@@ -119,7 +119,16 @@ export default function AquariumDesigner() {
   };
 
   const handleZoomChange = (newZoom: number) => {
-    setCanvasState(prev => ({ ...prev, zoom: newZoom }));
+    setCanvasState(prev => {
+      // If zooming back to 100% or less, reset pan to center
+      const shouldCenter = newZoom <= 1 && prev.zoom > 1;
+      return {
+        ...prev,
+        zoom: newZoom,
+        panX: shouldCenter ? 0 : prev.panX,
+        panY: shouldCenter ? 0 : prev.panY,
+      };
+    });
   };
 
   const handlePanChange = (panX: number, panY: number) => {

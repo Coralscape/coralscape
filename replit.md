@@ -82,6 +82,7 @@ Preferred communication style: Simple, everyday language.
 - Tank image becomes draggable (grab cursor) when zoomed in above 100%
 - Pan state resets to (0,0) when uploading new tank image
 - Transform now combines zoom and pan using CSS translate for smooth movement
+- Auto-centers tank image when zooming back to 100% while preserving coral overlay positions
 
 ## System Architecture
 
