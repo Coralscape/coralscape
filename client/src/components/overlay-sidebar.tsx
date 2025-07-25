@@ -341,7 +341,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredCoralData.map((coral) => (
+            {filteredCoralData.slice(0, 5).map((coral) => (
               <DraggableCoralItem
                 key={coral.id}
                 coral={coral}

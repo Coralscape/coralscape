@@ -53,7 +53,7 @@ Preferred communication style: Simple, everyday language.
 - Made canvas dashed border scale to match tank image size exactly
 - Increased top navigation logo size by 50% again (from h-12 to h-18)
 - Updated search placeholder to "Search corals & inverts..."
-- Added "Buy me a coffee" donation button next to logo
+- Added "Buy me a frag" donation button with coral emoji next to logo
 - Added color wheel image from Google Sheets (sheet 2, column A, row 2) in top right
 - Adjusted logo size to h-15 for better balance
 - Made entire site responsive for mobile/tablet with adaptive layouts, spacing, and text sizes

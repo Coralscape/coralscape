@@ -62,9 +62,9 @@ export default function TopNavigation({
             className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 hidden sm:flex"
             onClick={() => window.open('https://buymeacoffee.com/coralscape', '_blank')}
           >
-            <Coffee className="mr-2 h-4 w-4" />
-            <span className="hidden md:inline">Buy me a coffee</span>
-            <Coffee className="md:hidden h-4 w-4" />
+            <span className="mr-2">🪸</span>
+            <span className="hidden md:inline">Buy me a frag</span>
+            <span className="md:hidden">🪸</span>
           </Button>
         </div>
         
