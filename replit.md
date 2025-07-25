@@ -55,6 +55,11 @@ Preferred communication style: Simple, everyday language.
 - Updated search placeholder to "Search corals & inverts..."
 - Added "Buy me a coffee" donation button next to logo
 - Added color wheel image from Google Sheets (sheet 2, column A, row 2) in top right
+- Adjusted logo size to h-15 for better balance
+- Made entire site responsive for mobile/tablet with adaptive layouts, spacing, and text sizes
+- Mobile: Sidebar appears above canvas, layer controls hidden
+- Tablet: Similar to mobile but with better spacing
+- Desktop: Full three-panel layout with all controls visible
 
 ## System Architecture
 

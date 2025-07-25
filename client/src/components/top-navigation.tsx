@@ -40,13 +40,13 @@ export default function TopNavigation({
     fetchColorWheel();
   }, []);
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+    <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 shadow-sm">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center space-x-2 md:space-x-4">
           <img 
             src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
             alt="CoralScape"
-            className="h-18 w-auto"
+            className="h-12 md:h-15 w-auto"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
@@ -59,15 +59,16 @@ export default function TopNavigation({
           <Button
             variant="outline"
             size="sm"
-            className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100"
+            className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 hidden sm:flex"
             onClick={() => window.open('https://buymeacoffee.com/coralscape', '_blank')}
           >
             <Coffee className="mr-2 h-4 w-4" />
-            Buy me a coffee
+            <span className="hidden md:inline">Buy me a coffee</span>
+            <Coffee className="md:hidden h-4 w-4" />
           </Button>
         </div>
         
-        <div className="flex items-center space-x-4 flex-1 max-w-2xl mx-4">
+        <div className="hidden md:flex items-center space-x-4 flex-1 max-w-2xl mx-4">
           <div className="flex-1 text-center">
 
           </div>

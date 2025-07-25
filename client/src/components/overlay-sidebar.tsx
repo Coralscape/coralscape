@@ -206,9 +206,9 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   };
 
   return (
-    <aside className="w-80 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Corals & Inverts</h2>
+    <aside className="w-full md:w-80 bg-white border-r md:border-r border-b md:border-b-0 border-gray-200 flex flex-col">
+      <div className="p-3 md:p-4 border-b border-gray-200">
+        <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">Corals & Inverts</h2>
         
         {/* Search Input */}
         <div className="relative mb-3">
@@ -294,7 +294,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
         </div>
       </div>
       
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-3 md:p-4">
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (

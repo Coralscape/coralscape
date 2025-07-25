@@ -158,29 +158,46 @@ export default function AquariumDesigner() {
           isConnected={isConnected}
         />
         
-        <div className="flex h-[calc(100vh-80px)]">
-          <OverlaySidebar
-            coralData={coralData}
-            isLoading={isLoadingCorals}
-            onAddOverlay={handleAddOverlay}
-          />
+        <div className="flex flex-col md:flex-row h-[calc(100vh-80px)]">
+          {/* Mobile: Show sidebar above canvas */}
+          <div className="md:hidden max-h-48 overflow-y-auto">
+            <OverlaySidebar
+              coralData={coralData}
+              isLoading={isLoadingCorals}
+              onAddOverlay={handleAddOverlay}
+            />
+          </div>
+
+          {/* Desktop: Show sidebar on left */}
+          <div className="hidden md:block">
+            <OverlaySidebar
+              coralData={coralData}
+              isLoading={isLoadingCorals}
+              onAddOverlay={handleAddOverlay}
+            />
+          </div>
           
-          <CanvasWorkspace
-            canvasState={canvasState}
-            onUpdateOverlay={handleUpdateOverlay}
-            onSelectOverlay={handleSelectOverlay}
-            onBaseImageUpload={handleBaseImageUpload}
-            onAddOverlay={handleAddOverlay}
-            onZoomChange={handleZoomChange}
-          />
+          <div className="flex-1 min-w-0">
+            <CanvasWorkspace
+              canvasState={canvasState}
+              onUpdateOverlay={handleUpdateOverlay}
+              onSelectOverlay={handleSelectOverlay}
+              onBaseImageUpload={handleBaseImageUpload}
+              onAddOverlay={handleAddOverlay}
+              onZoomChange={handleZoomChange}
+            />
+          </div>
           
-          <LayerControls
-            canvasState={canvasState}
-            selectedOverlay={selectedOverlay}
-            onUpdateOverlay={handleUpdateOverlay}
-            onDeleteOverlay={handleDeleteOverlay}
-            onSelectOverlay={handleSelectOverlay}
-          />
+          {/* Layer controls - hidden on mobile/tablet, visible on large screens */}
+          <div className="hidden lg:block">
+            <LayerControls
+              canvasState={canvasState}
+              selectedOverlay={selectedOverlay}
+              onUpdateOverlay={handleUpdateOverlay}
+              onDeleteOverlay={handleDeleteOverlay}
+              onSelectOverlay={handleSelectOverlay}
+            />
+          </div>
         </div>
       </div>
     </DndProvider>
