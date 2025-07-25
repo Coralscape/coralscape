@@ -1,11 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useDrag } from "react-dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RefreshCw, Search, Filter } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RefreshCw, Search, Filter, Upload, X } from "lucide-react";
 import { CoralData } from "@shared/schema";
 
 interface OverlaySidebarProps {
@@ -56,7 +57,7 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
             {coral.name.toLowerCase().includes('lps') && (
               <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">LPS</Badge>
             )}
-            {(coral.name.toLowerCase().includes('softy') || coral.name.toLowerCase().includes('soft')) && (
+            {coral.name.toLowerCase().includes('soft') && (
               <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Soft</Badge>
             )}
             {coral.name.toLowerCase().includes('zoa') && (
@@ -66,28 +67,27 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
               <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">Clam</Badge>
             )}
             
-            {/* Show color if detected */}
-            {['blue', 'green', 'red', 'yellow', 'orange', 'purple', 'pink'].map(color => 
-              coral.name.toLowerCase().includes(color) && (
-                <Badge key={color} variant="secondary" className="text-xs" style={{
-                  backgroundColor: color === 'blue' ? '#dbeafe' : 
-                                  color === 'green' ? '#dcfce7' :
-                                  color === 'red' ? '#fee2e2' :
-                                  color === 'yellow' ? '#fef3c7' :
-                                  color === 'orange' ? '#fed7aa' :
-                                  color === 'purple' ? '#ede9fe' :
-                                  color === 'pink' ? '#fce7f3' : '#f3f4f6',
-                  color: color === 'blue' ? '#1e40af' : 
-                         color === 'green' ? '#166534' :
-                         color === 'red' ? '#dc2626' :
-                         color === 'yellow' ? '#d97706' :
-                         color === 'orange' ? '#ea580c' :
-                         color === 'purple' ? '#7c3aed' :
-                         color === 'pink' ? '#db2777' : '#374151'
-                }}>
-                  {color}
-                </Badge>
-              )
+            {/* Detect and show colors */}
+            {coral.name.toLowerCase().includes('green') && (
+              <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">Green</Badge>
+            )}
+            {coral.name.toLowerCase().includes('blue') && (
+              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">Blue</Badge>
+            )}
+            {coral.name.toLowerCase().includes('red') && (
+              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">Red</Badge>
+            )}
+            {coral.name.toLowerCase().includes('pink') && (
+              <Badge variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">Pink</Badge>
+            )}
+            {coral.name.toLowerCase().includes('purple') && (
+              <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">Purple</Badge>
+            )}
+            {coral.name.toLowerCase().includes('yellow') && (
+              <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">Yellow</Badge>
+            )}
+            {coral.name.toLowerCase().includes('orange') && (
+              <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">Orange</Badge>
             )}
           </div>
         </div>
@@ -101,101 +101,78 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   const [typeFilter, setTypeFilter] = useState("all");
   const [colorFilter, setColorFilter] = useState("all");
   const [randomSeed, setRandomSeed] = useState(0);
+  const [customCorals, setCustomCorals] = useState<CoralData[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Extract unique types and colors with counts
-  const { coralTypes, coralColors, typeBasedColors } = useMemo(() => {
-    const typeCounts = new Map<string, number>();
-    const colorCounts = new Map<string, number>();
-    const typeColorMap = new Map<string, Map<string, number>>();
+  // Extract available types from coral data
+  const coralTypes = useMemo(() => {
+    const typeCounts: Record<string, number> = {};
     
     coralData.forEach(coral => {
       const name = coral.name.toLowerCase();
-      
-      // Extract coral types
-      const types: string[] = [];
-      if (name.includes('sps')) types.push('sps');
-      if (name.includes('lps')) types.push('lps');
-      if (name.includes('softy') || name.includes('soft')) types.push('soft coral');
-      if (name.includes('zoa') || name.includes('zoanthid')) types.push('zoanthid');
-      if (name.includes('mushroom')) types.push('mushroom');
-      if (name.includes('anemone')) types.push('anemone');
-      if (name.includes('clam')) types.push('clam');
-      if (name.includes('torch')) types.push('torch');
-      if (name.includes('hammer')) types.push('hammer');
-      if (name.includes('favia')) types.push('favia');
-      if (name.includes('acropora') || name.includes('acro')) types.push('acropora');
-      if (name.includes('montipora') || name.includes('monti')) types.push('montipora');
-      
-      // Extract colors
-      const colors: string[] = [];
-      if (name.includes('blue')) colors.push('blue');
-      if (name.includes('green')) colors.push('green');
-      if (name.includes('red')) colors.push('red');
-      if (name.includes('yellow')) colors.push('yellow');
-      if (name.includes('orange')) colors.push('orange');
-      if (name.includes('purple')) colors.push('purple');
-      if (name.includes('pink')) colors.push('pink');
-      if (name.includes('white')) colors.push('white');
-      if (name.includes('black')) colors.push('black');
-      if (name.includes('brown')) colors.push('brown');
-      if (name.includes('rainbow')) colors.push('rainbow');
-      
-      // Count types
-      types.forEach(type => {
-        typeCounts.set(type, (typeCounts.get(type) || 0) + 1);
-        
-        // Build type-color mapping
-        if (!typeColorMap.has(type)) {
-          typeColorMap.set(type, new Map());
-        }
-        const typeColors = typeColorMap.get(type)!;
-        colors.forEach(color => {
-          typeColors.set(color, (typeColors.get(color) || 0) + 1);
-        });
-      });
-      
-      // Count colors
-      colors.forEach(color => {
-        colorCounts.set(color, (colorCounts.get(color) || 0) + 1);
-      });
+      if (name.includes('sps')) typeCounts['sps'] = (typeCounts['sps'] || 0) + 1;
+      if (name.includes('lps')) typeCounts['lps'] = (typeCounts['lps'] || 0) + 1;
+      if (name.includes('soft')) typeCounts['soft'] = (typeCounts['soft'] || 0) + 1;
+      if (name.includes('zoa')) typeCounts['zoa'] = (typeCounts['zoa'] || 0) + 1;
+      if (name.includes('clam')) typeCounts['clam'] = (typeCounts['clam'] || 0) + 1;
     });
     
-    return {
-      coralTypes: Array.from(typeCounts.entries()).sort(([a], [b]) => a.localeCompare(b)),
-      coralColors: Array.from(colorCounts.entries()).sort(([a], [b]) => a.localeCompare(b)),
-      typeBasedColors: typeColorMap
-    };
+    return Object.entries(typeCounts);
   }, [coralData]);
 
-  // Get colors for selected type
+  // Extract available colors from coral data based on current type filter
   const availableColors = useMemo(() => {
-    if (typeFilter === "all") {
-      return coralColors;
+    let filteredData = coralData;
+    
+    if (typeFilter !== "all") {
+      filteredData = coralData.filter(coral => 
+        coral.name.toLowerCase().includes(typeFilter)
+      );
     }
     
-    const typeColors = typeBasedColors.get(typeFilter);
-    if (!typeColors) return [];
+    const colorCounts: Record<string, number> = {};
     
-    return Array.from(typeColors.entries()).sort(([a], [b]) => a.localeCompare(b));
-  }, [typeFilter, coralColors, typeBasedColors]);
-
-  // Filter and randomize coral data based on search and filters
-  const filteredCoralData = useMemo(() => {
-    const filtered = coralData.filter(coral => {
+    filteredData.forEach(coral => {
       const name = coral.name.toLowerCase();
-      const searchMatch = name.includes(searchTerm.toLowerCase());
-      
-      const typeMatch = typeFilter === "all" || name.includes(typeFilter.toLowerCase());
-      const colorMatch = colorFilter === "all" || name.includes(colorFilter.toLowerCase());
-      
-      return searchMatch && typeMatch && colorMatch;
+      if (name.includes('green')) colorCounts['green'] = (colorCounts['green'] || 0) + 1;
+      if (name.includes('blue')) colorCounts['blue'] = (colorCounts['blue'] || 0) + 1;
+      if (name.includes('red')) colorCounts['red'] = (colorCounts['red'] || 0) + 1;
+      if (name.includes('pink')) colorCounts['pink'] = (colorCounts['pink'] || 0) + 1;
+      if (name.includes('purple')) colorCounts['purple'] = (colorCounts['purple'] || 0) + 1;
+      if (name.includes('yellow')) colorCounts['yellow'] = (colorCounts['yellow'] || 0) + 1;
+      if (name.includes('orange')) colorCounts['orange'] = (colorCounts['orange'] || 0) + 1;
     });
     
-    // Simple seeded shuffle
+    return Object.entries(colorCounts);
+  }, [coralData, typeFilter]);
+
+  // Filter and randomize coral data
+  const filteredCoralData = useMemo(() => {
+    let filtered = coralData.filter(coral => {
+      const name = coral.name.toLowerCase();
+      const matchesSearch = name.includes(searchTerm.toLowerCase());
+      const matchesType = typeFilter === "all" || name.includes(typeFilter);
+      const matchesColor = colorFilter === "all" || name.includes(colorFilter);
+      
+      return matchesSearch && matchesType && matchesColor;
+    });
+    
+    // Shuffle the array based on randomSeed
     const shuffled = [...filtered];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(((randomSeed + i) * 9301 + 49297) % 233280 / 233280 * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    let currentIndex = shuffled.length;
+    let randomIndex;
+    
+    // Use randomSeed to create deterministic randomness
+    const seededRandom = (seed: number) => {
+      const x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);
+    };
+    
+    let seed = randomSeed;
+    while (currentIndex != 0) {
+      randomIndex = Math.floor(seededRandom(seed++) * currentIndex);
+      currentIndex--;
+      [shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
     }
     
     return shuffled;
@@ -205,151 +182,222 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     setRandomSeed(prev => prev + 1);
   };
 
+  const handleCustomUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        const newCoral: CoralData = {
+          id: `custom-${Date.now()}`,
+          name: file.name.replace(/\.(jpg|jpeg|png|gif|webp)$/i, ''),
+          fullImageUrl: result,
+          thumbnailUrl: result,
+          width: 150,
+          height: 150,
+        };
+        setCustomCorals(prev => [...prev, newCoral]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeCustomCoral = (id: string) => {
+    setCustomCorals(prev => prev.filter(coral => coral.id !== id));
+  };
+
   return (
     <aside className="w-full md:w-80 bg-white border-r md:border-r border-b md:border-b-0 border-gray-200 flex flex-col">
       <div className="p-3 md:p-4 border-b border-gray-200">
         <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">Corals & Inverts</h2>
         
-        {/* Search Input */}
-        <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search corals & inverts..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 text-sm"
-          />
-        </div>
-
-        {/* Filter Controls */}
-        <div className="space-y-2 mb-3">
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Filters</span>
-          </div>
+        <Tabs defaultValue="database" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="database">Database</TabsTrigger>
+            <TabsTrigger value="custom">Custom ({customCorals.length})</TabsTrigger>
+          </TabsList>
           
-          <div className="grid grid-cols-2 gap-2">
-            <div>
+          <TabsContent value="database" className="mt-3">
+            {/* Search Input */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search corals & inverts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 text-sm"
+              />
+            </div>
+
+            {/* Filters */}
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="text-xs h-8">
-                  <SelectValue placeholder="Type" />
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="all">All Types ({filteredCoralData.length})</SelectItem>
                   {coralTypes.map(([type, count]) => (
                     <SelectItem key={type} value={type}>
-                      {type.toString().charAt(0).toUpperCase() + type.toString().slice(1)} ({count})
+                      {type.charAt(0).toUpperCase() + type.slice(1)} ({count})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            
-            <div>
+              
               <Select value={colorFilter} onValueChange={setColorFilter}>
-                <SelectTrigger className="text-xs h-8">
-                  <SelectValue placeholder="Color" />
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Colors</SelectItem>
+                  <SelectItem value="all">All Colors ({filteredCoralData.length})</SelectItem>
                   {availableColors.map(([color, count]) => (
                     <SelectItem key={color} value={color}>
-                      {color.toString().charAt(0).toUpperCase() + color.toString().slice(1)} ({count})
+                      {color.charAt(0).toUpperCase() + color.slice(1)} ({count})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-          </div>
-        </div>
 
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <span>{filteredCoralData.length} of {coralData.length} specimens</span>
-          <div className="flex items-center space-x-1">
-            {(searchTerm || typeFilter !== "all" || colorFilter !== "all") && (
+            {/* Clear filters and randomize buttons */}
+            <div className="flex justify-between items-center mb-3">
+              {(searchTerm || typeFilter !== "all" || colorFilter !== "all") && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-500 hover:text-gray-700 h-auto p-1"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setTypeFilter("all");
+                    setColorFilter("all");
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-gray-500 hover:text-gray-700 h-auto p-1"
-                onClick={() => {
-                  setSearchTerm("");
-                  setTypeFilter("all");
-                  setColorFilter("all");
-                }}
+                className="text-primary hover:text-primary/80 h-auto p-1"
+                onClick={handleRandomize}
               >
-                Clear
+                <RefreshCw className="mr-1 h-3 w-3" />
+                Randomize
               </Button>
-            )}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-primary hover:text-primary/80 h-auto p-1"
-              onClick={handleRandomize}
-            >
-              <RefreshCw className="mr-1 h-3 w-3" />
-              Randomize
-            </Button>
-          </div>
-        </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="custom" className="mt-3">
+            <div className="space-y-3">
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full"
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload Coral Image
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleCustomUpload}
+                className="hidden"
+              />
+              
+              {customCorals.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4">
+                  Upload your own coral images to add them to your design
+                </p>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
       
       <ScrollArea className="flex-1 p-3 md:p-4">
-        {isLoading ? (
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-100 rounded-lg p-3 animate-pulse">
-                <div className="flex items-center space-x-3">
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        <Tabs defaultValue="database" className="w-full">
+          <TabsContent value="database" className="mt-0">
+            {isLoading ? (
+              <div className="space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="bg-gray-100 rounded-lg p-3 animate-pulse">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : filteredCoralData.length === 0 && coralData.length > 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <Search className="mx-auto h-12 w-12" />
+            ) : filteredCoralData.length === 0 && coralData.length > 0 ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <Search className="mx-auto h-12 w-12" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Results Found</h3>
+                <p className="text-gray-600">Try adjusting your search or filters</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setTypeFilter("all");
+                    setColorFilter("all");
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            ) : coralData.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-7l2 2-2 2M5 4l2 2-2 2" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Specimens Available</h3>
+                <p className="text-gray-600">Connect to Google Sheets to load coral and invertebrate data</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredCoralData.slice(0, 5).map((coral) => (
+                  <DraggableCoralItem
+                    key={coral.id}
+                    coral={coral}
+                    onAddOverlay={onAddOverlay}
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="custom" className="mt-0">
+            <div className="space-y-3">
+              {customCorals.map((coral) => (
+                <div key={coral.id} className="relative">
+                  <DraggableCoralItem
+                    coral={coral}
+                    onAddOverlay={onAddOverlay}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-1 right-1 h-6 w-6 p-0 bg-white shadow-sm"
+                    onClick={() => removeCustomCoral(coral.id)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Results Found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters</p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-3"
-              onClick={() => {
-                setSearchTerm("");
-                setTypeFilter("all");
-                setColorFilter("all");
-              }}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        ) : coralData.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-7l2 2-2 2M5 4l2 2-2 2" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Specimens Available</h3>
-            <p className="text-gray-600">Connect to Google Sheets to load coral and invertebrate data</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredCoralData.slice(0, 5).map((coral) => (
-              <DraggableCoralItem
-                key={coral.id}
-                coral={coral}
-                onAddOverlay={onAddOverlay}
-              />
-            ))}
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
       </ScrollArea>
     </aside>
   );

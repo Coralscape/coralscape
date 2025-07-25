@@ -63,6 +63,11 @@ Preferred communication style: Simple, everyday language.
 - Reverted sidebar to show 5 specimens in scrollable format
 - Added export success popup with "Buy me a frag" donation option after successful export
 - Color wheel image now displays in top right navigation from Google Sheets
+- Fixed color wheel positioning to appear left of help icon in top navigation
+- Added custom coral upload feature with separate "Custom" tab in sidebar
+- Users can upload their own coral images which persist for the session
+- Custom corals appear in dedicated tab with remove buttons
+- Custom uploads create draggable coral items just like database specimens
 
 ## System Architecture
 

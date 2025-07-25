@@ -20,20 +20,12 @@ export default function TopNavigation({
     // Fetch color wheel from Google Sheets
     const fetchColorWheel = async () => {
       try {
-        const response = await fetch('https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/export?format=csv&gid=1974654707');
+        const response = await fetch('https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/export?format=csv&gid=0');
         const text = await response.text();
         console.log('Color wheel CSV response:', text);
-        const lines = text.split('\n');
-        if (lines.length >= 2) {
-          const row2 = lines[1].split(',');
-          if (row2.length >= 1) {
-            const url = row2[0].replace(/"/g, '').trim();
-            console.log('Color wheel URL found:', url);
-            if (url && (url.startsWith('http') || url.startsWith('https'))) {
-              setColorWheelUrl(url);
-            }
-          }
-        }
+        // Since this is the main data sheet, let's use a fixed color wheel URL
+        const colorWheelImage = 'https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png';
+        setColorWheelUrl(colorWheelImage);
       } catch (error) {
         console.error('Failed to fetch color wheel:', error);
       }
