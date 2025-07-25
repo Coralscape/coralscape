@@ -54,11 +54,7 @@ export default function LayerControls({
 
   return (
     <aside className="w-80 bg-white border-l border-gray-200 flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">Layer Controls</h2>
-      </div>
-
-      {/* Export Section - Moved to top */}
+      {/* Export Section - At the very top */}
       <div className="border-b border-gray-200 p-4 bg-gray-50">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -109,6 +105,10 @@ export default function LayerControls({
             Final image will include watermark and all coral layers
           </div>
         </div>
+      </div>
+
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900">Layer Controls</h2>
       </div>
       
       <ScrollArea className="flex-1 p-4 space-y-6">

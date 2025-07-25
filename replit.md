@@ -83,6 +83,7 @@ Preferred communication style: Simple, everyday language.
 - Pan state resets to (0,0) when uploading new tank image
 - Transform now combines zoom and pan using CSS translate for smooth movement
 - Auto-centers tank image when zooming back to 100% while preserving coral overlay positions
+- Moved export options to the very top of the right panel above layer controls header
 
 ## System Architecture
 
