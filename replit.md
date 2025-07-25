@@ -68,6 +68,8 @@ Preferred communication style: Simple, everyday language.
 - Users can upload their own coral images which persist for the session
 - Custom corals appear in dedicated tab with remove buttons
 - Custom uploads create draggable coral items just like database specimens
+- Fixed custom coral display issue - uploaded corals now properly show in Custom tab
+- Updated color wheel to fetch from same sheet as logo (gid=1974654707) row 2
 
 ## System Architecture
 

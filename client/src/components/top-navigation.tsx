@@ -20,18 +20,34 @@ export default function TopNavigation({
     // Fetch color wheel from Google Sheets
     const fetchColorWheel = async () => {
       try {
-        const response = await fetch('https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/export?format=csv&gid=0');
-        const text = await response.text();
-        console.log('Color wheel CSV response:', text);
-        const lines = text.split('\n');
-        if (lines.length >= 3) {
-          const row3 = lines[2].split(',');
-          if (row3.length >= 3) {
-            const url = row3[2].replace(/"/g, '').trim();
-            console.log('Color wheel URL found in row 3:', url);
-            if (url && (url.startsWith('http') || url.startsWith('https'))) {
-              setColorWheelUrl(url);
+        // Try different GIDs for sheet 2, same approach as watermark
+        const possibleGids = ['1', '2000000000', '1555555555', '669674685'];
+        
+        for (const gid of possibleGids) {
+          try {
+            const csvUrl = `https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/export?format=csv&gid=${gid}`;
+            const response = await fetch(csvUrl);
+            
+            if (response.ok) {
+              const csvData = await response.text();
+              const rows = csvData.split('\n');
+              
+              if (rows.length >= 2) {
+                const row2 = rows[1]; // Row 2 (index 1)
+                const columns = row2.split(',').map(col => col.trim().replace(/"/g, ''));
+                
+                if (columns.length > 0 && columns[0]) {
+                  const url = columns[0];
+                  console.log('Color wheel URL found in row 2:', url);
+                  if (url.startsWith('http://') || url.startsWith('https://')) {
+                    setColorWheelUrl(url);
+                    return; // Success, stop trying other GIDs
+                  }
+                }
+              }
             }
+          } catch (error) {
+            continue; // Try next gid
           }
         }
       } catch (error) {

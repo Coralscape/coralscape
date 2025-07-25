@@ -197,8 +197,13 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
           height: 150,
         };
         setCustomCorals(prev => [...prev, newCoral]);
+        console.log('Custom coral added:', newCoral.name, 'Total:', customCorals.length + 1);
       };
       reader.readAsDataURL(file);
+    }
+    // Clear the input value so the same file can be uploaded again
+    if (event.target) {
+      event.target.value = '';
     }
   };
 
@@ -312,6 +317,26 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                   Upload your own coral images to add them to your design
                 </p>
               )}
+              
+              {/* Show uploaded custom corals here too */}
+              <div className="space-y-3">
+                {customCorals.map((coral) => (
+                  <div key={coral.id} className="relative">
+                    <DraggableCoralItem
+                      coral={coral}
+                      onAddOverlay={onAddOverlay}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-1 right-1 h-6 w-6 p-0 bg-white shadow-sm"
+                      onClick={() => removeCustomCoral(coral.id)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -377,26 +402,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
             )}
           </TabsContent>
           
-          <TabsContent value="custom" className="mt-0">
-            <div className="space-y-3">
-              {customCorals.map((coral) => (
-                <div key={coral.id} className="relative">
-                  <DraggableCoralItem
-                    coral={coral}
-                    onAddOverlay={onAddOverlay}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute top-1 right-1 h-6 w-6 p-0 bg-white shadow-sm"
-                    onClick={() => removeCustomCoral(coral.id)}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
+
         </Tabs>
       </ScrollArea>
     </aside>
