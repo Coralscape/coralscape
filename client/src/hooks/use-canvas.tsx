@@ -5,6 +5,7 @@ import { exportCanvasAsImage } from "@/lib/canvas-utils";
 
 export function useCanvasExport() {
   const [isExporting, setIsExporting] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const { toast } = useToast();
 
   const exportCanvas = useCallback(async (canvasState: CanvasState) => {
@@ -22,10 +23,7 @@ export function useCanvasExport() {
     try {
       await exportCanvasAsImage(canvasState);
       
-      toast({
-        title: "Export Successful",
-        description: "Your tank design has been downloaded successfully!",
-      });
+      setShowSuccessPopup(true);
     } catch (error) {
       console.error('Export error:', error);
       toast({
@@ -38,7 +36,11 @@ export function useCanvasExport() {
     }
   }, [toast]);
 
-  return { exportCanvas, isExporting };
+  const closeSuccessPopup = useCallback(() => {
+    setShowSuccessPopup(false);
+  }, []);
+
+  return { exportCanvas, isExporting, showSuccessPopup, closeSuccessPopup };
 }
 
 export function useCanvasState() {

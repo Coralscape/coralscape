@@ -60,6 +60,9 @@ Preferred communication style: Simple, everyday language.
 - Mobile: Sidebar appears above canvas, layer controls hidden
 - Tablet: Similar to mobile but with better spacing
 - Desktop: Full three-panel layout with all controls visible
+- Reverted sidebar to show 5 specimens in scrollable format
+- Added export success popup with "Buy me a frag" donation option after successful export
+- Color wheel image now displays in top right navigation from Google Sheets
 
 ## System Architecture
 

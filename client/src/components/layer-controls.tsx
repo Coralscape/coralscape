@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { MousePointer, ArrowUp, ArrowDown, Trash2, Download, Layers, Eye, Image, Lock } from "lucide-react";
 import { CanvasState, OverlayData } from "@shared/schema";
 import { useCanvasExport } from "@/hooks/use-canvas";
+import ExportSuccessPopup from "./export-success-popup";
 
 interface LayerControlsProps {
   canvasState: CanvasState;
@@ -25,7 +26,7 @@ export default function LayerControls({
   onDeleteOverlay,
   onSelectOverlay,
 }: LayerControlsProps) {
-  const { exportCanvas, isExporting } = useCanvasExport();
+  const { exportCanvas, isExporting, showSuccessPopup, closeSuccessPopup } = useCanvasExport();
 
   const handleMoveLayer = (overlayId: string, direction: 'up' | 'down') => {
     const overlay = canvasState.overlays.find(o => o.id === overlayId);
@@ -281,6 +282,11 @@ export default function LayerControls({
           </div>
         </div>
       </div>
+
+      <ExportSuccessPopup 
+        isOpen={showSuccessPopup}
+        onClose={closeSuccessPopup}
+      />
     </aside>
   );
 }

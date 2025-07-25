@@ -106,7 +106,7 @@ export default function TopNavigation({
             <img 
               src={colorWheelUrl}
               alt="Color Wheel"
-              className="h-8 w-8 rounded-full object-cover"
+              className="h-8 w-8 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
