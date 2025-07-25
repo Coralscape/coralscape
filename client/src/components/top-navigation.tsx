@@ -20,25 +20,29 @@ export default function TopNavigation({
     // Fetch color wheel from Google Sheets
     const fetchColorWheel = async () => {
       try {
-        // Try different GIDs for sheet 2, same approach as watermark
-        const possibleGids = ['1', '2000000000', '1555555555', '669674685'];
+        // Fetch from sheet 2, column A, row 2 of the specific spreadsheet
+        // First try to get sheet 2 using different common GIDs
+        const possibleGids = ['669674685', '1555555555', '2000000000', '1'];
         
         for (const gid of possibleGids) {
           try {
             const csvUrl = `https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/export?format=csv&gid=${gid}`;
+            console.log(`Trying color wheel with GID: ${gid}`);
             const response = await fetch(csvUrl);
             
             if (response.ok) {
               const csvData = await response.text();
+              console.log(`Color wheel CSV data for GID ${gid}:`, csvData.substring(0, 200));
               const rows = csvData.split('\n');
               
-              if (rows.length >= 2) {
+              // Check if this looks like sheet 2 data (not the main coral data)
+              if (rows.length >= 2 && !rows[0].includes('Id,Name,ImageUrl')) {
                 const row2 = rows[1]; // Row 2 (index 1)
                 const columns = row2.split(',').map(col => col.trim().replace(/"/g, ''));
                 
                 if (columns.length > 0 && columns[0]) {
                   const url = columns[0];
-                  console.log('Color wheel URL found in row 2:', url);
+                  console.log('Color wheel URL found in sheet 2, row 2:', url);
                   if (url.startsWith('http://') || url.startsWith('https://')) {
                     setColorWheelUrl(url);
                     return; // Success, stop trying other GIDs
@@ -47,6 +51,7 @@ export default function TopNavigation({
               }
             }
           } catch (error) {
+            console.log(`Failed to fetch with GID ${gid}:`, error);
             continue; // Try next gid
           }
         }
@@ -125,10 +130,11 @@ export default function TopNavigation({
             <img 
               src={colorWheelUrl}
               alt="Color Wheel"
-              className="h-8 w-8 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+              className="h-12 md:h-15 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
+                console.log('Color wheel image failed to load:', colorWheelUrl);
               }}
             />
           )}
