@@ -39,6 +39,8 @@ Preferred communication style: Simple, everyday language.
 - Changed rotation click increment from 90° to 10° for finer control
 - Modified base image click to select (deselect overlays) instead of auto-zoom
 - Zoom control now exclusively managed through zoom buttons/percentage input
+- Reduced rotation sensitivity by 70% for smoother, more precise control
+- Fixed watermark positioning to stay attached to base image corner during zoom
 
 ## System Architecture
 

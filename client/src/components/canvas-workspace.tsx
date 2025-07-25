@@ -164,7 +164,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
                     if (!isDragging) return;
                     
                     const currentAngle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX);
-                    const angleDiff = (currentAngle - startAngle) * (180 / Math.PI);
+                    const angleDiff = (currentAngle - startAngle) * (180 / Math.PI) * 0.3; // Reduced sensitivity by 70%
                     const newRotation = (startRotation + angleDiff) % 360;
                     
                     onUpdate({ rotation: newRotation < 0 ? newRotation + 360 : newRotation });
@@ -403,9 +403,11 @@ export default function CanvasWorkspace({
                   <div 
                     className="watermark absolute z-50 pointer-events-none"
                     style={{ 
-                      width: `${20 * canvasState.zoom}%`,
-                      bottom: `${20 * canvasState.zoom}px`,
-                      right: `${20 * canvasState.zoom}px`,
+                      width: '20%',
+                      bottom: '20px',
+                      right: '20px',
+                      transform: `scale(${canvasState.zoom})`,
+                      transformOrigin: 'bottom right'
                     }}
                   >
                     <img 
