@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plug, Settings, HelpCircle, CheckCircle2, Layers } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Loader2, Plug, Settings, HelpCircle, CheckCircle2, Layers, Mail } from "lucide-react";
 
 interface TopNavigationProps {
   onConnect: () => void;
@@ -65,9 +67,24 @@ export default function TopNavigation({
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="icon" title="inquiries.coralscape@gmail.com">
-            <HelpCircle className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuItem asChild>
+                <a 
+                  href="mailto:inquiries.coralscape@gmail.com"
+                  className="flex items-center cursor-pointer"
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  inquiries.coralscape@gmail.com
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

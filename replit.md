@@ -48,7 +48,8 @@ Preferred communication style: Simple, everyday language.
 - Replaced "CoralScape Designer" title with watermark logo in top navigation
 - Removed gear/settings icon from top right navigation
 - Removed "Coral & Invertebrate Database" text from top center
-- Added email tooltip "inquiries.coralscape@gmail.com" to help/question mark icon
+- Added clickable email dropdown "inquiries.coralscape@gmail.com" to help/question mark icon
+- Fixed coral positioning offset in exported images by using actual workspace dimensions
 
 ## System Architecture
 

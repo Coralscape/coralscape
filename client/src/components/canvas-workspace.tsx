@@ -373,7 +373,7 @@ export default function CanvasWorkspace({
                 (canvasRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
               }
             }}
-            className={`relative bg-white rounded-xl shadow-lg border-2 border-dashed border-gray-300 min-h-[600px] flex items-center justify-center overflow-hidden ${
+            className={`canvas-workspace relative bg-white rounded-xl shadow-lg border-2 border-dashed border-gray-300 min-h-[600px] flex items-center justify-center overflow-hidden ${
               isOver ? 'drop-zone-active' : ''
             }`}
             onClick={handleCanvasClick}
