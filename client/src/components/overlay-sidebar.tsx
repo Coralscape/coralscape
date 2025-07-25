@@ -99,6 +99,7 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
 export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: OverlaySidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [subTypeFilter, setSubTypeFilter] = useState("all");
   const [colorFilter, setColorFilter] = useState("all");
   const [randomSeed, setRandomSeed] = useState(0);
   const [customCorals, setCustomCorals] = useState<CoralData[]>([]);
@@ -120,13 +121,70 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     return Object.entries(typeCounts);
   }, [coralData]);
 
-  // Extract available colors from coral data based on current type filter
+  // Get subcategories based on selected main type
+  const availableSubTypes = useMemo(() => {
+    if (typeFilter === "all") return [];
+    
+    let filteredData = coralData.filter(coral => 
+      coral.name.toLowerCase().includes(typeFilter)
+    );
+    
+    const subTypeCounts: Record<string, number> = {};
+    
+    if (typeFilter === 'sps') {
+      filteredData.forEach(coral => {
+        const name = coral.name.toLowerCase();
+        if (name.includes('acropora')) subTypeCounts['acropora'] = (subTypeCounts['acropora'] || 0) + 1;
+        if (name.includes('montipora')) subTypeCounts['montipora'] = (subTypeCounts['montipora'] || 0) + 1;
+        if (name.includes('pocillopora')) subTypeCounts['pocillopora'] = (subTypeCounts['pocillopora'] || 0) + 1;
+        if (name.includes('stylophora')) subTypeCounts['stylophora'] = (subTypeCounts['stylophora'] || 0) + 1;
+        if (name.includes('seriatopora')) subTypeCounts['seriatopora'] = (subTypeCounts['seriatopora'] || 0) + 1;
+      });
+    } else if (typeFilter === 'lps') {
+      filteredData.forEach(coral => {
+        const name = coral.name.toLowerCase();
+        if (name.includes('hammer')) subTypeCounts['hammer'] = (subTypeCounts['hammer'] || 0) + 1;
+        if (name.includes('torch')) subTypeCounts['torch'] = (subTypeCounts['torch'] || 0) + 1;
+        if (name.includes('frogspawn')) subTypeCounts['frogspawn'] = (subTypeCounts['frogspawn'] || 0) + 1;
+        if (name.includes('bubble')) subTypeCounts['bubble'] = (subTypeCounts['bubble'] || 0) + 1;
+        if (name.includes('plate')) subTypeCounts['plate'] = (subTypeCounts['plate'] || 0) + 1;
+        if (name.includes('brain')) subTypeCounts['brain'] = (subTypeCounts['brain'] || 0) + 1;
+        if (name.includes('elegance')) subTypeCounts['elegance'] = (subTypeCounts['elegance'] || 0) + 1;
+      });
+    } else if (typeFilter === 'soft') {
+      filteredData.forEach(coral => {
+        const name = coral.name.toLowerCase();
+        if (name.includes('leather')) subTypeCounts['leather'] = (subTypeCounts['leather'] || 0) + 1;
+        if (name.includes('mushroom')) subTypeCounts['mushroom'] = (subTypeCounts['mushroom'] || 0) + 1;
+        if (name.includes('finger')) subTypeCounts['finger'] = (subTypeCounts['finger'] || 0) + 1;
+        if (name.includes('tree')) subTypeCounts['tree'] = (subTypeCounts['tree'] || 0) + 1;
+        if (name.includes('xenia')) subTypeCounts['xenia'] = (subTypeCounts['xenia'] || 0) + 1;
+      });
+    } else if (typeFilter === 'zoa') {
+      filteredData.forEach(coral => {
+        const name = coral.name.toLowerCase();
+        if (name.includes('paly')) subTypeCounts['paly'] = (subTypeCounts['paly'] || 0) + 1;
+        if (name.includes('button')) subTypeCounts['button'] = (subTypeCounts['button'] || 0) + 1;
+        if (name.includes('radioactive')) subTypeCounts['radioactive'] = (subTypeCounts['radioactive'] || 0) + 1;
+      });
+    }
+    
+    return Object.entries(subTypeCounts);
+  }, [coralData, typeFilter]);
+
+  // Extract available colors from coral data based on current type and subtype filters
   const availableColors = useMemo(() => {
     let filteredData = coralData;
     
     if (typeFilter !== "all") {
-      filteredData = coralData.filter(coral => 
+      filteredData = filteredData.filter(coral => 
         coral.name.toLowerCase().includes(typeFilter)
+      );
+    }
+    
+    if (subTypeFilter !== "all") {
+      filteredData = filteredData.filter(coral => 
+        coral.name.toLowerCase().includes(subTypeFilter)
       );
     }
     
@@ -144,7 +202,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     });
     
     return Object.entries(colorCounts);
-  }, [coralData, typeFilter]);
+  }, [coralData, typeFilter, subTypeFilter]);
 
   // Filter and randomize coral data
   const filteredCoralData = useMemo(() => {
@@ -152,9 +210,10 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
       const name = coral.name.toLowerCase();
       const matchesSearch = name.includes(searchTerm.toLowerCase());
       const matchesType = typeFilter === "all" || name.includes(typeFilter);
+      const matchesSubType = subTypeFilter === "all" || name.includes(subTypeFilter);
       const matchesColor = colorFilter === "all" || name.includes(colorFilter);
       
-      return matchesSearch && matchesType && matchesColor;
+      return matchesSearch && matchesType && matchesSubType && matchesColor;
     });
     
     // Shuffle the array based on randomSeed
@@ -176,7 +235,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     }
     
     return shuffled;
-  }, [coralData, searchTerm, typeFilter, colorFilter, randomSeed]);
+  }, [coralData, searchTerm, typeFilter, subTypeFilter, colorFilter, randomSeed]);
 
   const handleRandomize = () => {
     setRandomSeed(prev => prev + 1);
@@ -236,13 +295,17 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
             </div>
 
             {/* Filters */}
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <div className="space-y-2 mb-3">
+              {/* Main Type Filter */}
+              <Select value={typeFilter} onValueChange={(value) => {
+                setTypeFilter(value);
+                setSubTypeFilter("all"); // Reset subtype when main type changes
+              }}>
                 <SelectTrigger className="text-sm">
-                  <SelectValue />
+                  <SelectValue placeholder="Select Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Types ({filteredCoralData.length})</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
                   {coralTypes.map(([type, count]) => (
                     <SelectItem key={type} value={type}>
                       {type.charAt(0).toUpperCase() + type.slice(1)} ({count})
@@ -251,12 +314,33 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                 </SelectContent>
               </Select>
               
+              {/* Subtype Filter - appears when main type is selected */}
+              {availableSubTypes.length > 0 && (
+                <div className="relative">
+                  <Select value={subTypeFilter} onValueChange={setSubTypeFilter}>
+                    <SelectTrigger className="text-sm ml-4 border-l-4 border-primary/30">
+                      <SelectValue placeholder="Select Subtype" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All {typeFilter.charAt(0).toUpperCase() + typeFilter.slice(1)} Types</SelectItem>
+                      {availableSubTypes.map(([subType, count]) => (
+                        <SelectItem key={subType} value={subType}>
+                          {subType.charAt(0).toUpperCase() + subType.slice(1)} ({count})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="absolute left-0 top-1/2 w-3 h-px bg-primary/30 transform -translate-y-1/2"></div>
+                </div>
+              )}
+              
+              {/* Color Filter */}
               <Select value={colorFilter} onValueChange={setColorFilter}>
                 <SelectTrigger className="text-sm">
-                  <SelectValue />
+                  <SelectValue placeholder="Select Color" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Colors ({filteredCoralData.length})</SelectItem>
+                  <SelectItem value="all">All Colors</SelectItem>
                   {availableColors.map(([color, count]) => (
                     <SelectItem key={color} value={color}>
                       {color.charAt(0).toUpperCase() + color.slice(1)} ({count})
@@ -268,7 +352,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
 
             {/* Clear filters and randomize buttons */}
             <div className="flex justify-between items-center mb-3">
-              {(searchTerm || typeFilter !== "all" || colorFilter !== "all") && (
+              {(searchTerm || typeFilter !== "all" || subTypeFilter !== "all" || colorFilter !== "all") && (
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -276,6 +360,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                   onClick={() => {
                     setSearchTerm("");
                     setTypeFilter("all");
+                    setSubTypeFilter("all");
                     setColorFilter("all");
                   }}
                 >

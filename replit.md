@@ -71,6 +71,9 @@ Preferred communication style: Simple, everyday language.
 - Fixed custom coral display issue - uploaded corals now properly show in Custom tab
 - Updated color wheel to fetch from same sheet as logo (gid=1974654707) row 2
 - Moved export options section above layer controls for better visibility and accessibility
+- Added hierarchical filtering system with subcategories (SPS→Acropora, LPS→Hammer, etc.)
+- Subtype filters appear indented when main type is selected, showing specific coral classifications
+- Updated filter dependencies to include subtype filtering in coral search results
 
 ## System Architecture
 
