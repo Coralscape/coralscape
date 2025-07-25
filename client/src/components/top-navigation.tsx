@@ -23,9 +23,17 @@ export default function TopNavigation({
         const response = await fetch('https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/export?format=csv&gid=0');
         const text = await response.text();
         console.log('Color wheel CSV response:', text);
-        // Since this is the main data sheet, let's use a fixed color wheel URL
-        const colorWheelImage = 'https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png';
-        setColorWheelUrl(colorWheelImage);
+        const lines = text.split('\n');
+        if (lines.length >= 3) {
+          const row3 = lines[2].split(',');
+          if (row3.length >= 3) {
+            const url = row3[2].replace(/"/g, '').trim();
+            console.log('Color wheel URL found in row 3:', url);
+            if (url && (url.startsWith('http') || url.startsWith('https'))) {
+              setColorWheelUrl(url);
+            }
+          }
+        }
       } catch (error) {
         console.error('Failed to fetch color wheel:', error);
       }
