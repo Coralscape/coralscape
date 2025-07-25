@@ -146,18 +146,44 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
           />
           
           {/* Transform Controls */}
-          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-1 flex items-center space-x-1">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-6 w-6 p-0"
-              onClick={() => onUpdate({ 
-                rotation: ((overlay.rotation || 0) + 90) % 360 
-              })}
-              title="Rotate 90°"
-            >
-              <RotateCw className="h-3 w-3" />
-            </Button>
+          <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-6 w-6 p-0"
+                onMouseDown={() => {
+                  const startRotation = overlay.rotation || 0;
+                  let isRotating = true;
+                  
+                  const rotateInterval = setInterval(() => {
+                    if (!isRotating) {
+                      clearInterval(rotateInterval);
+                      return;
+                    }
+                    onUpdate({ rotation: ((overlay.rotation || 0) + 5) % 360 });
+                  }, 50);
+                  
+                  const stopRotating = () => {
+                    isRotating = false;
+                    clearInterval(rotateInterval);
+                    document.removeEventListener('mouseup', stopRotating);
+                    document.removeEventListener('mouseleave', stopRotating);
+                  };
+                  
+                  document.addEventListener('mouseup', stopRotating);
+                  document.addEventListener('mouseleave', stopRotating);
+                }}
+                onClick={() => onUpdate({ rotation: ((overlay.rotation || 0) + 90) % 360 })}
+                title="Hold to rotate continuously, click for 90°"
+              >
+                <RotateCw className="h-3 w-3" />
+              </Button>
+              <span className="text-xs text-gray-500 min-w-[35px]">
+                {Math.round(overlay.rotation || 0)}°
+              </span>
+            </div>
+            <div className="h-4 w-px bg-gray-300"></div>
             <Button
               size="sm"
               variant="ghost"
@@ -370,13 +396,25 @@ export default function CanvasWorkspace({
                 ))}
                 
                 {/* Watermark */}
-                <div className="watermark absolute bottom-4 right-4 z-50">
-                  <div className="bg-white bg-opacity-90 rounded-lg p-2 shadow-sm">
-                    <div className="text-xs font-medium text-gray-600 px-2 py-1">
-                      CoralScape
+                {canvasState.baseImage && (
+                  <div className="watermark absolute bottom-4 right-4 z-50" style={{ width: '20%' }}>
+                    <div className="bg-white bg-opacity-90 rounded-lg p-1 shadow-sm">
+                      <img 
+                        src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
+                        alt="CoralScape"
+                        className="w-full h-auto"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = '<div class="text-xs font-medium text-gray-600 px-2 py-1">CoralScape</div>';
+                          }
+                        }}
+                      />
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="text-center p-12">

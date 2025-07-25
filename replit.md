@@ -29,6 +29,10 @@ Preferred communication style: Simple, everyday language.
 - Transform controls appear above selected coral overlays
 - Enhanced watermark to support both text and image URLs from Google Sheets
 - All transforms (rotation, flips) are maintained during canvas export
+- Added continuous rotation (0-360°) by holding down rotate button
+- Implemented dynamic filter counts showing specimen numbers for each category
+- Color filters now update based on selected type showing relevant counts
+- Fixed watermark to use specific CoralScape logo image at 20% width
 
 ## System Architecture
 

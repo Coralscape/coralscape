@@ -121,62 +121,45 @@ async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number,
   return new Promise(async (resolve) => {
     ctx.save();
     
-    // Try to fetch watermark from Google Sheets
-    let watermarkContent = 'CoralScape'; // Default fallback
-    let isImageUrl = false;
-    
-    try {
-      const sheetsUrl = "https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/edit?usp=sharing";
-      const fetchedContent = await fetchWatermarkFromSheets(sheetsUrl);
-      if (fetchedContent && fetchedContent.trim()) {
-        watermarkContent = fetchedContent.trim();
-        isImageUrl = watermarkContent.startsWith('http://') || watermarkContent.startsWith('https://');
-      }
-    } catch (error) {
-      console.warn('Failed to fetch watermark from sheets, using default');
-    }
+    // Use the specific CoralScape watermark image
+    const watermarkImageUrl = "https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png";
     
     // Calculate watermark size (20% of canvas width)
     const watermarkWidth = canvasWidth * 0.2;
     
     // Position in bottom right
     const x = canvasWidth - watermarkWidth - 20;
-    const y = canvasHeight - watermarkWidth * 0.6 - 20; // Make it proportional
     
-    if (isImageUrl) {
-      // Draw image watermark
-      try {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
+    try {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        // Calculate proportional height
+        const aspectRatio = img.width / img.height;
+        const watermarkHeight = watermarkWidth / aspectRatio;
+        const y = canvasHeight - watermarkHeight - 20;
         
-        img.onload = () => {
-          // Calculate proportional height
-          const aspectRatio = img.width / img.height;
-          const watermarkHeight = watermarkWidth / aspectRatio;
-          
-          // Draw semi-transparent background
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-          ctx.fillRect(x - 10, y - 10, watermarkWidth + 20, watermarkHeight + 20);
-          
-          // Draw watermark image
-          ctx.globalAlpha = 0.8;
-          ctx.drawImage(img, x, y, watermarkWidth, watermarkHeight);
-          ctx.globalAlpha = 1;
-          
-          ctx.restore();
-          resolve();
-        };
+        // Draw semi-transparent background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillRect(x - 5, y - 5, watermarkWidth + 10, watermarkHeight + 10);
         
-        img.onerror = () => {
-          // Fall back to text if image fails
-          drawTextWatermark();
-        };
+        // Draw watermark image
+        ctx.globalAlpha = 1.0;
+        ctx.drawImage(img, x, y, watermarkWidth, watermarkHeight);
+        ctx.globalAlpha = 1;
         
-        img.src = watermarkContent;
-      } catch (error) {
+        ctx.restore();
+        resolve();
+      };
+      
+      img.onerror = () => {
+        // Fall back to text if image fails
         drawTextWatermark();
-      }
-    } else {
+      };
+      
+      img.src = watermarkImageUrl;
+    } catch (error) {
       drawTextWatermark();
     }
     
@@ -192,7 +175,7 @@ async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number,
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
       ctx.font = `bold ${fontSize}px Inter, sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(watermarkContent, x + watermarkWidth / 2, textY);
+      ctx.fillText('CoralScape', x + watermarkWidth / 2, textY);
       
       ctx.restore();
       resolve();

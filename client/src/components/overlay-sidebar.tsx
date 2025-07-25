@@ -101,46 +101,82 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   const [typeFilter, setTypeFilter] = useState("all");
   const [colorFilter, setColorFilter] = useState("all");
 
-  // Extract unique types and colors from coral names
-  const { coralTypes, coralColors } = useMemo(() => {
-    const types = new Set<string>();
-    const colors = new Set<string>();
+  // Extract unique types and colors with counts
+  const { coralTypes, coralColors, typeBasedColors } = useMemo(() => {
+    const typeCounts = new Map<string, number>();
+    const colorCounts = new Map<string, number>();
+    const typeColorMap = new Map<string, Map<string, number>>();
     
     coralData.forEach(coral => {
       const name = coral.name.toLowerCase();
       
       // Extract coral types
-      if (name.includes('sps')) types.add('sps');
-      if (name.includes('lps')) types.add('lps');
-      if (name.includes('softy') || name.includes('soft')) types.add('soft coral');
-      if (name.includes('zoa') || name.includes('zoanthid')) types.add('zoanthid');
-      if (name.includes('mushroom')) types.add('mushroom');
-      if (name.includes('anemone')) types.add('anemone');
-      if (name.includes('clam')) types.add('clam');
-      if (name.includes('torch')) types.add('torch');
-      if (name.includes('hammer')) types.add('hammer');
-      if (name.includes('favia')) types.add('favia');
-      if (name.includes('acropora') || name.includes('acro')) types.add('acropora');
-      if (name.includes('montipora') || name.includes('monti')) types.add('montipora');
+      const types: string[] = [];
+      if (name.includes('sps')) types.push('sps');
+      if (name.includes('lps')) types.push('lps');
+      if (name.includes('softy') || name.includes('soft')) types.push('soft coral');
+      if (name.includes('zoa') || name.includes('zoanthid')) types.push('zoanthid');
+      if (name.includes('mushroom')) types.push('mushroom');
+      if (name.includes('anemone')) types.push('anemone');
+      if (name.includes('clam')) types.push('clam');
+      if (name.includes('torch')) types.push('torch');
+      if (name.includes('hammer')) types.push('hammer');
+      if (name.includes('favia')) types.push('favia');
+      if (name.includes('acropora') || name.includes('acro')) types.push('acropora');
+      if (name.includes('montipora') || name.includes('monti')) types.push('montipora');
       
       // Extract colors
-      if (name.includes('blue')) colors.add('blue');
-      if (name.includes('green')) colors.add('green');
-      if (name.includes('red')) colors.add('red');
-      if (name.includes('yellow')) colors.add('yellow');
-      if (name.includes('orange')) colors.add('orange');
-      if (name.includes('purple')) colors.add('purple');
-      if (name.includes('pink')) colors.add('pink');
-      if (name.includes('white')) colors.add('white');
-      if (name.includes('black')) colors.add('black');
-      if (name.includes('brown')) colors.add('brown');
+      const colors: string[] = [];
+      if (name.includes('blue')) colors.push('blue');
+      if (name.includes('green')) colors.push('green');
+      if (name.includes('red')) colors.push('red');
+      if (name.includes('yellow')) colors.push('yellow');
+      if (name.includes('orange')) colors.push('orange');
+      if (name.includes('purple')) colors.push('purple');
+      if (name.includes('pink')) colors.push('pink');
+      if (name.includes('white')) colors.push('white');
+      if (name.includes('black')) colors.push('black');
+      if (name.includes('brown')) colors.push('brown');
+      if (name.includes('rainbow')) colors.push('rainbow');
+      
+      // Count types
+      types.forEach(type => {
+        typeCounts.set(type, (typeCounts.get(type) || 0) + 1);
+        
+        // Build type-color mapping
+        if (!typeColorMap.has(type)) {
+          typeColorMap.set(type, new Map());
+        }
+        const typeColors = typeColorMap.get(type)!;
+        colors.forEach(color => {
+          typeColors.set(color, (typeColors.get(color) || 0) + 1);
+        });
+      });
+      
+      // Count colors
+      colors.forEach(color => {
+        colorCounts.set(color, (colorCounts.get(color) || 0) + 1);
+      });
     });
     
     return {
-      coralTypes: Array.from(types).sort(),
-      coralColors: Array.from(colors).sort()
+      coralTypes: Array.from(typeCounts.entries()).sort(([a], [b]) => a.localeCompare(b)),
+      coralColors: Array.from(colorCounts.entries()).sort(([a], [b]) => a.localeCompare(b)),
+      typeBasedColors: typeColorMap
     };
   }, [coralData]);
+
+  // Get colors for selected type
+  const availableColors = useMemo(() => {
+    if (typeFilter === "all") {
+      return coralColors;
+    }
+    
+    const typeColors = typeBasedColors.get(typeFilter);
+    if (!typeColors) return [];
+    
+    return Array.from(typeColors.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [typeFilter, coralColors, typeBasedColors]);
 
   // Filter coral data based on search and filters
   const filteredCoralData = useMemo(() => {
@@ -187,9 +223,9 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Types</SelectItem>
-                  {coralTypes.map(type => (
+                  {coralTypes.map(([type, count]) => (
                     <SelectItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                      {type.toString().charAt(0).toUpperCase() + type.toString().slice(1)} ({count})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -203,9 +239,9 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Colors</SelectItem>
-                  {coralColors.map(color => (
+                  {availableColors.map(([color, count]) => (
                     <SelectItem key={color} value={color}>
-                      {color.charAt(0).toUpperCase() + color.slice(1)}
+                      {color.toString().charAt(0).toUpperCase() + color.toString().slice(1)} ({count})
                     </SelectItem>
                   ))}
                 </SelectContent>
