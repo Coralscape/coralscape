@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/user-menu";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Loader2, Plug, Settings, HelpCircle, CheckCircle2, Layers, Mail, Coffee, Palette } from "lucide-react";
 
@@ -156,6 +157,8 @@ export default function TopNavigation({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <UserMenu />
         </div>
       </div>
     </header>

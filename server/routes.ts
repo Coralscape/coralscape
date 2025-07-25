@@ -1,10 +1,51 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
-import { insertCoralDataSchema, insertTankCompositionSchema } from "@shared/schema";
+import { 
+  insertCoralDataSchema, 
+  insertTankCompositionSchema,
+  insertUserSchema,
+  loginSchema,
+  insertCustomCoralSchema,
+  type User
+} from "@shared/schema";
 import { z } from "zod";
 
+// Extend session data interface
+declare module "express-session" {
+  interface SessionData {
+    userId: string;
+  }
+}
+
+// Authentication middleware
+const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Session configuration
+  const pgStore = connectPg(session);
+  app.use(session({
+    store: new pgStore({
+      conString: process.env.DATABASE_URL,
+      createTableIfMissing: false,
+      tableName: "sessions",
+    }),
+    secret: process.env.SESSION_SECRET || "coralscape-session-secret-development",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: true,
+    },
+  }));
   // Google Sheets integration
   app.post("/api/sheets/connect", async (req, res) => {
     try {
@@ -33,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const rows = csvData.split('\n').slice(1); // Skip header row
 
       // Clear existing coral data
-      await storage.clearCoralData();
+      await storage.clearCorals();
 
       // Parse CSV and store coral data
       const coralData = [];
@@ -53,7 +94,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             };
 
             if (data.name && data.fullImageUrl && data.thumbnailUrl) {
-              const coral = await storage.createCoralData(data);
+              const coral = await storage.addCoral(data);
               coralData.push(coral);
             }
           }
@@ -74,7 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all coral data
   app.get("/api/corals", async (req, res) => {
     try {
-      const corals = await storage.getAllCoralData();
+      const corals = await storage.getCorals();
       res.json(corals);
     } catch (error) {
       console.error('Error fetching corals:', error);
@@ -82,35 +123,175 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Save tank composition
-  app.post("/api/compositions", async (req, res) => {
+  // Authentication endpoints
+  app.post("/api/auth/signup", async (req, res) => {
     try {
-      const validatedData = insertTankCompositionSchema.parse(req.body);
-      const composition = await storage.saveTankComposition(validatedData);
-      res.json(composition);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid composition data", errors: error.errors });
+      const userData = insertUserSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existing = await storage.getUserByEmail(userData.email);
+      if (existing) {
+        return res.status(400).json({ message: "User already exists with this email" });
       }
-      console.error('Error saving composition:', error);
-      res.status(500).json({ message: "Failed to save composition" });
+      
+      const user = await storage.createUser(userData);
+      req.session.userId = user.id;
+      
+      // Don't send password back
+      const { password, ...userWithoutPassword } = user;
+      res.json({ user: userWithoutPassword, message: "Account created successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
   });
 
-  // Get tank composition
-  app.get("/api/compositions/:id", async (req, res) => {
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = loginSchema.parse(req.body);
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      const isValid = await storage.validatePassword(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      req.session.userId = user.id;
+      
+      // Don't send password back
+      const { password: _, ...userWithoutPassword } = user;
+      res.json({ user: userWithoutPassword, message: "Logged in successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Could not log out" });
+      }
+      res.clearCookie("connect.sid");
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  app.get("/api/auth/me", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUserById(req.session.userId!);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      
+      // Don't send password back
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Custom coral endpoints (user-specific)
+  app.get("/api/custom-corals", requireAuth, async (req, res) => {
+    try {
+      const customCorals = await storage.getUserCustomCorals(req.session.userId!);
+      res.json(customCorals);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/custom-corals", requireAuth, async (req, res) => {
+    try {
+      const coralData = insertCustomCoralSchema.parse({
+        ...req.body,
+        userId: req.session.userId!,
+      });
+      const coral = await storage.addCustomCoral(coralData);
+      res.json(coral);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/custom-corals/:id", requireAuth, async (req, res) => {
     try {
       const { id } = req.params;
-      const composition = await storage.getTankComposition(id);
+      const deleted = await storage.deleteCustomCoral(id, req.session.userId!);
+      if (!deleted) {
+        return res.status(404).json({ message: "Custom coral not found" });
+      }
+      res.json({ message: "Custom coral deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Tank composition endpoints (user-specific with names)
+  app.get("/api/tank-compositions", requireAuth, async (req, res) => {
+    try {
+      const compositions = await storage.getUserTankCompositions(req.session.userId!);
+      res.json(compositions);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/tank-compositions", requireAuth, async (req, res) => {
+    try {
+      const composition = insertTankCompositionSchema.parse({
+        ...req.body,
+        userId: req.session.userId!,
+      });
+      const saved = await storage.saveTankComposition(composition);
+      res.json(saved);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/tank-compositions/:id", requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const composition = await storage.getTankComposition(id, req.session.userId!);
       
       if (!composition) {
-        return res.status(404).json({ message: "Composition not found" });
+        return res.status(404).json({ message: "Tank composition not found" });
       }
       
       res.json(composition);
-    } catch (error) {
-      console.error('Error fetching composition:', error);
-      res.status(500).json({ message: "Failed to fetch composition" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/tank-compositions/:id", requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = insertTankCompositionSchema.partial().parse(req.body);
+      const updated = await storage.updateTankComposition(id, req.session.userId!, updates);
+      if (!updated) {
+        return res.status(404).json({ message: "Tank composition not found" });
+      }
+      res.json(updated);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/tank-compositions/:id", requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteTankComposition(id, req.session.userId!);
+      if (!deleted) {
+        return res.status(404).json({ message: "Tank composition not found" });
+      }
+      res.json({ message: "Tank composition deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   });
 
