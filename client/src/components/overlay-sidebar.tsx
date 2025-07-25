@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useDrag } from "react-dnd";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RefreshCw, Search, Filter } from "lucide-react";
 import { CoralData } from "@shared/schema";
 
 interface OverlaySidebarProps {
@@ -46,10 +48,47 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
         <div className="flex-1 min-w-0">
           <h3 className="font-medium text-gray-900 truncate">{coral.name}</h3>
           <p className="text-sm text-gray-500">{coral.width}x{coral.height}</p>
-          <div className="flex items-center mt-1">
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              Ready
-            </Badge>
+          <div className="flex items-center gap-1 mt-1 flex-wrap">
+            {/* Detect and show coral type */}
+            {coral.name.toLowerCase().includes('sps') && (
+              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">SPS</Badge>
+            )}
+            {coral.name.toLowerCase().includes('lps') && (
+              <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">LPS</Badge>
+            )}
+            {(coral.name.toLowerCase().includes('softy') || coral.name.toLowerCase().includes('soft')) && (
+              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Soft</Badge>
+            )}
+            {coral.name.toLowerCase().includes('zoa') && (
+              <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">Zoa</Badge>
+            )}
+            {coral.name.toLowerCase().includes('clam') && (
+              <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">Clam</Badge>
+            )}
+            
+            {/* Show color if detected */}
+            {['blue', 'green', 'red', 'yellow', 'orange', 'purple', 'pink'].map(color => 
+              coral.name.toLowerCase().includes(color) && (
+                <Badge key={color} variant="secondary" className="text-xs" style={{
+                  backgroundColor: color === 'blue' ? '#dbeafe' : 
+                                  color === 'green' ? '#dcfce7' :
+                                  color === 'red' ? '#fee2e2' :
+                                  color === 'yellow' ? '#fef3c7' :
+                                  color === 'orange' ? '#fed7aa' :
+                                  color === 'purple' ? '#ede9fe' :
+                                  color === 'pink' ? '#fce7f3' : '#f3f4f6',
+                  color: color === 'blue' ? '#1e40af' : 
+                         color === 'green' ? '#166534' :
+                         color === 'red' ? '#dc2626' :
+                         color === 'yellow' ? '#d97706' :
+                         color === 'orange' ? '#ea580c' :
+                         color === 'purple' ? '#7c3aed' :
+                         color === 'pink' ? '#db2777' : '#374151'
+                }}>
+                  {color}
+                </Badge>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -58,16 +97,145 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
 }
 
 export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: OverlaySidebarProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [colorFilter, setColorFilter] = useState("all");
+
+  // Extract unique types and colors from coral names
+  const { coralTypes, coralColors } = useMemo(() => {
+    const types = new Set<string>();
+    const colors = new Set<string>();
+    
+    coralData.forEach(coral => {
+      const name = coral.name.toLowerCase();
+      
+      // Extract coral types
+      if (name.includes('sps')) types.add('sps');
+      if (name.includes('lps')) types.add('lps');
+      if (name.includes('softy') || name.includes('soft')) types.add('soft coral');
+      if (name.includes('zoa') || name.includes('zoanthid')) types.add('zoanthid');
+      if (name.includes('mushroom')) types.add('mushroom');
+      if (name.includes('anemone')) types.add('anemone');
+      if (name.includes('clam')) types.add('clam');
+      if (name.includes('torch')) types.add('torch');
+      if (name.includes('hammer')) types.add('hammer');
+      if (name.includes('favia')) types.add('favia');
+      if (name.includes('acropora') || name.includes('acro')) types.add('acropora');
+      if (name.includes('montipora') || name.includes('monti')) types.add('montipora');
+      
+      // Extract colors
+      if (name.includes('blue')) colors.add('blue');
+      if (name.includes('green')) colors.add('green');
+      if (name.includes('red')) colors.add('red');
+      if (name.includes('yellow')) colors.add('yellow');
+      if (name.includes('orange')) colors.add('orange');
+      if (name.includes('purple')) colors.add('purple');
+      if (name.includes('pink')) colors.add('pink');
+      if (name.includes('white')) colors.add('white');
+      if (name.includes('black')) colors.add('black');
+      if (name.includes('brown')) colors.add('brown');
+    });
+    
+    return {
+      coralTypes: Array.from(types).sort(),
+      coralColors: Array.from(colors).sort()
+    };
+  }, [coralData]);
+
+  // Filter coral data based on search and filters
+  const filteredCoralData = useMemo(() => {
+    return coralData.filter(coral => {
+      const name = coral.name.toLowerCase();
+      const searchMatch = name.includes(searchTerm.toLowerCase());
+      
+      const typeMatch = typeFilter === "all" || name.includes(typeFilter.toLowerCase());
+      const colorMatch = colorFilter === "all" || name.includes(colorFilter.toLowerCase());
+      
+      return searchMatch && typeMatch && colorMatch;
+    });
+  }, [coralData, searchTerm, typeFilter, colorFilter]);
+
   return (
     <aside className="w-80 bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Coral & Invertebrates</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">Coral & Invertebrates</h2>
+        
+        {/* Search Input */}
+        <div className="relative mb-3">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search corals..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 text-sm"
+          />
+        </div>
+
+        {/* Filter Controls */}
+        <div className="space-y-2 mb-3">
+          <div className="flex items-center space-x-2">
+            <Filter className="h-4 w-4 text-gray-500" />
+            <span className="text-sm font-medium text-gray-700">Filters</span>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="text-xs h-8">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  {coralTypes.map(type => (
+                    <SelectItem key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Select value={colorFilter} onValueChange={setColorFilter}>
+                <SelectTrigger className="text-xs h-8">
+                  <SelectValue placeholder="Color" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Colors</SelectItem>
+                  {coralColors.map(color => (
+                    <SelectItem key={color} value={color}>
+                      {color.charAt(0).toUpperCase() + color.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between text-sm text-gray-600">
-          <span>{coralData.length} specimens loaded</span>
-          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 h-auto p-1">
-            <RefreshCw className="mr-1 h-3 w-3" />
-            Refresh
-          </Button>
+          <span>{filteredCoralData.length} of {coralData.length} specimens</span>
+          <div className="flex items-center space-x-1">
+            {(searchTerm || typeFilter !== "all" || colorFilter !== "all") && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-500 hover:text-gray-700 h-auto p-1"
+                onClick={() => {
+                  setSearchTerm("");
+                  setTypeFilter("all");
+                  setColorFilter("all");
+                }}
+              >
+                Clear
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 h-auto p-1">
+              <RefreshCw className="mr-1 h-3 w-3" />
+              Refresh
+            </Button>
+          </div>
         </div>
       </div>
       
@@ -86,6 +254,26 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
               </div>
             ))}
           </div>
+        ) : filteredCoralData.length === 0 && coralData.length > 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <Search className="mx-auto h-12 w-12" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No Results Found</h3>
+            <p className="text-gray-600">Try adjusting your search or filters</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3"
+              onClick={() => {
+                setSearchTerm("");
+                setTypeFilter("all");
+                setColorFilter("all");
+              }}
+            >
+              Clear Filters
+            </Button>
+          </div>
         ) : coralData.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
@@ -98,7 +286,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
           </div>
         ) : (
           <div className="space-y-3">
-            {coralData.map((coral) => (
+            {filteredCoralData.map((coral) => (
               <DraggableCoralItem
                 key={coral.id}
                 coral={coral}

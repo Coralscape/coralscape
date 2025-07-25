@@ -15,6 +15,10 @@ Preferred communication style: Simple, everyday language.
 - Removed manual URL input - app now automatically connects to the coral database
 - Fixed React DnD context provider for drag and drop functionality
 - Updated UI text: "Canvas" → "Tank", "Overlay Images" → "Corals & Inverts", "Image Composition Studio" → "CoralScape"
+- Added search and filtering functionality for coral types and colors
+- Implemented visual badges showing coral type (SPS, LPS, Soft, Zoa, Clam) and colors
+- Added filter dropdowns for Type and Color with automatic detection from coral names
+- Added clear filters functionality when search or filters are active
 
 ## System Architecture
 
