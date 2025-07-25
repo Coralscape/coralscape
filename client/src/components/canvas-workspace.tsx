@@ -384,13 +384,14 @@ export default function CanvasWorkspace({
                 style={{
                   width: 'fit-content',
                   height: 'fit-content',
+                  transform: `scale(${canvasState.zoom})`,
+                  transformOrigin: 'center',
                 }}
               >
                 <img
                   src={canvasState.baseImage}
                   alt="Tank base"
                   className="rounded-lg cursor-pointer block"
-                  style={{ transform: `scale(${canvasState.zoom})` }}
                   onClick={handleBaseImageClick}
                 />
                 

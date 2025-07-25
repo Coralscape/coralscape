@@ -76,6 +76,7 @@ Preferred communication style: Simple, everyday language.
 - Updated filter dependencies to include subtype filtering in coral search results
 - Fixed canvas export alignment by making dashed border scale to tank image size exactly
 - Moved dashed border to wrap only the tank image area instead of entire canvas workspace
+- Made border container scale with zoom level for consistent visual appearance at all zoom levels
 
 ## System Architecture
 
