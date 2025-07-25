@@ -49,6 +49,8 @@ export function useCanvasState() {
     overlays: [],
     selectedOverlayId: null,
     zoom: 1,
+    panX: 0,
+    panY: 0,
   });
 
   const updateOverlay = useCallback((overlayId: string, updates: Partial<any>) => {
@@ -81,7 +83,15 @@ export function useCanvasState() {
   }, []);
 
   const setBaseImage = useCallback((imageUrl: string) => {
-    setCanvasState(prev => ({ ...prev, baseImage: imageUrl }));
+    setCanvasState(prev => ({ ...prev, baseImage: imageUrl, panX: 0, panY: 0 }));
+  }, []);
+
+  const setPan = useCallback((panX: number, panY: number) => {
+    setCanvasState(prev => ({ ...prev, panX, panY }));
+  }, []);
+
+  const setZoom = useCallback((zoom: number) => {
+    setCanvasState(prev => ({ ...prev, zoom }));
   }, []);
 
   return {
@@ -91,5 +101,7 @@ export function useCanvasState() {
     removeOverlay,
     selectOverlay,
     setBaseImage,
+    setPan,
+    setZoom,
   };
 }

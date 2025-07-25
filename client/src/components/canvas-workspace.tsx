@@ -12,6 +12,7 @@ interface CanvasWorkspaceProps {
   onBaseImageUpload: (imageUrl: string) => void;
   onAddOverlay: (coral: CoralData, position: { x: number; y: number }) => void;
   onZoomChange: (zoom: number) => void;
+  onPanChange: (panX: number, panY: number) => void;
 }
 
 interface DraggableOverlayProps {
@@ -228,11 +229,14 @@ export default function CanvasWorkspace({
   onBaseImageUpload,
   onAddOverlay,
   onZoomChange,
+  onPanChange,
 }: CanvasWorkspaceProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isEditingZoom, setIsEditingZoom] = useState(false);
   const [zoomInput, setZoomInput] = useState(Math.round(canvasState.zoom * 100).toString());
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'coral',
@@ -268,6 +272,42 @@ export default function CanvasWorkspace({
       onSelectOverlay(null);
     }
   };
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    // Only start panning if clicking on the base image and zoomed in
+    if (canvasState.zoom > 1 && e.target instanceof HTMLImageElement) {
+      e.preventDefault();
+      setIsPanning(true);
+      setPanStart({ 
+        x: e.clientX - canvasState.panX, 
+        y: e.clientY - canvasState.panY 
+      });
+    }
+  }, [canvasState.zoom, canvasState.panX, canvasState.panY]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isPanning) {
+      const newPanX = e.clientX - panStart.x;
+      const newPanY = e.clientY - panStart.y;
+      onPanChange(newPanX, newPanY);
+    }
+  }, [isPanning, panStart, onPanChange]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsPanning(false);
+  }, []);
+
+  // Add event listeners for mouse move and up
+  React.useEffect(() => {
+    if (isPanning) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isPanning, handleMouseMove, handleMouseUp]);
 
   const handleZoomIn = () => {
     onZoomChange(Math.min(canvasState.zoom * 1.2, 3));
@@ -384,15 +424,17 @@ export default function CanvasWorkspace({
                 style={{
                   width: 'fit-content',
                   height: 'fit-content',
-                  transform: `scale(${canvasState.zoom})`,
+                  transform: `scale(${canvasState.zoom}) translate(${canvasState.panX / canvasState.zoom}px, ${canvasState.panY / canvasState.zoom}px)`,
                   transformOrigin: 'center',
                 }}
               >
                 <img
                   src={canvasState.baseImage}
                   alt="Tank base"
-                  className="rounded-lg cursor-pointer block"
+                  className={`rounded-lg block ${canvasState.zoom > 1 ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}`}
                   onClick={handleBaseImageClick}
+                  onMouseDown={handleMouseDown}
+                  style={{ userSelect: 'none', pointerEvents: 'auto' }}
                 />
                 
                 {/* Render overlays */}

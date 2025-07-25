@@ -49,4 +49,6 @@ export interface CanvasState {
   overlays: OverlayData[];
   selectedOverlayId: string | null;
   zoom: number;
+  panX: number;
+  panY: number;
 }

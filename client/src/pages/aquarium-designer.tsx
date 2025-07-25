@@ -20,6 +20,8 @@ export default function AquariumDesigner() {
     overlays: [],
     selectedOverlayId: null,
     zoom: 1,
+    panX: 0,
+    panY: 0,
   });
 
   const fixedSheetsUrl = "https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/edit?usp=sharing";
@@ -120,6 +122,10 @@ export default function AquariumDesigner() {
     setCanvasState(prev => ({ ...prev, zoom: newZoom }));
   };
 
+  const handlePanChange = (panX: number, panY: number) => {
+    setCanvasState(prev => ({ ...prev, panX, panY }));
+  };
+
   const handleDeleteOverlay = (overlayId: string) => {
     setCanvasState(prev => ({
       ...prev,
@@ -133,7 +139,7 @@ export default function AquariumDesigner() {
   };
 
   const handleBaseImageUpload = async (imageUrl: string) => {
-    setCanvasState(prev => ({ ...prev, baseImage: imageUrl }));
+    setCanvasState(prev => ({ ...prev, baseImage: imageUrl, panX: 0, panY: 0 }));
     
     // Fetch watermark from Google Sheets when base image is uploaded
     try {
@@ -185,6 +191,7 @@ export default function AquariumDesigner() {
               onBaseImageUpload={handleBaseImageUpload}
               onAddOverlay={handleAddOverlay}
               onZoomChange={handleZoomChange}
+              onPanChange={handlePanChange}
             />
           </div>
           

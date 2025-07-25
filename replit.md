@@ -78,6 +78,10 @@ Preferred communication style: Simple, everyday language.
 - Moved dashed border to wrap only the tank image area instead of entire canvas workspace
 - Made border container scale with zoom level for consistent visual appearance at all zoom levels
 - Fixed export button to prevent page refresh by adding preventDefault and explicit button type
+- Added pan/drag functionality for navigating around zoomed tank images
+- Tank image becomes draggable (grab cursor) when zoomed in above 100%
+- Pan state resets to (0,0) when uploading new tank image
+- Transform now combines zoom and pan using CSS translate for smooth movement
 
 ## System Architecture
 
