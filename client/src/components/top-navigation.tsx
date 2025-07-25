@@ -22,11 +22,13 @@ export default function TopNavigation({
       try {
         const response = await fetch('https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/export?format=csv&gid=1974654707');
         const text = await response.text();
+        console.log('Color wheel CSV response:', text);
         const lines = text.split('\n');
         if (lines.length >= 2) {
           const row2 = lines[1].split(',');
           if (row2.length >= 1) {
             const url = row2[0].replace(/"/g, '').trim();
+            console.log('Color wheel URL found:', url);
             if (url && (url.startsWith('http') || url.startsWith('https'))) {
               setColorWheelUrl(url);
             }
@@ -99,6 +101,7 @@ export default function TopNavigation({
               </>
             )}
           </Button>
+          
         </div>
 
         <div className="flex items-center space-x-2">
