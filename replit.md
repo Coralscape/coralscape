@@ -8,6 +8,14 @@ This is a full-stack aquarium design application that allows users to create cus
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+- Fixed Google Sheets integration to use user's specific sheet URL: 1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4
+- Updated CSV parsing to handle proper column mapping (B=name, C=fullImageUrl, D=thumbnailUrl, E=width, F=height)
+- Removed manual URL input - app now automatically connects to the coral database
+- Fixed React DnD context provider for drag and drop functionality
+- Updated UI text: "Canvas" → "Tank", "Overlay Images" → "Corals & Inverts", "Image Composition Studio" → "CoralScape"
+
 ## System Architecture
 
 ### Frontend Architecture

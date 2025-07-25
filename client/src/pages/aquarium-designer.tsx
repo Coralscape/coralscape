@@ -21,7 +21,7 @@ export default function AquariumDesigner() {
     zoom: 1,
   });
 
-  const fixedSheetsUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSJwB7OdxotJFCbibmsh5cbGmb0SNwrP_5YUSOCPFwZ_JMIDrNNBmvxxqbDowsva1kR4_XSkN4ZnyMm/pubhtml";
+  const fixedSheetsUrl = "https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/edit?usp=sharing";
   const [isConnected, setIsConnected] = useState(false);
 
   // Fetch coral data

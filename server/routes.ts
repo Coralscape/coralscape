@@ -14,14 +14,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Google Sheets URL is required" });
       }
 
-      // Extract sheet ID from URL
+      // Extract sheet ID from URL (handles both edit and pubhtml URLs)
       const sheetIdMatch = sheetsUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
       if (!sheetIdMatch) {
         return res.status(400).json({ message: "Invalid Google Sheets URL format" });
       }
 
       const sheetId = sheetIdMatch[1];
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
 
       // Fetch data from Google Sheets
       const response = await fetch(csvUrl);
@@ -39,14 +39,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const coralData = [];
       for (const row of rows) {
         if (row.trim()) {
-          const columns = row.split(',');
-          if (columns.length >= 6) {
+          // Handle CSV parsing with proper comma splitting (accounting for quoted values)
+          const columns = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+          const cleanColumns = columns.map(col => col.replace(/^"|"$/g, '').trim());
+          
+          if (cleanColumns.length >= 6) {
             const data = {
-              name: columns[1]?.trim().replace(/"/g, '') || '',
-              fullImageUrl: columns[2]?.trim().replace(/"/g, '') || '',
-              thumbnailUrl: columns[3]?.trim().replace(/"/g, '') || '',
-              width: parseInt(columns[4]?.trim()) || 0,
-              height: parseInt(columns[5]?.trim()) || 0,
+              name: cleanColumns[1] || '', // Column B
+              fullImageUrl: cleanColumns[2] || '', // Column C  
+              thumbnailUrl: cleanColumns[3] || '', // Column D
+              width: parseInt(cleanColumns[4]) || 100, // Column E
+              height: parseInt(cleanColumns[5]) || 100, // Column F
             };
 
             if (data.name && data.fullImageUrl && data.thumbnailUrl) {
