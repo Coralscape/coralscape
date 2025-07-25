@@ -96,7 +96,13 @@ export async function fetchWatermarkFromSheets(url: string): Promise<string | nu
           const columns = firstRow.split(',').map(col => col.trim().replace(/"/g, ''));
           
           if (columns.length > 0 && columns[0]) {
-            return columns[0]; // Return the value from column A, row 1
+            // Check if it's an image URL (http/https)
+            const value = columns[0];
+            if (value.startsWith('http://') || value.startsWith('https://')) {
+              return value; // Return the image URL from column A, row 1
+            } else {
+              return value; // Return as text if not an image URL
+            }
           }
         }
       }

@@ -24,6 +24,11 @@ Preferred communication style: Simple, everyday language.
 - Added clickable zoom functionality on tank background image
 - Integrated watermark system fetching from Google Sheets sheet 2, column A, row 1
 - Watermark displays at 20% width in lower right corner and cannot be removed
+- Added clickable zoom percentage input for precise zoom control (10-500%)
+- Implemented image transform controls: rotate 90°, flip horizontal, flip vertical
+- Transform controls appear above selected coral overlays
+- Enhanced watermark to support both text and image URLs from Google Sheets
+- All transforms (rotation, flips) are maintained during canvas export
 
 ## System Architecture
 

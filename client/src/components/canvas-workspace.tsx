@@ -1,7 +1,8 @@
 import React, { useRef, useState, useCallback } from "react";
 import { useDrop } from "react-dnd";
 import { Button } from "@/components/ui/button";
-import { Upload, ZoomIn, ZoomOut } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Upload, ZoomIn, ZoomOut, RotateCw, FlipHorizontal, FlipVertical } from "lucide-react";
 import { CanvasState, OverlayData, CoralData } from "@shared/schema";
 
 interface CanvasWorkspaceProps {
@@ -18,6 +19,12 @@ interface DraggableOverlayProps {
   isSelected: boolean;
   onUpdate: (updates: Partial<OverlayData>) => void;
   onSelect: () => void;
+}
+
+interface TransformControls {
+  rotation: number;
+  flipH: boolean;
+  flipV: boolean;
 }
 
 function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: DraggableOverlayProps) {
@@ -109,6 +116,9 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
         src={overlay.imageUrl}
         alt={overlay.name}
         className="overlay-image w-full h-full object-cover rounded-lg border-2 border-transparent hover:border-primary transition-colors"
+        style={{
+          transform: `rotate(${overlay.rotation || 0}deg) scaleX(${overlay.flipH ? -1 : 1}) scaleY(${overlay.flipV ? -1 : 1})`
+        }}
         draggable={false}
         onError={(e) => {
           const target = e.target as HTMLImageElement;
@@ -134,6 +144,43 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
             className="resize-handle se"
             onMouseDown={(e) => handleResizeMouseDown(e, 'se')}
           />
+          
+          {/* Transform Controls */}
+          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-1 flex items-center space-x-1">
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-6 w-6 p-0"
+              onClick={() => onUpdate({ 
+                rotation: ((overlay.rotation || 0) + 90) % 360 
+              })}
+              title="Rotate 90°"
+            >
+              <RotateCw className="h-3 w-3" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-6 w-6 p-0"
+              onClick={() => onUpdate({ 
+                flipH: !(overlay.flipH || false)
+              })}
+              title="Flip Horizontal"
+            >
+              <FlipHorizontal className="h-3 w-3" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-6 w-6 p-0"
+              onClick={() => onUpdate({ 
+                flipV: !(overlay.flipV || false)
+              })}
+              title="Flip Vertical"
+            >
+              <FlipVertical className="h-3 w-3" />
+            </Button>
+          </div>
         </>
       )}
     </div>
@@ -150,6 +197,8 @@ export default function CanvasWorkspace({
 }: CanvasWorkspaceProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const [isEditingZoom, setIsEditingZoom] = useState(false);
+  const [zoomInput, setZoomInput] = useState(Math.round(canvasState.zoom * 100).toString());
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'coral',
@@ -203,6 +252,26 @@ export default function CanvasWorkspace({
     }
   };
 
+  const handleZoomInputChange = (value: string) => {
+    const numValue = parseInt(value);
+    if (!isNaN(numValue) && numValue > 0 && numValue <= 500) {
+      onZoomChange(numValue / 100);
+      setZoomInput(value);
+    }
+  };
+
+  const handleZoomInputSubmit = () => {
+    setIsEditingZoom(false);
+    const numValue = parseInt(zoomInput);
+    if (!isNaN(numValue) && numValue > 0 && numValue <= 500) {
+      onZoomChange(numValue / 100);
+    } else {
+      setZoomInput(Math.round(canvasState.zoom * 100).toString());
+    }
+  };
+
+
+
   return (
     <main className="flex-1 bg-gray-100 flex flex-col">
       <div className="bg-white border-b border-gray-200 px-6 py-4">
@@ -214,7 +283,33 @@ export default function CanvasWorkspace({
               <Button variant="ghost" size="sm" className="p-1" onClick={handleZoomOut}>
                 <ZoomOut className="h-4 w-4" />
               </Button>
-              <span className="font-medium">{Math.round(canvasState.zoom * 100)}%</span>
+              {isEditingZoom ? (
+                <Input
+                  type="number"
+                  value={zoomInput}
+                  onChange={(e) => setZoomInput(e.target.value)}
+                  onBlur={handleZoomInputSubmit}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleZoomInputSubmit();
+                    } else if (e.key === 'Escape') {
+                      setIsEditingZoom(false);
+                      setZoomInput(Math.round(canvasState.zoom * 100).toString());
+                    }
+                  }}
+                  className="w-16 h-6 text-xs text-center"
+                  min="10"
+                  max="500"
+                  autoFocus
+                />
+              ) : (
+                <span 
+                  className="font-medium cursor-pointer hover:bg-gray-100 px-2 py-1 rounded"
+                  onClick={() => setIsEditingZoom(true)}
+                >
+                  {Math.round(canvasState.zoom * 100)}%
+                </span>
+              )}
               <Button variant="ghost" size="sm" className="p-1" onClick={handleZoomIn}>
                 <ZoomIn className="h-4 w-4" />
               </Button>

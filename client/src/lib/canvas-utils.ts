@@ -84,7 +84,23 @@ function drawOverlay(
         const width = (overlay.width / 800) * canvasWidth;
         const height = (overlay.height / 600) * canvasHeight;
         
-        ctx.drawImage(img, x, y, width, height);
+        // Apply transforms if they exist
+        const centerX = x + width / 2;
+        const centerY = y + height / 2;
+        
+        ctx.translate(centerX, centerY);
+        
+        // Apply rotation
+        if (overlay.rotation) {
+          ctx.rotate((overlay.rotation * Math.PI) / 180);
+        }
+        
+        // Apply flips
+        ctx.scale(overlay.flipH ? -1 : 1, overlay.flipV ? -1 : 1);
+        
+        // Draw the image centered
+        ctx.drawImage(img, -width / 2, -height / 2, width, height);
+        
         ctx.restore();
         resolve();
       } catch (error) {
@@ -105,13 +121,16 @@ async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number,
   return new Promise(async (resolve) => {
     ctx.save();
     
-    // Try to fetch watermark text from Google Sheets
-    let watermarkText = 'CoralScape'; // Default fallback
+    // Try to fetch watermark from Google Sheets
+    let watermarkContent = 'CoralScape'; // Default fallback
+    let isImageUrl = false;
+    
     try {
       const sheetsUrl = "https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/edit?usp=sharing";
-      const fetchedText = await fetchWatermarkFromSheets(sheetsUrl);
-      if (fetchedText && fetchedText.trim()) {
-        watermarkText = fetchedText.trim();
+      const fetchedContent = await fetchWatermarkFromSheets(sheetsUrl);
+      if (fetchedContent && fetchedContent.trim()) {
+        watermarkContent = fetchedContent.trim();
+        isImageUrl = watermarkContent.startsWith('http://') || watermarkContent.startsWith('https://');
       }
     } catch (error) {
       console.warn('Failed to fetch watermark from sheets, using default');
@@ -119,24 +138,65 @@ async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number,
     
     // Calculate watermark size (20% of canvas width)
     const watermarkWidth = canvasWidth * 0.2;
-    const fontSize = Math.max(14, watermarkWidth / 8);
     
     // Position in bottom right
     const x = canvasWidth - watermarkWidth - 20;
-    const y = canvasHeight - 40;
+    const y = canvasHeight - watermarkWidth * 0.6 - 20; // Make it proportional
     
-    // Draw semi-transparent background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.fillRect(x - 10, y - fontSize - 5, watermarkWidth + 20, fontSize + 15);
+    if (isImageUrl) {
+      // Draw image watermark
+      try {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
+        img.onload = () => {
+          // Calculate proportional height
+          const aspectRatio = img.width / img.height;
+          const watermarkHeight = watermarkWidth / aspectRatio;
+          
+          // Draw semi-transparent background
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+          ctx.fillRect(x - 10, y - 10, watermarkWidth + 20, watermarkHeight + 20);
+          
+          // Draw watermark image
+          ctx.globalAlpha = 0.8;
+          ctx.drawImage(img, x, y, watermarkWidth, watermarkHeight);
+          ctx.globalAlpha = 1;
+          
+          ctx.restore();
+          resolve();
+        };
+        
+        img.onerror = () => {
+          // Fall back to text if image fails
+          drawTextWatermark();
+        };
+        
+        img.src = watermarkContent;
+      } catch (error) {
+        drawTextWatermark();
+      }
+    } else {
+      drawTextWatermark();
+    }
     
-    // Draw text
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.font = `bold ${fontSize}px Inter, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText(watermarkText, x + watermarkWidth / 2, y);
-    
-    ctx.restore();
-    resolve();
+    function drawTextWatermark() {
+      const fontSize = Math.max(14, watermarkWidth / 8);
+      const textY = canvasHeight - 40;
+      
+      // Draw semi-transparent background
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fillRect(x - 10, textY - fontSize - 5, watermarkWidth + 20, fontSize + 15);
+      
+      // Draw text
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(watermarkContent, x + watermarkWidth / 2, textY);
+      
+      ctx.restore();
+      resolve();
+    }
   });
 }
 

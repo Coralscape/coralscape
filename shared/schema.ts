@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, real } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, real, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -39,6 +39,9 @@ export interface OverlayData {
   height: number;
   opacity: number;
   layer: number;
+  rotation?: number;
+  flipH?: boolean;
+  flipV?: boolean;
 }
 
 export interface CanvasState {

@@ -95,6 +95,9 @@ export default function AquariumDesigner() {
       height: newHeight,
       opacity: 1,
       layer: canvasState.overlays.length,
+      rotation: 0,
+      flipH: false,
+      flipV: false,
     };
 
     setCanvasState(prev => ({
