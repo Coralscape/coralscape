@@ -70,6 +70,7 @@ Preferred communication style: Simple, everyday language.
 - Custom uploads create draggable coral items just like database specimens
 - Fixed custom coral display issue - uploaded corals now properly show in Custom tab
 - Updated color wheel to fetch from same sheet as logo (gid=1974654707) row 2
+- Moved export options section above layer controls for better visibility and accessibility
 
 ## System Architecture
 

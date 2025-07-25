@@ -55,6 +55,58 @@ export default function LayerControls({
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900">Layer Controls</h2>
       </div>
+
+      {/* Export Section - Moved to top */}
+      <div className="border-b border-gray-200 p-4 bg-gray-50">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-gray-900">Export Options</h3>
+            <Badge variant="secondary" className="bg-green-100 text-green-800">Ready</Badge>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div>
+              <Label className="text-xs text-gray-500 mb-1">Format</Label>
+              <Select defaultValue="png">
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="png">PNG</SelectItem>
+                  <SelectItem value="jpeg">JPEG</SelectItem>
+                  <SelectItem value="webp">WEBP</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500 mb-1">Quality</Label>
+              <Select defaultValue="high">
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <Button
+            className="w-full bg-accent hover:bg-accent/90 text-white"
+            onClick={handleExport}
+            disabled={isExporting || !canvasState.baseImage}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            {isExporting ? 'Exporting...' : 'Export Tank Design'}
+          </Button>
+          
+          <div className="text-xs text-gray-500 text-center">
+            Final image will include watermark and all coral layers
+          </div>
+        </div>
+      </div>
       
       <ScrollArea className="flex-1 p-4 space-y-6">
         {selectedOverlay && (
@@ -230,58 +282,6 @@ export default function LayerControls({
           </div>
         </div>
       </ScrollArea>
-
-      {/* Export Section */}
-      <div className="border-t border-gray-200 p-4 bg-gray-50">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium text-gray-900">Export Options</h3>
-            <Badge variant="secondary" className="bg-green-100 text-green-800">Ready</Badge>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div>
-              <Label className="text-xs text-gray-500 mb-1">Format</Label>
-              <Select defaultValue="png">
-                <SelectTrigger className="text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="png">PNG</SelectItem>
-                  <SelectItem value="jpeg">JPEG</SelectItem>
-                  <SelectItem value="webp">WEBP</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-xs text-gray-500 mb-1">Quality</Label>
-              <Select defaultValue="high">
-                <SelectTrigger className="text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <Button
-            className="w-full bg-accent hover:bg-accent/90 text-white"
-            onClick={handleExport}
-            disabled={isExporting || !canvasState.baseImage}
-          >
-            <Download className="mr-2 h-4 w-4" />
-            {isExporting ? 'Exporting...' : 'Export Tank Design'}
-          </Button>
-          
-          <div className="text-xs text-gray-500 text-center">
-            Final image will include watermark and all coral layers
-          </div>
-        </div>
-      </div>
 
       <ExportSuccessPopup 
         isOpen={showSuccessPopup}
