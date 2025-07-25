@@ -74,6 +74,8 @@ Preferred communication style: Simple, everyday language.
 - Added hierarchical filtering system with subcategories (SPS→Acropora, LPS→Hammer, etc.)
 - Subtype filters appear indented when main type is selected, showing specific coral classifications
 - Updated filter dependencies to include subtype filtering in coral search results
+- Fixed canvas export alignment by making dashed border scale to tank image size exactly
+- Moved dashed border to wrap only the tank image area instead of entire canvas workspace
 
 ## System Architecture
 
