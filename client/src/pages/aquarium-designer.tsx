@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import OverlaySidebar from "@/components/overlay-sidebar";
 import CanvasWorkspace from "@/components/canvas-workspace";
 import LayerControls from "@/components/layer-controls";
 import { CoralData, OverlayData, CanvasState } from "@shared/schema";
+import { fetchWatermarkFromSheets } from "@/lib/google-sheets";
 
 export default function AquariumDesigner() {
   const { toast } = useToast();
@@ -29,6 +30,13 @@ export default function AquariumDesigner() {
     queryKey: ["/api/corals"],
     enabled: isConnected,
   });
+
+  // Auto-load database on component mount
+  useEffect(() => {
+    if (!isConnected) {
+      connectSheetsMutation.mutate();
+    }
+  }, []);
 
   // Connect to Google Sheets mutation
   const connectSheetsMutation = useMutation({
@@ -58,6 +66,24 @@ export default function AquariumDesigner() {
   };
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
+    // Calculate proportional size while limiting maximum size
+    const maxSize = 150;
+    const aspectRatio = coral.width / coral.height;
+    let newWidth = coral.width;
+    let newHeight = coral.height;
+    
+    if (newWidth > maxSize || newHeight > maxSize) {
+      if (aspectRatio > 1) {
+        // Wider than tall
+        newWidth = maxSize;
+        newHeight = maxSize / aspectRatio;
+      } else {
+        // Taller than wide
+        newHeight = maxSize;
+        newWidth = maxSize * aspectRatio;
+      }
+    }
+
     const newOverlay: OverlayData = {
       id: `overlay-${Date.now()}`,
       coralId: coral.id,
@@ -65,8 +91,8 @@ export default function AquariumDesigner() {
       imageUrl: coral.fullImageUrl,
       x: position.x,
       y: position.y,
-      width: Math.min(coral.width, 150), // Limit initial size
-      height: Math.min(coral.height, 150),
+      width: newWidth,
+      height: newHeight,
       opacity: 1,
       layer: canvasState.overlays.length,
     };
@@ -87,6 +113,10 @@ export default function AquariumDesigner() {
     }));
   };
 
+  const handleZoomChange = (newZoom: number) => {
+    setCanvasState(prev => ({ ...prev, zoom: newZoom }));
+  };
+
   const handleDeleteOverlay = (overlayId: string) => {
     setCanvasState(prev => ({
       ...prev,
@@ -99,8 +129,19 @@ export default function AquariumDesigner() {
     setCanvasState(prev => ({ ...prev, selectedOverlayId: overlayId }));
   };
 
-  const handleBaseImageUpload = (imageUrl: string) => {
+  const handleBaseImageUpload = async (imageUrl: string) => {
     setCanvasState(prev => ({ ...prev, baseImage: imageUrl }));
+    
+    // Fetch watermark from Google Sheets when base image is uploaded
+    try {
+      const watermarkText = await fetchWatermarkFromSheets(fixedSheetsUrl);
+      if (watermarkText) {
+        console.log('Watermark loaded:', watermarkText);
+        // Store watermark in canvas state or global state if needed
+      }
+    } catch (error) {
+      console.warn('Failed to load watermark:', error);
+    }
   };
 
   const selectedOverlay = canvasState.overlays.find(o => o.id === canvasState.selectedOverlayId);
@@ -127,6 +168,7 @@ export default function AquariumDesigner() {
             onSelectOverlay={handleSelectOverlay}
             onBaseImageUpload={handleBaseImageUpload}
             onAddOverlay={handleAddOverlay}
+            onZoomChange={handleZoomChange}
           />
           
           <LayerControls

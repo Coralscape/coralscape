@@ -19,6 +19,11 @@ Preferred communication style: Simple, everyday language.
 - Implemented visual badges showing coral type (SPS, LPS, Soft, Zoa, Clam) and colors
 - Added filter dropdowns for Type and Color with automatic detection from coral names
 - Added clear filters functionality when search or filters are active
+- Implemented auto-loading of coral database on app startup
+- Added proportional image scaling for coral overlays (maintains aspect ratio)
+- Added clickable zoom functionality on tank background image
+- Integrated watermark system fetching from Google Sheets sheet 2, column A, row 1
+- Watermark displays at 20% width in lower right corner and cannot be removed
 
 ## System Architecture
 

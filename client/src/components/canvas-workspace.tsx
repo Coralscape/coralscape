@@ -10,6 +10,7 @@ interface CanvasWorkspaceProps {
   onSelectOverlay: (overlayId: string | null) => void;
   onBaseImageUpload: (imageUrl: string) => void;
   onAddOverlay: (coral: CoralData, position: { x: number; y: number }) => void;
+  onZoomChange: (zoom: number) => void;
 }
 
 interface DraggableOverlayProps {
@@ -49,6 +50,9 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
     });
   }, [overlay.width, overlay.height]);
 
+  // Calculate aspect ratio for the overlay
+  const aspectRatio = overlay.width / overlay.height;
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging) {
       onUpdate({
@@ -59,9 +63,13 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
       const deltaX = e.clientX - resizeStart.x;
       const deltaY = e.clientY - resizeStart.y;
       
+      // Maintain aspect ratio when resizing
+      const newWidth = Math.max(20, resizeStart.width + deltaX);
+      const newHeight = newWidth / aspectRatio;
+      
       onUpdate({
-        width: Math.max(20, resizeStart.width + deltaX),
-        height: Math.max(20, resizeStart.height + deltaY),
+        width: newWidth,
+        height: newHeight,
       });
     }
   }, [isDragging, isResizing, dragStart, resizeStart, onUpdate]);
@@ -138,6 +146,7 @@ export default function CanvasWorkspace({
   onSelectOverlay,
   onBaseImageUpload,
   onAddOverlay,
+  onZoomChange,
 }: CanvasWorkspaceProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -177,6 +186,23 @@ export default function CanvasWorkspace({
     }
   };
 
+  const handleZoomIn = () => {
+    onZoomChange(Math.min(canvasState.zoom * 1.2, 3));
+  };
+
+  const handleZoomOut = () => {
+    onZoomChange(Math.max(canvasState.zoom / 1.2, 0.1));
+  };
+
+  const handleBaseImageClick = () => {
+    // Toggle zoom on base image click
+    if (canvasState.zoom === 1) {
+      onZoomChange(2);
+    } else {
+      onZoomChange(1);
+    }
+  };
+
   return (
     <main className="flex-1 bg-gray-100 flex flex-col">
       <div className="bg-white border-b border-gray-200 px-6 py-4">
@@ -185,11 +211,11 @@ export default function CanvasWorkspace({
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2 text-sm text-gray-600">
               <span>Zoom:</span>
-              <Button variant="ghost" size="sm" className="p-1">
+              <Button variant="ghost" size="sm" className="p-1" onClick={handleZoomOut}>
                 <ZoomOut className="h-4 w-4" />
               </Button>
               <span className="font-medium">{Math.round(canvasState.zoom * 100)}%</span>
-              <Button variant="ghost" size="sm" className="p-1">
+              <Button variant="ghost" size="sm" className="p-1" onClick={handleZoomIn}>
                 <ZoomIn className="h-4 w-4" />
               </Button>
             </div>
@@ -232,8 +258,9 @@ export default function CanvasWorkspace({
                 <img
                   src={canvasState.baseImage}
                   alt="Tank base"
-                  className="w-full h-auto rounded-lg"
+                  className="w-full h-auto rounded-lg cursor-pointer"
                   style={{ transform: `scale(${canvasState.zoom})` }}
+                  onClick={handleBaseImageClick}
                 />
                 
                 {/* Render overlays */}

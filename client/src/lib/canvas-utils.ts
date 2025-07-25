@@ -1,4 +1,5 @@
 import { CanvasState, OverlayData } from "@shared/schema";
+import { fetchWatermarkFromSheets } from "./google-sheets";
 
 export async function exportCanvasAsImage(canvasState: CanvasState): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -29,7 +30,7 @@ export async function exportCanvasAsImage(canvasState: CanvasState): Promise<voi
         
         await Promise.all(overlayPromises);
         
-        // Draw watermark
+        // Draw watermark from Google Sheets
         await drawWatermark(ctx, canvas.width, canvas.height);
         
         // Export as blob and download
@@ -100,14 +101,25 @@ function drawOverlay(
   });
 }
 
-function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): Promise<void> {
-  return new Promise((resolve) => {
-    // Draw text watermark since we don't have the actual watermark image
+async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): Promise<void> {
+  return new Promise(async (resolve) => {
     ctx.save();
+    
+    // Try to fetch watermark text from Google Sheets
+    let watermarkText = 'CoralScape'; // Default fallback
+    try {
+      const sheetsUrl = "https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/edit?usp=sharing";
+      const fetchedText = await fetchWatermarkFromSheets(sheetsUrl);
+      if (fetchedText && fetchedText.trim()) {
+        watermarkText = fetchedText.trim();
+      }
+    } catch (error) {
+      console.warn('Failed to fetch watermark from sheets, using default');
+    }
     
     // Calculate watermark size (20% of canvas width)
     const watermarkWidth = canvasWidth * 0.2;
-    const fontSize = Math.max(12, watermarkWidth / 8);
+    const fontSize = Math.max(14, watermarkWidth / 8);
     
     // Position in bottom right
     const x = canvasWidth - watermarkWidth - 20;
@@ -118,10 +130,10 @@ function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number, canva
     ctx.fillRect(x - 10, y - fontSize - 5, watermarkWidth + 20, fontSize + 15);
     
     // Draw text
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-    ctx.font = `${fontSize}px Inter, sans-serif`;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.font = `bold ${fontSize}px Inter, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('CoralScape', x + watermarkWidth / 2, y);
+    ctx.fillText(watermarkText, x + watermarkWidth / 2, y);
     
     ctx.restore();
     resolve();
