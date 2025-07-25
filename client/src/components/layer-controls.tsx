@@ -40,7 +40,9 @@ export default function LayerControls({
     }
   };
 
-  const handleExport = async () => {
+  const handleExport = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     try {
       await exportCanvas(canvasState);
     } catch (error) {
@@ -94,6 +96,7 @@ export default function LayerControls({
           </div>
           
           <Button
+            type="button"
             className="w-full bg-accent hover:bg-accent/90 text-white"
             onClick={handleExport}
             disabled={isExporting || !canvasState.baseImage}
