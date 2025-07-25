@@ -148,37 +148,44 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
           {/* Transform Controls */}
           <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex items-center space-x-2">
             <div className="flex items-center space-x-1">
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-6 w-6 p-0"
-                onMouseDown={() => {
+              <div
+                className="relative cursor-pointer"
+                onMouseDown={(e) => {
+                  e.preventDefault();
                   const startRotation = overlay.rotation || 0;
-                  let isRotating = true;
+                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                  const centerX = rect.left + rect.width / 2;
+                  const centerY = rect.top + rect.height / 2;
+                  const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
                   
-                  const rotateInterval = setInterval(() => {
-                    if (!isRotating) {
-                      clearInterval(rotateInterval);
-                      return;
-                    }
-                    onUpdate({ rotation: ((overlay.rotation || 0) + 5) % 360 });
-                  }, 50);
+                  let isDragging = true;
                   
-                  const stopRotating = () => {
-                    isRotating = false;
-                    clearInterval(rotateInterval);
-                    document.removeEventListener('mouseup', stopRotating);
-                    document.removeEventListener('mouseleave', stopRotating);
+                  const handleMouseMove = (moveEvent: MouseEvent) => {
+                    if (!isDragging) return;
+                    
+                    const currentAngle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX);
+                    const angleDiff = (currentAngle - startAngle) * (180 / Math.PI);
+                    const newRotation = (startRotation + angleDiff) % 360;
+                    
+                    onUpdate({ rotation: newRotation < 0 ? newRotation + 360 : newRotation });
                   };
                   
-                  document.addEventListener('mouseup', stopRotating);
-                  document.addEventListener('mouseleave', stopRotating);
+                  const handleMouseUp = () => {
+                    isDragging = false;
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                  };
+                  
+                  document.addEventListener('mousemove', handleMouseMove);
+                  document.addEventListener('mouseup', handleMouseUp);
                 }}
                 onClick={() => onUpdate({ rotation: ((overlay.rotation || 0) + 90) % 360 })}
-                title="Hold to rotate continuously, click for 90°"
+                title="Drag to rotate smoothly, click for 90°"
               >
-                <RotateCw className="h-3 w-3" />
-              </Button>
+                <div className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors">
+                  <RotateCw className="h-3 w-3" />
+                </div>
+              </div>
               <span className="text-xs text-gray-500 min-w-[35px]">
                 {Math.round(overlay.rotation || 0)}°
               </span>
@@ -397,22 +404,27 @@ export default function CanvasWorkspace({
                 
                 {/* Watermark */}
                 {canvasState.baseImage && (
-                  <div className="watermark absolute bottom-4 right-4 z-50" style={{ width: '20%' }}>
-                    <div className="bg-white bg-opacity-90 rounded-lg p-1 shadow-sm">
-                      <img 
-                        src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
-                        alt="CoralScape"
-                        className="w-full h-auto"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const parent = target.parentElement;
-                          if (parent) {
-                            parent.innerHTML = '<div class="text-xs font-medium text-gray-600 px-2 py-1">CoralScape</div>';
-                          }
-                        }}
-                      />
-                    </div>
+                  <div 
+                    className="watermark absolute z-50 pointer-events-none"
+                    style={{ 
+                      width: `${20 * canvasState.zoom}%`,
+                      bottom: `${20 * canvasState.zoom}px`,
+                      right: `${20 * canvasState.zoom}px`,
+                    }}
+                  >
+                    <img 
+                      src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
+                      alt="CoralScape"
+                      className="w-full h-auto opacity-80"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = '<div class="text-xs font-medium text-gray-600 px-2 py-1">CoralScape</div>';
+                        }
+                      }}
+                    />
                   </div>
                 )}
               </div>

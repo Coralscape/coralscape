@@ -33,6 +33,9 @@ Preferred communication style: Simple, everyday language.
 - Implemented dynamic filter counts showing specimen numbers for each category
 - Color filters now update based on selected type showing relevant counts
 - Fixed watermark to use specific CoralScape logo image at 20% width
+- Implemented PowerPoint-style smooth rotation by dragging rotation handle
+- Watermark now tracks with base image zoom and position (no white border)
+- Rotation control shows real-time degree values during manipulation
 
 ## System Architecture
 

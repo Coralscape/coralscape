@@ -140,12 +140,8 @@ async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number,
         const watermarkHeight = watermarkWidth / aspectRatio;
         const y = canvasHeight - watermarkHeight - 20;
         
-        // Draw semi-transparent background
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.fillRect(x - 5, y - 5, watermarkWidth + 10, watermarkHeight + 10);
-        
-        // Draw watermark image
-        ctx.globalAlpha = 1.0;
+        // Draw watermark image without background
+        ctx.globalAlpha = 0.8;
         ctx.drawImage(img, x, y, watermarkWidth, watermarkHeight);
         ctx.globalAlpha = 1;
         
@@ -167,11 +163,7 @@ async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number,
       const fontSize = Math.max(14, watermarkWidth / 8);
       const textY = canvasHeight - 40;
       
-      // Draw semi-transparent background
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      ctx.fillRect(x - 10, textY - fontSize - 5, watermarkWidth + 20, fontSize + 15);
-      
-      // Draw text
+      // Draw text without background
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
       ctx.font = `bold ${fontSize}px Inter, sans-serif`;
       ctx.textAlign = 'center';
