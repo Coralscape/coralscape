@@ -119,6 +119,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
         style={{
           transform: `rotate(${overlay.rotation || 0}deg) scaleX(${overlay.flipH ? -1 : 1}) scaleY(${overlay.flipV ? -1 : 1})`
         }}
+        title={overlay.name}
         draggable={false}
         onError={(e) => {
           const target = e.target as HTMLImageElement;
@@ -350,7 +351,7 @@ export default function CanvasWorkspace({
               className="whitespace-nowrap"
             >
               <Upload className="mr-2 h-4 w-4" />
-              Upload Base Image
+              Upload Tank Image
             </Button>
             <input
               ref={fileInputRef}
@@ -403,11 +404,9 @@ export default function CanvasWorkspace({
                   <div 
                     className="watermark absolute z-50 pointer-events-none"
                     style={{ 
-                      width: '20%',
-                      bottom: '20px',
-                      right: '20px',
-                      transform: `scale(${canvasState.zoom})`,
-                      transformOrigin: 'bottom right'
+                      width: `${20 / canvasState.zoom}%`,
+                      bottom: `${20 / canvasState.zoom}px`,
+                      right: `${20 / canvasState.zoom}px`,
                     }}
                   >
                     <img 

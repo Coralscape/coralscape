@@ -41,6 +41,10 @@ Preferred communication style: Simple, everyday language.
 - Zoom control now exclusively managed through zoom buttons/percentage input
 - Reduced rotation sensitivity by 70% for smoother, more precise control
 - Fixed watermark positioning to stay attached to base image corner during zoom
+- Changed "Upload Base Image" to "Upload Tank Image" throughout interface
+- Added coral name tooltips on hover when overlays are placed on tank
+- Implemented randomize button to shuffle specimen order in sidebar
+- Watermark now properly scales inversely with zoom to maintain fixed position
 
 ## System Architecture
 

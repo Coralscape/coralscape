@@ -100,6 +100,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [colorFilter, setColorFilter] = useState("all");
+  const [randomSeed, setRandomSeed] = useState(0);
 
   // Extract unique types and colors with counts
   const { coralTypes, coralColors, typeBasedColors } = useMemo(() => {
@@ -178,9 +179,9 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     return Array.from(typeColors.entries()).sort(([a], [b]) => a.localeCompare(b));
   }, [typeFilter, coralColors, typeBasedColors]);
 
-  // Filter coral data based on search and filters
+  // Filter and randomize coral data based on search and filters
   const filteredCoralData = useMemo(() => {
-    return coralData.filter(coral => {
+    const filtered = coralData.filter(coral => {
       const name = coral.name.toLowerCase();
       const searchMatch = name.includes(searchTerm.toLowerCase());
       
@@ -189,7 +190,20 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
       
       return searchMatch && typeMatch && colorMatch;
     });
-  }, [coralData, searchTerm, typeFilter, colorFilter]);
+    
+    // Simple seeded shuffle
+    const shuffled = [...filtered];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(((randomSeed + i) * 9301 + 49297) % 233280 / 233280 * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    return shuffled;
+  }, [coralData, searchTerm, typeFilter, colorFilter, randomSeed]);
+
+  const handleRandomize = () => {
+    setRandomSeed(prev => prev + 1);
+  };
 
   return (
     <aside className="w-80 bg-white border-r border-gray-200 flex flex-col">
@@ -267,9 +281,14 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                 Clear
               </Button>
             )}
-            <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 h-auto p-1">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-primary hover:text-primary/80 h-auto p-1"
+              onClick={handleRandomize}
+            >
               <RefreshCw className="mr-1 h-3 w-3" />
-              Refresh
+              Randomize
             </Button>
           </div>
         </div>
