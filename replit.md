@@ -36,6 +36,9 @@ Preferred communication style: Simple, everyday language.
 - Implemented PowerPoint-style smooth rotation by dragging rotation handle
 - Watermark now tracks with base image zoom and position (no white border)
 - Rotation control shows real-time degree values during manipulation
+- Changed rotation click increment from 90° to 10° for finer control
+- Modified base image click to select (deselect overlays) instead of auto-zoom
+- Zoom control now exclusively managed through zoom buttons/percentage input
 
 ## System Architecture
 

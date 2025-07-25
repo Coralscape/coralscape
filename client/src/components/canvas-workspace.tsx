@@ -179,8 +179,8 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
                   document.addEventListener('mousemove', handleMouseMove);
                   document.addEventListener('mouseup', handleMouseUp);
                 }}
-                onClick={() => onUpdate({ rotation: ((overlay.rotation || 0) + 90) % 360 })}
-                title="Drag to rotate smoothly, click for 90°"
+                onClick={() => onUpdate({ rotation: ((overlay.rotation || 0) + 10) % 360 })}
+                title="Drag to rotate smoothly, click for 10°"
               >
                 <div className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors">
                   <RotateCw className="h-3 w-3" />
@@ -277,12 +277,8 @@ export default function CanvasWorkspace({
   };
 
   const handleBaseImageClick = () => {
-    // Toggle zoom on base image click
-    if (canvasState.zoom === 1) {
-      onZoomChange(2);
-    } else {
-      onZoomChange(1);
-    }
+    // Select base image (deselect any overlays)
+    onSelectOverlay(null);
   };
 
   const handleZoomInputChange = (value: string) => {
