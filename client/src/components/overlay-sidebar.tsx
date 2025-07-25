@@ -208,7 +208,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   return (
     <aside className="w-80 bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Coral & Invertebrates</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">Corals & Inverts</h2>
         
         {/* Search Input */}
         <div className="relative mb-3">

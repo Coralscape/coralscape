@@ -16,17 +16,24 @@ export default function TopNavigation({
     <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-semibold text-gray-900 flex items-center">
-            <Layers className="text-primary mr-2 h-6 w-6" />
-            CoralScape Designer
-          </h1>
+          <img 
+            src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
+            alt="CoralScape"
+            className="h-8 w-auto"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                parent.innerHTML = '<h1 class="text-xl font-bold text-gray-900">CoralScape</h1>';
+              }
+            }}
+          />
         </div>
         
         <div className="flex items-center space-x-4 flex-1 max-w-2xl mx-4">
           <div className="flex-1 text-center">
-            <p className="text-sm text-gray-600">
-              Coral & Invertebrate Database
-            </p>
+
           </div>
           
           <Button
@@ -58,10 +65,7 @@ export default function TopNavigation({
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="icon">
-            <Settings className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" title="inquiries.coralscape@gmail.com">
             <HelpCircle className="h-4 w-4" />
           </Button>
         </div>

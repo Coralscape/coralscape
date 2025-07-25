@@ -399,14 +399,14 @@ export default function CanvasWorkspace({
                   />
                 ))}
                 
-                {/* Watermark */}
+                {/* Watermark - sticky to tank image */}
                 {canvasState.baseImage && (
                   <div 
                     className="watermark absolute z-50 pointer-events-none"
                     style={{ 
-                      width: `${20 / canvasState.zoom}%`,
-                      bottom: `${20 / canvasState.zoom}px`,
-                      right: `${20 / canvasState.zoom}px`,
+                      width: '20%',
+                      bottom: '20px',
+                      right: '20px',
                     }}
                   >
                     <img 

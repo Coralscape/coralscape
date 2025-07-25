@@ -44,7 +44,11 @@ Preferred communication style: Simple, everyday language.
 - Changed "Upload Base Image" to "Upload Tank Image" throughout interface
 - Added coral name tooltips on hover when overlays are placed on tank
 - Implemented randomize button to shuffle specimen order in sidebar
-- Watermark now properly scales inversely with zoom to maintain fixed position
+- Watermark now stays sticky to tank image at fixed position (bottom-right corner)
+- Replaced "CoralScape Designer" title with watermark logo in top navigation
+- Removed gear/settings icon from top right navigation
+- Removed "Coral & Invertebrate Database" text from top center
+- Added email tooltip "inquiries.coralscape@gmail.com" to help/question mark icon
 
 ## System Architecture
 
