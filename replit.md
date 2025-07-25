@@ -51,7 +51,10 @@ Preferred communication style: Simple, everyday language.
 - Added clickable email dropdown "inquiries.coralscape@gmail.com" to help/question mark icon
 - Fixed coral positioning offset in exported images by using actual base image dimensions
 - Made canvas dashed border scale to match tank image size exactly
-- Increased top navigation logo size by 50% (from h-8 to h-12)
+- Increased top navigation logo size by 50% again (from h-12 to h-18)
+- Updated search placeholder to "Search corals & inverts..."
+- Added "Buy me a coffee" donation button next to logo
+- Added color wheel image from Google Sheets (sheet 2, column A, row 2) in top right
 
 ## System Architecture
 
