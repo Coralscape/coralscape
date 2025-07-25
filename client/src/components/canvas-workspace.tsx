@@ -373,17 +373,17 @@ export default function CanvasWorkspace({
                 (canvasRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
               }
             }}
-            className={`canvas-workspace relative bg-white rounded-xl shadow-lg border-2 border-dashed border-gray-300 min-h-[600px] flex items-center justify-center overflow-hidden ${
-              isOver ? 'drop-zone-active' : ''
-            }`}
+            className={`canvas-workspace relative bg-white rounded-xl shadow-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden ${
+              canvasState.baseImage ? '' : 'min-h-[600px]'
+            } ${isOver ? 'drop-zone-active' : ''}`}
             onClick={handleCanvasClick}
           >
             {canvasState.baseImage ? (
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full flex items-center justify-center">
                 <img
                   src={canvasState.baseImage}
                   alt="Tank base"
-                  className="w-full h-auto rounded-lg cursor-pointer"
+                  className="max-w-full max-h-full rounded-lg cursor-pointer"
                   style={{ transform: `scale(${canvasState.zoom})` }}
                   onClick={handleBaseImageClick}
                 />

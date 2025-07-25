@@ -49,7 +49,9 @@ Preferred communication style: Simple, everyday language.
 - Removed gear/settings icon from top right navigation
 - Removed "Coral & Invertebrate Database" text from top center
 - Added clickable email dropdown "inquiries.coralscape@gmail.com" to help/question mark icon
-- Fixed coral positioning offset in exported images by using actual workspace dimensions
+- Fixed coral positioning offset in exported images by using actual base image dimensions
+- Made canvas dashed border scale to match tank image size exactly
+- Increased top navigation logo size by 50% (from h-8 to h-12)
 
 ## System Architecture
 

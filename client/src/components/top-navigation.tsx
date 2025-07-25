@@ -21,7 +21,7 @@ export default function TopNavigation({
           <img 
             src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
             alt="CoralScape"
-            className="h-8 w-auto"
+            className="h-12 w-auto"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';

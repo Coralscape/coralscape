@@ -78,17 +78,17 @@ function drawOverlay(
         ctx.save();
         ctx.globalAlpha = overlay.opacity;
         
-        // Get the actual workspace dimensions from the DOM
-        const workspaceElement = document.querySelector('.canvas-workspace') as HTMLElement;
-        const workspaceRect = workspaceElement?.getBoundingClientRect();
-        const workspaceWidth = workspaceRect?.width || 800;
-        const workspaceHeight = workspaceRect?.height || 600;
+        // Get the actual base image dimensions from the DOM
+        const baseImageElement = document.querySelector('.canvas-workspace img') as HTMLImageElement;
+        const baseImageRect = baseImageElement?.getBoundingClientRect();
+        const displayWidth = baseImageRect?.width || canvasWidth;
+        const displayHeight = baseImageRect?.height || canvasHeight;
         
-        // Calculate position and size relative to canvas using actual workspace dimensions
-        const x = (overlay.x / workspaceWidth) * canvasWidth;
-        const y = (overlay.y / workspaceHeight) * canvasHeight;
-        const width = (overlay.width / workspaceWidth) * canvasWidth;
-        const height = (overlay.height / workspaceHeight) * canvasHeight;
+        // Calculate position and size relative to canvas using actual displayed image dimensions
+        const x = (overlay.x / displayWidth) * canvasWidth;
+        const y = (overlay.y / displayHeight) * canvasHeight;
+        const width = (overlay.width / displayWidth) * canvasWidth;
+        const height = (overlay.height / displayHeight) * canvasHeight;
         
         // Apply transforms if they exist
         const centerX = x + width / 2;
