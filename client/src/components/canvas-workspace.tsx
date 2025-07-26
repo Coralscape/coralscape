@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback } from "react";
 import { useDrop } from "react-dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, ZoomIn, ZoomOut, RotateCw, FlipHorizontal, FlipVertical, Trash2 } from "lucide-react";
+import { Upload, ZoomIn, ZoomOut, RotateCw, FlipHorizontal, FlipVertical, Trash2, Undo } from "lucide-react";
 import { CanvasState, OverlayData, CoralData } from "@shared/schema";
 
 interface CanvasWorkspaceProps {
@@ -14,6 +14,8 @@ interface CanvasWorkspaceProps {
   onZoomChange: (zoom: number) => void;
   onPanChange: (panX: number, panY: number) => void;
   onDeleteOverlay: (overlayId: string) => void;
+  onUndo: () => void;
+  canUndo: boolean;
 }
 
 interface DraggableOverlayProps {
@@ -243,6 +245,8 @@ export default function CanvasWorkspace({
   onZoomChange,
   onPanChange,
   onDeleteOverlay,
+  onUndo,
+  canUndo,
 }: CanvasWorkspaceProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -361,6 +365,18 @@ export default function CanvasWorkspace({
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-base md:text-lg font-semibold text-gray-900">Tank Workspace</h2>
           <div className="flex items-center space-x-2 md:space-x-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onUndo}
+              disabled={!canUndo}
+              className="flex items-center space-x-1 text-xs md:text-sm"
+              title="Undo last action (Ctrl+Z)"
+            >
+              <Undo className="h-4 w-4" />
+              <span className="hidden sm:inline">Undo</span>
+            </Button>
+            <div className="h-4 w-px bg-gray-300"></div>
             <div className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm text-gray-600">
               <span>Zoom:</span>
               <Button variant="ghost" size="sm" className="p-1" onClick={handleZoomOut}>

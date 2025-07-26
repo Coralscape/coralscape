@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,6 +23,10 @@ export default function AquariumDesigner() {
     panX: 0,
     panY: 0,
   });
+
+  // Undo functionality
+  const [undoStack, setUndoStack] = useState<CanvasState[]>([]);
+  const [canUndoAction, setCanUndoAction] = useState(false);
 
   const fixedSheetsUrl = "https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/edit?usp=sharing";
   const [isConnected, setIsConnected] = useState(false);
@@ -67,7 +71,45 @@ export default function AquariumDesigner() {
     connectSheetsMutation.mutate();
   };
 
+  // Save state to undo stack before making changes
+  const saveToUndoStack = useCallback((currentState: CanvasState) => {
+    setUndoStack(prev => [...prev.slice(-19), currentState]); // Keep last 20 states
+    setCanUndoAction(true);
+  }, []);
+
+  // Undo last action
+  const handleUndo = useCallback(() => {
+    if (undoStack.length > 0) {
+      const previousState = undoStack[undoStack.length - 1];
+      setCanvasState(previousState);
+      setUndoStack(prev => prev.slice(0, -1));
+      setCanUndoAction(undoStack.length > 1);
+    }
+  }, [undoStack]);
+
+  // Keyboard event handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Delete key to delete selected overlay
+      if (e.key === 'Delete' && canvasState.selectedOverlayId) {
+        saveToUndoStack(canvasState);
+        handleDeleteOverlay(canvasState.selectedOverlayId);
+      }
+      
+      // Ctrl+Z for undo
+      if (e.ctrlKey && e.key === 'z' && canUndoAction) {
+        e.preventDefault();
+        handleUndo();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [canvasState, canUndoAction, handleUndo, saveToUndoStack]);
+
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
+    saveToUndoStack(canvasState);
+    
     // Calculate proportional size while limiting maximum size
     const maxSize = 150;
     const aspectRatio = coral.width / coral.height;
@@ -110,6 +152,17 @@ export default function AquariumDesigner() {
   };
 
   const handleUpdateOverlay = (overlayId: string, updates: Partial<OverlayData>) => {
+    // Save state before significant changes (not for every small drag movement)
+    const shouldSaveUndo = updates.hasOwnProperty('rotation') || 
+                          updates.hasOwnProperty('flipH') || 
+                          updates.hasOwnProperty('flipV') ||
+                          updates.hasOwnProperty('width') ||
+                          updates.hasOwnProperty('height');
+    
+    if (shouldSaveUndo && !undoStack.some(state => state === canvasState)) {
+      saveToUndoStack(canvasState);
+    }
+    
     setCanvasState(prev => ({
       ...prev,
       overlays: prev.overlays.map(overlay =>
@@ -136,6 +189,10 @@ export default function AquariumDesigner() {
   };
 
   const handleDeleteOverlay = (overlayId: string) => {
+    if (!undoStack.some(state => state === canvasState)) {
+      saveToUndoStack(canvasState);
+    }
+    
     setCanvasState(prev => ({
       ...prev,
       overlays: prev.overlays.filter(overlay => overlay.id !== overlayId),
@@ -202,6 +259,8 @@ export default function AquariumDesigner() {
               onZoomChange={handleZoomChange}
               onPanChange={handlePanChange}
               onDeleteOverlay={handleDeleteOverlay}
+              onUndo={handleUndo}
+              canUndo={canUndoAction}
             />
           </div>
           

@@ -87,7 +87,10 @@ Preferred communication style: Simple, everyday language.
 - Added trashcan delete icon next to mirror icons for direct layer deletion from canvas
 - Fixed custom images to use proportional sizing instead of fixed 150x150 dimensions
 - Custom coral uploads now maintain aspect ratio with automatic sizing calculations
-- Moved export options to the very top of the right panel above layer controls header
+- Added keyboard delete functionality (Delete key) to remove selected coral overlays
+- Implemented comprehensive undo system with Undo button and Ctrl+Z keyboard shortcut
+- Undo tracks up to 20 recent states including coral additions, deletions, and transformations
+- Undo button appears next to zoom controls and shows enabled/disabled state
 
 ## System Architecture
 
