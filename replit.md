@@ -84,13 +84,6 @@ Preferred communication style: Simple, everyday language.
 - Transform now combines zoom and pan using CSS translate for smooth movement
 - Auto-centers tank image when zooming back to 100% while preserving coral overlay positions
 - Moved export options to the very top of the right panel above layer controls header
-- Added comprehensive email/password authentication system with signup, login, and logout
-- Implemented session-based authentication with PostgreSQL storage
-- Created user menu with account dropdown and authentication status
-- Added database schema for users, custom corals, and saved tank compositions
-- Set up user-specific custom coral uploads with persistent storage
-- Implemented named tank designs that users can save and edit later
-- Added authentication middleware protecting user-specific endpoints
 
 ## System Architecture
 
