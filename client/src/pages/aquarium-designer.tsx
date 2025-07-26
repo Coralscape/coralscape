@@ -191,35 +191,7 @@ export default function AquariumDesigner() {
     return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, handleDeleteOverlay]);
 
-  // Handle mouse up globally to end dragging
-  useEffect(() => {
-    const handleMouseUp = () => {
-      if (isDragging && dragStartState) {
-        console.log('Mouse up - ending drag and saving action');
-        saveActionToUndo({
-          type: 'UPDATE_OVERLAY',
-          data: { 
-            id: dragStartState.id, 
-            previousState: dragStartState 
-          }
-        });
-        setIsDragging(false);
-        setDragStartState(null);
-      }
-    };
-
-    const handleMouseMove = () => {
-      // Reset drag state if mouse is moved without being in a drag operation
-      // This helps clean up any stuck drag states
-    };
-
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mouseleave', handleMouseUp); // Also handle mouse leaving window
-    return () => {
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mouseleave', handleMouseUp);
-    };
-  }, [isDragging, dragStartState, saveActionToUndo]);
+  // Note: Mouse up handling is now done in the canvas workspace component directly
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
     
@@ -345,20 +317,6 @@ export default function AquariumDesigner() {
   };
 
   const handleSelectOverlay = (overlayId: string | null) => {
-    // If we were dragging and now selecting something else (or null), end the drag
-    if (isDragging && dragStartState) {
-      console.log('Selection change - ending drag and saving action');
-      saveActionToUndo({
-        type: 'UPDATE_OVERLAY',
-        data: { 
-          id: dragStartState.id, 
-          previousState: dragStartState 
-        }
-      });
-      setIsDragging(false);
-      setDragStartState(null);
-    }
-    
     setCanvasState(prev => ({ ...prev, selectedOverlayId: overlayId }));
   };
 
