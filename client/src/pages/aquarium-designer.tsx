@@ -90,14 +90,20 @@ export default function AquariumDesigner() {
   // Keyboard event handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if user is typing in an input field
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      
       // Delete key to delete selected overlay
-      if (e.key === 'Delete' && canvasState.selectedOverlayId) {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && canvasState.selectedOverlayId) {
+        e.preventDefault();
         saveToUndoStack(canvasState);
         handleDeleteOverlay(canvasState.selectedOverlayId);
       }
       
-      // Ctrl+Z for undo
-      if (e.ctrlKey && e.key === 'z' && canUndoAction) {
+      // Ctrl+Z or Cmd+Z for undo (support both Windows/Linux and Mac)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey && canUndoAction) {
         e.preventDefault();
         handleUndo();
       }
@@ -105,7 +111,7 @@ export default function AquariumDesigner() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [canvasState, canUndoAction, handleUndo, saveToUndoStack]);
+  }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, saveToUndoStack]);
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
     saveToUndoStack(canvasState);
