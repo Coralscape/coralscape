@@ -25,7 +25,8 @@ export default function AquariumDesigner() {
   });
 
   // Undo functionality
-  const [undoStack, setUndoStack] = useState<CanvasState[]>([]);
+  // Simple undo system that tracks individual actions
+  const [undoStack, setUndoStack] = useState<{type: string, data: any}[]>([]);
   const [canUndoAction, setCanUndoAction] = useState(false);
 
   const fixedSheetsUrl = "https://docs.google.com/spreadsheets/d/1j4ZgG9NFOfB_H4ExYY8mKzUQuflXmRa6pP8fsdDxt-4/edit?usp=sharing";
@@ -71,24 +72,45 @@ export default function AquariumDesigner() {
     connectSheetsMutation.mutate();
   };
 
-  // Save state to undo stack before making changes
-  const saveToUndoStack = useCallback((currentState: CanvasState) => {
-    setUndoStack(prev => {
-      // Don't add duplicate states
-      if (prev.length > 0 && JSON.stringify(prev[prev.length - 1]) === JSON.stringify(currentState)) {
-        return prev;
-      }
-      // Keep last 20 states
-      return [...prev.slice(-19), currentState];
-    });
+  // Save specific action to undo stack
+  const saveActionToUndo = useCallback((action: {type: string, data: any}) => {
+    setUndoStack(prev => [...prev.slice(-19), action]); // Keep last 20 actions
     setCanUndoAction(true);
   }, []);
 
   // Undo last action
   const handleUndo = useCallback(() => {
     if (undoStack.length > 0) {
-      const previousState = undoStack[undoStack.length - 1];
-      setCanvasState(previousState);
+      const lastAction = undoStack[undoStack.length - 1];
+      
+      // Reverse the action based on its type
+      switch (lastAction.type) {
+        case 'ADD_OVERLAY':
+          setCanvasState(prev => ({
+            ...prev,
+            overlays: prev.overlays.filter(overlay => overlay.id !== lastAction.data.id),
+            selectedOverlayId: null,
+          }));
+          break;
+          
+        case 'DELETE_OVERLAY':
+          setCanvasState(prev => ({
+            ...prev,
+            overlays: [...prev.overlays, lastAction.data.overlay],
+            selectedOverlayId: lastAction.data.overlay.id,
+          }));
+          break;
+          
+        case 'UPDATE_OVERLAY':
+          setCanvasState(prev => ({
+            ...prev,
+            overlays: prev.overlays.map(overlay =>
+              overlay.id === lastAction.data.id ? lastAction.data.previousState : overlay
+            ),
+          }));
+          break;
+      }
+      
       setUndoStack(prev => prev.slice(0, -1));
       setCanUndoAction(undoStack.length > 1);
     }
@@ -96,15 +118,19 @@ export default function AquariumDesigner() {
 
   // Delete overlay function (defined before useEffect that references it)
   const handleDeleteOverlay = (overlayId: string) => {
-    // Create a deep copy to avoid reference issues
-    const currentStateCopy = JSON.parse(JSON.stringify(canvasState));
-    saveToUndoStack(currentStateCopy);
-    
-    setCanvasState(prev => ({
-      ...prev,
-      overlays: prev.overlays.filter(overlay => overlay.id !== overlayId),
-      selectedOverlayId: prev.selectedOverlayId === overlayId ? null : prev.selectedOverlayId,
-    }));
+    const overlayToDelete = canvasState.overlays.find(overlay => overlay.id === overlayId);
+    if (overlayToDelete) {
+      saveActionToUndo({
+        type: 'DELETE_OVERLAY',
+        data: { overlay: overlayToDelete }
+      });
+      
+      setCanvasState(prev => ({
+        ...prev,
+        overlays: prev.overlays.filter(overlay => overlay.id !== overlayId),
+        selectedOverlayId: prev.selectedOverlayId === overlayId ? null : prev.selectedOverlayId,
+      }));
+    }
   };
 
   // Keyboard event handler with proper cleanup
@@ -139,9 +165,6 @@ export default function AquariumDesigner() {
   }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, handleDeleteOverlay]);
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
-    // Create a deep copy to avoid reference issues
-    const currentStateCopy = JSON.parse(JSON.stringify(canvasState));
-    saveToUndoStack(currentStateCopy);
     
     // Calculate proportional size while limiting maximum size
     const maxSize = 150;
@@ -182,6 +205,12 @@ export default function AquariumDesigner() {
       overlays: [...prev.overlays, newOverlay],
       selectedOverlayId: newOverlay.id,
     }));
+    
+    // Save the add action for undo
+    saveActionToUndo({
+      type: 'ADD_OVERLAY',
+      data: { id: newOverlay.id }
+    });
   };
 
   const handleUpdateOverlay = (overlayId: string, updates: Partial<OverlayData>) => {
@@ -193,9 +222,16 @@ export default function AquariumDesigner() {
                           updates.hasOwnProperty('height');
     
     if (shouldSaveUndo) {
-      // Create a deep copy to avoid reference issues
-      const currentStateCopy = JSON.parse(JSON.stringify(canvasState));
-      saveToUndoStack(currentStateCopy);
+      const currentOverlay = canvasState.overlays.find(overlay => overlay.id === overlayId);
+      if (currentOverlay) {
+        saveActionToUndo({
+          type: 'UPDATE_OVERLAY',
+          data: { 
+            id: overlayId, 
+            previousState: { ...currentOverlay } 
+          }
+        });
+      }
     }
     
     setCanvasState(prev => ({
