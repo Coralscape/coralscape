@@ -103,7 +103,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   const [typeFilter, setTypeFilter] = useState("all");
   const [subTypeFilter, setSubTypeFilter] = useState("all");
   const [colorFilter, setColorFilter] = useState("all");
-  const [randomSeed, setRandomSeed] = useState(0);
+  const [randomSeed, setRandomSeed] = useState(() => Math.random()); // Initialize with random value on page load
   const [customCorals, setCustomCorals] = useState<CoralData[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
