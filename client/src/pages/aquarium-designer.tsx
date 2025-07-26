@@ -142,6 +142,7 @@ export default function AquariumDesigner() {
   const handleDeleteOverlay = (overlayId: string) => {
     const overlayToDelete = canvasState.overlays.find(overlay => overlay.id === overlayId);
     if (overlayToDelete) {
+      console.log('Saving delete action for overlay:', overlayId, overlayToDelete);
       saveActionToUndo({
         type: 'DELETE_OVERLAY',
         data: { overlay: overlayToDelete }
@@ -229,6 +230,7 @@ export default function AquariumDesigner() {
     }));
     
     // Save the add action for undo
+    console.log('Saving add action for overlay:', newOverlay.id);
     saveActionToUndo({
       type: 'ADD_OVERLAY',
       data: { id: newOverlay.id }
@@ -236,17 +238,19 @@ export default function AquariumDesigner() {
   };
 
   const handleUpdateOverlay = (overlayId: string, updates: Partial<OverlayData>) => {
-    // Save state before significant changes (not for every small drag movement)
+    // Save state for all significant changes including position and size
     const shouldSaveUndo = updates.hasOwnProperty('rotation') || 
                           updates.hasOwnProperty('flipH') || 
                           updates.hasOwnProperty('flipV') ||
                           updates.hasOwnProperty('width') ||
-                          updates.hasOwnProperty('height');
+                          updates.hasOwnProperty('height') ||
+                          updates.hasOwnProperty('x') ||
+                          updates.hasOwnProperty('y');
     
     if (shouldSaveUndo) {
       const currentOverlay = canvasState.overlays.find(overlay => overlay.id === overlayId);
       if (currentOverlay) {
-        console.log('Saving update action for overlay:', overlayId, 'current state:', currentOverlay);
+        console.log('Saving update action for overlay:', overlayId, 'updates:', Object.keys(updates), 'current state:', currentOverlay);
         saveActionToUndo({
           type: 'UPDATE_OVERLAY',
           data: { 
