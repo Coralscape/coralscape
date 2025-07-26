@@ -527,15 +527,17 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                 <p className="text-gray-600">Connect to Google Sheets to load coral and invertebrate data</p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {filteredCoralData.map((coral) => (
-                  <DraggableCoralItem
-                    key={coral.id}
-                    coral={coral}
-                    onAddOverlay={onAddOverlay}
-                  />
-                ))}
-              </div>
+              <ScrollArea className="h-[400px]">
+                <div className="space-y-3 pr-3">
+                  {filteredCoralData.map((coral) => (
+                    <DraggableCoralItem
+                      key={coral.id}
+                      coral={coral}
+                      onAddOverlay={onAddOverlay}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
             )}
           </TabsContent>
           

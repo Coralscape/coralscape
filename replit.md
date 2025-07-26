@@ -101,7 +101,7 @@ Preferred communication style: Simple, everyday language.
 - HEIC files are automatically converted to JPEG format for web compatibility with user feedback
 - Successfully tested and working - users can now upload iPhone HEIC photos seamlessly
 - Implemented automatic coral randomization on page load - different corals appear each time the page opens
-- Removed 5-coral limit - sidebar now shows all filtered results in scrollable format
+- Reverted sidebar to show 5 specimens in scrollable format
 
 ## System Architecture
 
