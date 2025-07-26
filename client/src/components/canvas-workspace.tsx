@@ -16,6 +16,8 @@ interface CanvasWorkspaceProps {
   onDeleteOverlay: (overlayId: string) => void;
   onUndo: () => void;
   canUndo: boolean;
+  onDragStart: (overlayId: string) => void;
+  onDragEnd: () => void;
 }
 
 interface DraggableOverlayProps {
@@ -24,6 +26,8 @@ interface DraggableOverlayProps {
   onUpdate: (updates: Partial<OverlayData>) => void;
   onSelect: () => void;
   onDelete: () => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 }
 
 interface TransformControls {
@@ -32,7 +36,7 @@ interface TransformControls {
   flipV: boolean;
 }
 
-function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete }: DraggableOverlayProps) {
+function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, onDragStart, onDragEnd }: DraggableOverlayProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -48,7 +52,8 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete }:
     onSelect();
     setIsDragging(true);
     setDragStart({ x: e.clientX - overlay.x, y: e.clientY - overlay.y });
-  }, [overlay.x, overlay.y, onSelect]);
+    onDragStart(); // Notify parent that drag started
+  }, [overlay.x, overlay.y, onSelect, onDragStart]);
 
   const handleResizeMouseDown = useCallback((e: React.MouseEvent, direction: string) => {
     e.preventDefault();
@@ -87,9 +92,13 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete }:
   }, [isDragging, isResizing, dragStart, resizeStart, onUpdate]);
 
   const handleMouseUp = useCallback(() => {
+    const wasDragging = isDragging;
     setIsDragging(false);
     setIsResizing(false);
-  }, []);
+    if (wasDragging) {
+      onDragEnd(); // Notify parent that drag ended
+    }
+  }, [isDragging, onDragEnd]);
 
   // Add event listeners
   React.useEffect(() => {
@@ -247,6 +256,8 @@ export default function CanvasWorkspace({
   onDeleteOverlay,
   onUndo,
   canUndo,
+  onDragStart,
+  onDragEnd,
 }: CanvasWorkspaceProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -483,6 +494,8 @@ export default function CanvasWorkspace({
                     onUpdate={(updates) => onUpdateOverlay(overlay.id, updates)}
                     onSelect={() => onSelectOverlay(overlay.id)}
                     onDelete={() => onDeleteOverlay(overlay.id)}
+                    onDragStart={() => onDragStart(overlay.id)}
+                    onDragEnd={onDragEnd}
                   />
                 ))}
                 

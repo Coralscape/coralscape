@@ -208,8 +208,17 @@ export default function AquariumDesigner() {
       }
     };
 
+    const handleMouseMove = () => {
+      // Reset drag state if mouse is moved without being in a drag operation
+      // This helps clean up any stuck drag states
+    };
+
     document.addEventListener('mouseup', handleMouseUp);
-    return () => document.removeEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mouseleave', handleMouseUp); // Also handle mouse leaving window
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseleave', handleMouseUp);
+    };
   }, [isDragging, dragStartState, saveActionToUndo]);
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
@@ -262,10 +271,32 @@ export default function AquariumDesigner() {
     });
   };
 
+  // Add a prop to track when dragging starts and ends from canvas component
+  const handleDragStart = (overlayId: string) => {
+    const currentOverlay = canvasState.overlays.find(overlay => overlay.id === overlayId);
+    if (currentOverlay && !isDragging) {
+      console.log('Drag started for overlay:', overlayId);
+      setIsDragging(true);
+      setDragStartState({ ...currentOverlay });
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (isDragging && dragStartState) {
+      console.log('Drag ended - saving action');
+      saveActionToUndo({
+        type: 'UPDATE_OVERLAY',
+        data: { 
+          id: dragStartState.id, 
+          previousState: dragStartState 
+        }
+      });
+      setIsDragging(false);
+      setDragStartState(null);
+    }
+  };
+
   const handleUpdateOverlay = (overlayId: string, updates: Partial<OverlayData>) => {
-    // Check if this is a position update (dragging)
-    const isPositionUpdate = updates.hasOwnProperty('x') || updates.hasOwnProperty('y');
-    
     // Check if this is an instant transformation (rotation, flip, resize)
     const isInstantTransform = updates.hasOwnProperty('rotation') || 
                               updates.hasOwnProperty('flipH') || 
@@ -285,16 +316,6 @@ export default function AquariumDesigner() {
             previousState: { ...currentOverlay } 
           }
         });
-      }
-    }
-    
-    // For position updates, only save at start of drag
-    if (isPositionUpdate && !isDragging) {
-      const currentOverlay = canvasState.overlays.find(overlay => overlay.id === overlayId);
-      if (currentOverlay) {
-        console.log('Starting drag - saving initial position for overlay:', overlayId);
-        setIsDragging(true);
-        setDragStartState({ ...currentOverlay });
       }
     }
     
@@ -326,7 +347,7 @@ export default function AquariumDesigner() {
   const handleSelectOverlay = (overlayId: string | null) => {
     // If we were dragging and now selecting something else (or null), end the drag
     if (isDragging && dragStartState) {
-      console.log('Ending drag - saving drag action');
+      console.log('Selection change - ending drag and saving action');
       saveActionToUndo({
         type: 'UPDATE_OVERLAY',
         data: { 
@@ -398,6 +419,8 @@ export default function AquariumDesigner() {
               onDeleteOverlay={handleDeleteOverlay}
               onUndo={handleUndo}
               canUndo={canUndoAction}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
             />
           </div>
           
