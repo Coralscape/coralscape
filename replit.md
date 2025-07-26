@@ -94,6 +94,9 @@ Preferred communication style: Simple, everyday language.
 - Undo now reverses single actions: add coral, delete coral, rotate, flip transformations
 - Added duplicate action detection and debugging to prevent multiple undos
 - Undo button appears next to zoom controls and shows enabled/disabled state
+- Fixed drag operation tracking to save only one undo action per complete coral movement
+- Resolved coral "sticking" issue by coordinating drag detection systems between components
+- Coral overlays now properly release when mouse button is released during dragging
 
 ## System Architecture
 
