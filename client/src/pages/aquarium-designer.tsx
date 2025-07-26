@@ -73,7 +73,14 @@ export default function AquariumDesigner() {
 
   // Save state to undo stack before making changes
   const saveToUndoStack = useCallback((currentState: CanvasState) => {
-    setUndoStack(prev => [...prev.slice(-19), currentState]); // Keep last 20 states
+    setUndoStack(prev => {
+      // Don't add duplicate states
+      if (prev.length > 0 && JSON.stringify(prev[prev.length - 1]) === JSON.stringify(currentState)) {
+        return prev;
+      }
+      // Keep last 20 states
+      return [...prev.slice(-19), currentState];
+    });
     setCanUndoAction(true);
   }, []);
 
@@ -89,7 +96,9 @@ export default function AquariumDesigner() {
 
   // Delete overlay function (defined before useEffect that references it)
   const handleDeleteOverlay = (overlayId: string) => {
-    saveToUndoStack(canvasState);
+    // Create a deep copy to avoid reference issues
+    const currentStateCopy = JSON.parse(JSON.stringify(canvasState));
+    saveToUndoStack(currentStateCopy);
     
     setCanvasState(prev => ({
       ...prev,
@@ -130,7 +139,9 @@ export default function AquariumDesigner() {
   }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, handleDeleteOverlay]);
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
-    saveToUndoStack(canvasState);
+    // Create a deep copy to avoid reference issues
+    const currentStateCopy = JSON.parse(JSON.stringify(canvasState));
+    saveToUndoStack(currentStateCopy);
     
     // Calculate proportional size while limiting maximum size
     const maxSize = 150;
@@ -182,7 +193,9 @@ export default function AquariumDesigner() {
                           updates.hasOwnProperty('height');
     
     if (shouldSaveUndo) {
-      saveToUndoStack(canvasState);
+      // Create a deep copy to avoid reference issues
+      const currentStateCopy = JSON.parse(JSON.stringify(canvasState));
+      saveToUndoStack(currentStateCopy);
     }
     
     setCanvasState(prev => ({
