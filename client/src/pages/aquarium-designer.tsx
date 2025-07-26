@@ -87,6 +87,9 @@ export default function AquariumDesigner() {
     }
   }, [undoStack]);
 
+  // Track last undo time to prevent rapid undo calls
+  const [lastUndoTime, setLastUndoTime] = useState(0);
+
   // Keyboard event handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -105,13 +108,19 @@ export default function AquariumDesigner() {
       // Ctrl+Z or Cmd+Z for undo (support both Windows/Linux and Mac)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey && canUndoAction) {
         e.preventDefault();
-        handleUndo();
+        
+        // Prevent rapid undo calls (throttle to max once per 200ms)
+        const now = Date.now();
+        if (now - lastUndoTime > 200) {
+          setLastUndoTime(now);
+          handleUndo();
+        }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, saveToUndoStack]);
+  }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, saveToUndoStack, lastUndoTime]);
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
     saveToUndoStack(canvasState);
