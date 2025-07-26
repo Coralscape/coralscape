@@ -74,7 +74,18 @@ export default function AquariumDesigner() {
 
   // Save specific action to undo stack
   const saveActionToUndo = useCallback((action: {type: string, data: any}) => {
-    setUndoStack(prev => [...prev.slice(-19), action]); // Keep last 20 actions
+    setUndoStack(prev => {
+      // Don't add duplicate actions
+      const lastAction = prev[prev.length - 1];
+      if (lastAction && 
+          lastAction.type === action.type && 
+          JSON.stringify(lastAction.data) === JSON.stringify(action.data)) {
+        return prev;
+      }
+      // Keep last 20 actions
+      const newStack = [...prev.slice(-19), action];
+      return newStack;
+    });
     setCanUndoAction(true);
   }, []);
 
@@ -82,30 +93,41 @@ export default function AquariumDesigner() {
   const handleUndo = useCallback(() => {
     if (undoStack.length > 0) {
       const lastAction = undoStack[undoStack.length - 1];
+      console.log('Undoing action:', lastAction.type, lastAction.data);
       
       // Reverse the action based on its type
       switch (lastAction.type) {
         case 'ADD_OVERLAY':
-          setCanvasState(prev => ({
-            ...prev,
-            overlays: prev.overlays.filter(overlay => overlay.id !== lastAction.data.id),
-            selectedOverlayId: null,
-          }));
+          setCanvasState(prev => {
+            const newOverlays = prev.overlays.filter(overlay => overlay.id !== lastAction.data.id);
+            return {
+              ...prev,
+              overlays: newOverlays,
+              selectedOverlayId: null,
+            };
+          });
           break;
           
         case 'DELETE_OVERLAY':
-          setCanvasState(prev => ({
-            ...prev,
-            overlays: [...prev.overlays, lastAction.data.overlay],
-            selectedOverlayId: lastAction.data.overlay.id,
-          }));
+          setCanvasState(prev => {
+            // Make sure the overlay doesn't already exist
+            const exists = prev.overlays.find(o => o.id === lastAction.data.overlay.id);
+            if (!exists) {
+              return {
+                ...prev,
+                overlays: [...prev.overlays, lastAction.data.overlay],
+                selectedOverlayId: lastAction.data.overlay.id,
+              };
+            }
+            return prev;
+          });
           break;
           
         case 'UPDATE_OVERLAY':
           setCanvasState(prev => ({
             ...prev,
             overlays: prev.overlays.map(overlay =>
-              overlay.id === lastAction.data.id ? lastAction.data.previousState : overlay
+              overlay.id === lastAction.data.id ? { ...lastAction.data.previousState } : overlay
             ),
           }));
           break;
@@ -224,6 +246,7 @@ export default function AquariumDesigner() {
     if (shouldSaveUndo) {
       const currentOverlay = canvasState.overlays.find(overlay => overlay.id === overlayId);
       if (currentOverlay) {
+        console.log('Saving update action for overlay:', overlayId, 'current state:', currentOverlay);
         saveActionToUndo({
           type: 'UPDATE_OVERLAY',
           data: { 

@@ -90,7 +90,9 @@ Preferred communication style: Simple, everyday language.
 - Added keyboard delete functionality (Delete/Backspace keys) to remove selected coral overlays
 - Implemented comprehensive undo system with Undo button and Ctrl+Z/Cmd+Z keyboard shortcuts
 - Fixed keyboard event handling to prevent conflicts with input fields and support Mac shortcuts
-- Undo tracks up to 20 recent states including coral additions, deletions, and transformations
+- Redesigned undo system to track individual actions instead of full canvas states
+- Undo now reverses single actions: add coral, delete coral, rotate, flip transformations
+- Added duplicate action detection and debugging to prevent multiple undos
 - Undo button appears next to zoom controls and shows enabled/disabled state
 
 ## System Architecture
