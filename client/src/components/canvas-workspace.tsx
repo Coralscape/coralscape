@@ -368,7 +368,15 @@ export default function CanvasWorkspace({
             <Button
               variant="ghost"
               size="sm"
-              onClick={onUndo}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onUndo();
+              }}
               disabled={!canUndo}
               className="flex items-center space-x-1 text-xs md:text-sm"
               title="Undo last action (Ctrl+Z)"

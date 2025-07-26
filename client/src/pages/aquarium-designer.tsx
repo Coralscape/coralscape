@@ -87,33 +87,47 @@ export default function AquariumDesigner() {
     }
   }, [undoStack]);
 
-  // Track last undo time to prevent rapid undo calls
-  const [lastUndoTime, setLastUndoTime] = useState(0);
+  // Delete overlay function (defined before useEffect that references it)
+  const handleDeleteOverlay = (overlayId: string) => {
+    saveToUndoStack(canvasState);
+    
+    setCanvasState(prev => ({
+      ...prev,
+      overlays: prev.overlays.filter(overlay => overlay.id !== overlayId),
+      selectedOverlayId: prev.selectedOverlayId === overlayId ? null : prev.selectedOverlayId,
+    }));
+  };
 
-  // Keyboard event handler
+  // Keyboard event handler with proper cleanup
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if user is typing in an input field
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      const target = e.target as Element;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true')) {
         return;
       }
       
       // Delete key to delete selected overlay
       if ((e.key === 'Delete' || e.key === 'Backspace') && canvasState.selectedOverlayId) {
         e.preventDefault();
+        e.stopPropagation();
         handleDeleteOverlay(canvasState.selectedOverlayId);
+        return;
       }
       
       // Ctrl+Z or Cmd+Z for undo (support both Windows/Linux and Mac)
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey && canUndoAction) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z') && !e.shiftKey && canUndoAction) {
         e.preventDefault();
+        e.stopPropagation();
         handleUndo();
+        return;
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [canvasState.selectedOverlayId, canUndoAction, handleUndo]);
+    // Add event listener with capture to catch events early
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
+  }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, handleDeleteOverlay]);
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
     saveToUndoStack(canvasState);
@@ -194,16 +208,6 @@ export default function AquariumDesigner() {
 
   const handlePanChange = (panX: number, panY: number) => {
     setCanvasState(prev => ({ ...prev, panX, panY }));
-  };
-
-  const handleDeleteOverlay = (overlayId: string) => {
-    saveToUndoStack(canvasState);
-    
-    setCanvasState(prev => ({
-      ...prev,
-      overlays: prev.overlays.filter(overlay => overlay.id !== overlayId),
-      selectedOverlayId: prev.selectedOverlayId === overlayId ? null : prev.selectedOverlayId,
-    }));
   };
 
   const handleSelectOverlay = (overlayId: string | null) => {
