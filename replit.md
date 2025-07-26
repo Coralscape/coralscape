@@ -100,6 +100,8 @@ Preferred communication style: Simple, everyday language.
 - Added HEIC file support for both tank images and custom coral uploads using heic2any library
 - HEIC files are automatically converted to JPEG format for web compatibility with user feedback
 - Successfully tested and working - users can now upload iPhone HEIC photos seamlessly
+- Implemented automatic coral randomization on page load - different corals appear each time the page opens
+- Removed 5-coral limit - sidebar now shows all filtered results in scrollable format
 
 ## System Architecture
 
