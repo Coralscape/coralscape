@@ -101,26 +101,19 @@ export default function AquariumDesigner() {
       // Delete key to delete selected overlay
       if ((e.key === 'Delete' || e.key === 'Backspace') && canvasState.selectedOverlayId) {
         e.preventDefault();
-        saveToUndoStack(canvasState);
         handleDeleteOverlay(canvasState.selectedOverlayId);
       }
       
       // Ctrl+Z or Cmd+Z for undo (support both Windows/Linux and Mac)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey && canUndoAction) {
         e.preventDefault();
-        
-        // Prevent rapid undo calls (throttle to max once per 200ms)
-        const now = Date.now();
-        if (now - lastUndoTime > 200) {
-          setLastUndoTime(now);
-          handleUndo();
-        }
+        handleUndo();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [canvasState.selectedOverlayId, canUndoAction, handleUndo, saveToUndoStack, lastUndoTime]);
+  }, [canvasState.selectedOverlayId, canUndoAction, handleUndo]);
 
   const handleAddOverlay = (coral: CoralData, position: { x: number; y: number }) => {
     saveToUndoStack(canvasState);
@@ -174,7 +167,7 @@ export default function AquariumDesigner() {
                           updates.hasOwnProperty('width') ||
                           updates.hasOwnProperty('height');
     
-    if (shouldSaveUndo && !undoStack.some(state => state === canvasState)) {
+    if (shouldSaveUndo) {
       saveToUndoStack(canvasState);
     }
     
@@ -204,9 +197,7 @@ export default function AquariumDesigner() {
   };
 
   const handleDeleteOverlay = (overlayId: string) => {
-    if (!undoStack.some(state => state === canvasState)) {
-      saveToUndoStack(canvasState);
-    }
+    saveToUndoStack(canvasState);
     
     setCanvasState(prev => ({
       ...prev,

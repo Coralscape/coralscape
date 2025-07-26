@@ -368,10 +368,7 @@ export default function CanvasWorkspace({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => {
-                // Add small delay to prevent rapid clicking
-                setTimeout(onUndo, 50);
-              }}
+              onClick={onUndo}
               disabled={!canUndo}
               className="flex items-center space-x-1 text-xs md:text-sm"
               title="Undo last action (Ctrl+Z)"
