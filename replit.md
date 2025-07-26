@@ -99,6 +99,7 @@ Preferred communication style: Simple, everyday language.
 - Coral overlays now properly release when mouse button is released during dragging
 - Added HEIC file support for both tank images and custom coral uploads using heic2any library
 - HEIC files are automatically converted to JPEG format for web compatibility with user feedback
+- Successfully tested and working - users can now upload iPhone HEIC photos seamlessly
 
 ## System Architecture
 
