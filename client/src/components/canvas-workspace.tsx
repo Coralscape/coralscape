@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback } from "react";
 import { useDrop } from "react-dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, ZoomIn, ZoomOut, RotateCw, FlipHorizontal, FlipVertical } from "lucide-react";
+import { Upload, ZoomIn, ZoomOut, RotateCw, FlipHorizontal, FlipVertical, Trash2 } from "lucide-react";
 import { CanvasState, OverlayData, CoralData } from "@shared/schema";
 
 interface CanvasWorkspaceProps {
@@ -13,6 +13,7 @@ interface CanvasWorkspaceProps {
   onAddOverlay: (coral: CoralData, position: { x: number; y: number }) => void;
   onZoomChange: (zoom: number) => void;
   onPanChange: (panX: number, panY: number) => void;
+  onDeleteOverlay: (overlayId: string) => void;
 }
 
 interface DraggableOverlayProps {
@@ -20,6 +21,7 @@ interface DraggableOverlayProps {
   isSelected: boolean;
   onUpdate: (updates: Partial<OverlayData>) => void;
   onSelect: () => void;
+  onDelete: () => void;
 }
 
 interface TransformControls {
@@ -28,7 +30,7 @@ interface TransformControls {
   flipV: boolean;
 }
 
-function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: DraggableOverlayProps) {
+function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete }: DraggableOverlayProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -215,6 +217,16 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect }: Draggable
             >
               <FlipVertical className="h-3 w-3" />
             </Button>
+            <div className="h-4 w-px bg-gray-300"></div>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-6 w-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={onDelete}
+              title="Delete Layer"
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
           </div>
         </>
       )}
@@ -230,6 +242,7 @@ export default function CanvasWorkspace({
   onAddOverlay,
   onZoomChange,
   onPanChange,
+  onDeleteOverlay,
 }: CanvasWorkspaceProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -445,6 +458,7 @@ export default function CanvasWorkspace({
                     isSelected={overlay.id === canvasState.selectedOverlayId}
                     onUpdate={(updates) => onUpdateOverlay(overlay.id, updates)}
                     onSelect={() => onSelectOverlay(overlay.id)}
+                    onDelete={() => onDeleteOverlay(overlay.id)}
                   />
                 ))}
                 

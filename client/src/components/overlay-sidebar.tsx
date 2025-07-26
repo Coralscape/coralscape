@@ -247,16 +247,40 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        const newCoral: CoralData = {
-          id: `custom-${Date.now()}`,
-          name: file.name.replace(/\.(jpg|jpeg|png|gif|webp)$/i, ''),
-          fullImageUrl: result,
-          thumbnailUrl: result,
-          width: 150,
-          height: 150,
+        
+        // Create an image element to get the actual dimensions
+        const img = new Image();
+        img.onload = () => {
+          // Calculate proportional size while limiting maximum size
+          const maxSize = 150;
+          const aspectRatio = img.width / img.height;
+          let newWidth = img.width;
+          let newHeight = img.height;
+          
+          if (newWidth > maxSize || newHeight > maxSize) {
+            if (aspectRatio > 1) {
+              // Wider than tall
+              newWidth = maxSize;
+              newHeight = maxSize / aspectRatio;
+            } else {
+              // Taller than wide
+              newHeight = maxSize;
+              newWidth = maxSize * aspectRatio;
+            }
+          }
+          
+          const newCoral: CoralData = {
+            id: `custom-${Date.now()}`,
+            name: file.name.replace(/\.(jpg|jpeg|png|gif|webp)$/i, ''),
+            fullImageUrl: result,
+            thumbnailUrl: result,
+            width: newWidth,
+            height: newHeight,
+          };
+          setCustomCorals(prev => [...prev, newCoral]);
+          console.log('Custom coral added:', newCoral.name, 'Dimensions:', newWidth, 'x', newHeight);
         };
-        setCustomCorals(prev => [...prev, newCoral]);
-        console.log('Custom coral added:', newCoral.name, 'Total:', customCorals.length + 1);
+        img.src = result;
       };
       reader.readAsDataURL(file);
     }

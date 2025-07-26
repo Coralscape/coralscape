@@ -84,6 +84,10 @@ Preferred communication style: Simple, everyday language.
 - Transform now combines zoom and pan using CSS translate for smooth movement
 - Auto-centers tank image when zooming back to 100% while preserving coral overlay positions
 - Moved export options to the very top of the right panel above layer controls header
+- Added trashcan delete icon next to mirror icons for direct layer deletion from canvas
+- Fixed custom images to use proportional sizing instead of fixed 150x150 dimensions
+- Custom coral uploads now maintain aspect ratio with automatic sizing calculations
+- Moved export options to the very top of the right panel above layer controls header
 
 ## System Architecture
 

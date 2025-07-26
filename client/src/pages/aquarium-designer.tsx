@@ -201,6 +201,7 @@ export default function AquariumDesigner() {
               onAddOverlay={handleAddOverlay}
               onZoomChange={handleZoomChange}
               onPanChange={handlePanChange}
+              onDeleteOverlay={handleDeleteOverlay}
             />
           </div>
           
