@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw, Search, Filter, Upload, X } from "lucide-react";
 import { CoralData } from "@shared/schema";
+import { convertHeicToJpeg, isSupportedImageFile } from "@/lib/heic-converter";
+import { useToast } from "@/hooks/use-toast";
 
 interface OverlaySidebarProps {
   coralData: CoralData[];
@@ -104,6 +106,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   const [randomSeed, setRandomSeed] = useState(0);
   const [customCorals, setCustomCorals] = useState<CoralData[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   // Extract available types from coral data
   const coralTypes = useMemo(() => {
@@ -241,49 +244,74 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     setRandomSeed(prev => prev + 1);
   };
 
-  const handleCustomUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCustomUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        
-        // Create an image element to get the actual dimensions
-        const img = new Image();
-        img.onload = () => {
-          // Calculate proportional size while limiting maximum size
-          const maxSize = 150;
-          const aspectRatio = img.width / img.height;
-          let newWidth = img.width;
-          let newHeight = img.height;
-          
-          if (newWidth > maxSize || newHeight > maxSize) {
-            if (aspectRatio > 1) {
-              // Wider than tall
-              newWidth = maxSize;
-              newHeight = maxSize / aspectRatio;
-            } else {
-              // Taller than wide
-              newHeight = maxSize;
-              newWidth = maxSize * aspectRatio;
-            }
-          }
-          
-          const newCoral: CoralData = {
-            id: `custom-${Date.now()}`,
-            name: file.name.replace(/\.(jpg|jpeg|png|gif|webp)$/i, ''),
-            fullImageUrl: result,
-            thumbnailUrl: result,
-            width: newWidth,
-            height: newHeight,
-          };
-          setCustomCorals(prev => [...prev, newCoral]);
-          console.log('Custom coral added:', newCoral.name, 'Dimensions:', newWidth, 'x', newHeight);
-        };
-        img.src = result;
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Check if file is supported
+    if (!isSupportedImageFile(file)) {
+      toast({
+        title: "Unsupported File Format",
+        description: "Please upload a JPEG, PNG, GIF, WebP, or HEIC image file.",
+        variant: "destructive",
+      });
+      return;
     }
+
+    try {
+      // Convert HEIC files or read regular images
+      const dataUrl = await convertHeicToJpeg(file);
+      
+      // Create an image element to get the actual dimensions
+      const img = new Image();
+      img.onload = () => {
+        // Calculate proportional size while limiting maximum size
+        const maxSize = 150;
+        const aspectRatio = img.width / img.height;
+        let newWidth = img.width;
+        let newHeight = img.height;
+        
+        if (newWidth > maxSize || newHeight > maxSize) {
+          if (aspectRatio > 1) {
+            // Wider than tall
+            newWidth = maxSize;
+            newHeight = maxSize / aspectRatio;
+          } else {
+            // Taller than wide
+            newHeight = maxSize;
+            newWidth = maxSize * aspectRatio;
+          }
+        }
+        
+        const newCoral: CoralData = {
+          id: `custom-${Date.now()}`,
+          name: file.name.replace(/\.(jpg|jpeg|png|gif|webp|heic|heif)$/i, ''),
+          fullImageUrl: dataUrl,
+          thumbnailUrl: dataUrl,
+          width: newWidth,
+          height: newHeight,
+        };
+        setCustomCorals(prev => [...prev, newCoral]);
+        console.log('Custom coral added:', newCoral.name, 'Dimensions:', newWidth, 'x', newHeight);
+        
+        if (file.name.toLowerCase().includes('.heic') || file.name.toLowerCase().includes('.heif')) {
+          toast({
+            title: "HEIC File Converted",
+            description: "Your HEIC coral image has been successfully converted and added.",
+          });
+        }
+      };
+      img.src = dataUrl;
+      
+    } catch (error) {
+      console.error('Custom coral upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload coral image. Please try again.",
+        variant: "destructive",
+      });
+    }
+    
     // Clear the input value so the same file can be uploaded again
     if (event.target) {
       event.target.value = '';
@@ -416,7 +444,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/*,.heic,.heif"
                 onChange={handleCustomUpload}
                 className="hidden"
               />

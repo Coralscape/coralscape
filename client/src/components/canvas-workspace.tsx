@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, ZoomIn, ZoomOut, RotateCw, FlipHorizontal, FlipVertical, Trash2, Undo } from "lucide-react";
 import { CanvasState, OverlayData, CoralData } from "@shared/schema";
+import { convertHeicToJpeg, isSupportedImageFile } from "@/lib/heic-converter";
+import { useToast } from "@/hooks/use-toast";
 
 interface CanvasWorkspaceProps {
   canvasState: CanvasState;
@@ -283,15 +285,40 @@ export default function CanvasWorkspace({
     }),
   }));
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const { toast } = useToast();
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        onBaseImageUpload(result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Check if file is supported
+    if (!isSupportedImageFile(file)) {
+      toast({
+        title: "Unsupported File Format",
+        description: "Please upload a JPEG, PNG, GIF, WebP, or HEIC image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Convert HEIC files or read regular images
+      const dataUrl = await convertHeicToJpeg(file);
+      onBaseImageUpload(dataUrl);
+      
+      if (file.name.toLowerCase().includes('.heic') || file.name.toLowerCase().includes('.heif')) {
+        toast({
+          title: "HEIC File Converted",
+          description: "Your HEIC image has been successfully converted and uploaded.",
+        });
+      }
+    } catch (error) {
+      console.error('File upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload image. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -444,7 +471,7 @@ export default function CanvasWorkspace({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,.heic,.heif"
               onChange={handleFileUpload}
               className="hidden"
             />
