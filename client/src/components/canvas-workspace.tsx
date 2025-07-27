@@ -537,7 +537,7 @@ export default function CanvasWorkspace({
                     }}
                   >
                     <img 
-                      src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
+                      src="https://i.ibb.co/Q3rT38fX/Screen-Shot-2025-07-27-at-7-34-03-PM.png"
                       alt="CoralScape"
                       className="w-full h-auto opacity-80"
                       onError={(e) => {
