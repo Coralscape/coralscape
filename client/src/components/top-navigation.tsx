@@ -67,7 +67,7 @@ export default function TopNavigation({
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center space-x-2 md:space-x-4">
           <img 
-            src="https://i.ibb.co/Z6g9TGRC/Screen-Shot-2024-03-05-at-1-43-18-AM.png"
+            src="https://i.ibb.co/Q3rT38fX/Screen-Shot-2025-07-27-at-7-34-03-PM.png"
             alt="CoralScape"
             className="h-12 md:h-15 w-auto"
             onError={(e) => {
