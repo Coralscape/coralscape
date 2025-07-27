@@ -138,7 +138,16 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     const regularTypes = entries.filter(([type]) => type !== 'color wheel').sort();
     const colorWheelType = entries.filter(([type]) => type === 'color wheel');
     
-    return [...regularTypes, ...colorWheelType];
+    // Always include color wheel type even if count is 0, but only if there are no actual color wheel items
+    const finalTypes = [...regularTypes];
+    if (colorWheelType.length > 0) {
+      finalTypes.push(...colorWheelType);
+    } else {
+      // Add color wheel with 0 count if no items found but we want to show the filter
+      finalTypes.push(['color wheel', 0]);
+    }
+    
+    return finalTypes;
   }, [coralData]);
 
   // Get subcategories based on selected main type
