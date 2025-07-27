@@ -68,6 +68,9 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
             {coral.name.toLowerCase().includes('clam') && (
               <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">Clam</Badge>
             )}
+            {coral.name.toLowerCase().includes('anemone') && (
+              <Badge variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">Anemone</Badge>
+            )}
             
             {/* Detect and show colors */}
             {coral.name.toLowerCase().includes('green') && (
@@ -119,6 +122,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
       if (name.includes('soft')) typeCounts['soft'] = (typeCounts['soft'] || 0) + 1;
       if (name.includes('zoa')) typeCounts['zoa'] = (typeCounts['zoa'] || 0) + 1;
       if (name.includes('clam')) typeCounts['clam'] = (typeCounts['clam'] || 0) + 1;
+      if (name.includes('anemone')) typeCounts['anemone'] = (typeCounts['anemone'] || 0) + 1;
     });
     
     return Object.entries(typeCounts);

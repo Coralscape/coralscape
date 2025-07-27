@@ -102,6 +102,8 @@ Preferred communication style: Simple, everyday language.
 - Successfully tested and working - users can now upload iPhone HEIC photos seamlessly
 - Implemented automatic coral randomization on page load - different corals appear each time the page opens
 - Reverted sidebar to show 5 specimens in scrollable format
+- Added anemone filter category to type dropdown with pink badge styling
+- Updated coral type detection to identify anemones in specimen names
 
 ## System Architecture
 
