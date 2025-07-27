@@ -165,7 +165,7 @@ export default function AquariumDesigner() {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if user is typing in an input field
       const target = e.target as Element;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true')) {
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || (target as HTMLElement).contentEditable === 'true')) {
         return;
       }
       
