@@ -183,6 +183,9 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
         if (name.includes('finger')) subTypeCounts['finger'] = (subTypeCounts['finger'] || 0) + 1;
         if (name.includes('tree')) subTypeCounts['tree'] = (subTypeCounts['tree'] || 0) + 1;
         if (name.includes('xenia')) subTypeCounts['xenia'] = (subTypeCounts['xenia'] || 0) + 1;
+        if (name.includes('toadstool')) subTypeCounts['toadstool'] = (subTypeCounts['toadstool'] || 0) + 1;
+        if (name.includes('colt')) subTypeCounts['colt'] = (subTypeCounts['colt'] || 0) + 1;
+        if (name.includes('sinularia')) subTypeCounts['sinularia'] = (subTypeCounts['sinularia'] || 0) + 1;
       });
     } else if (typeFilter === 'zoa') {
       filteredData.forEach(coral => {
@@ -233,8 +236,23 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
     let filtered = coralData.filter(coral => {
       const name = coral.name.toLowerCase();
       const matchesSearch = name.includes(searchTerm.toLowerCase());
-      const matchesType = typeFilter === "all" || name.includes(typeFilter);
-      const matchesSubType = subTypeFilter === "all" || name.includes(subTypeFilter);
+      
+      // Handle type filtering
+      let matchesType = typeFilter === "all";
+      if (!matchesType) {
+        matchesType = name.includes(typeFilter);
+      }
+      
+      // Handle subtype filtering - if subtype is selected, only check subtype (not main type)
+      let matchesSubType = subTypeFilter === "all";
+      if (!matchesSubType) {
+        matchesSubType = name.includes(subTypeFilter);
+        // If a subtype is selected, we only need to match the subtype, not the main type
+        if (subTypeFilter !== "all") {
+          matchesType = true; // Override type matching when subtype is selected
+        }
+      }
+      
       const matchesColor = colorFilter === "all" || name.includes(colorFilter);
       
       return matchesSearch && matchesType && matchesSubType && matchesColor;
