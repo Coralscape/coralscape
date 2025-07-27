@@ -161,6 +161,19 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
         if (name.includes('plate')) subTypeCounts['plate'] = (subTypeCounts['plate'] || 0) + 1;
         if (name.includes('brain')) subTypeCounts['brain'] = (subTypeCounts['brain'] || 0) + 1;
         if (name.includes('elegance')) subTypeCounts['elegance'] = (subTypeCounts['elegance'] || 0) + 1;
+        if (name.includes('micromussa')) subTypeCounts['micromussa'] = (subTypeCounts['micromussa'] || 0) + 1;
+        if (name.includes('trachy')) subTypeCounts['trachy'] = (subTypeCounts['trachy'] || 0) + 1;
+        if (name.includes('trachyphyllia')) subTypeCounts['trachyphyllia'] = (subTypeCounts['trachyphyllia'] || 0) + 1;
+        if (name.includes('chalice')) subTypeCounts['chalice'] = (subTypeCounts['chalice'] || 0) + 1;
+        if (name.includes('duncan')) subTypeCounts['duncan'] = (subTypeCounts['duncan'] || 0) + 1;
+        if (name.includes('goniopora')) subTypeCounts['goniopora'] = (subTypeCounts['goniopora'] || 0) + 1;
+        if (name.includes('alveopora')) subTypeCounts['alveopora'] = (subTypeCounts['alveopora'] || 0) + 1;
+        if (name.includes('lobophyllia')) subTypeCounts['lobophyllia'] = (subTypeCounts['lobophyllia'] || 0) + 1;
+        if (name.includes('symphyllia')) subTypeCounts['symphyllia'] = (subTypeCounts['symphyllia'] || 0) + 1;
+        if (name.includes('scolymia')) subTypeCounts['scolymia'] = (subTypeCounts['scolymia'] || 0) + 1;
+        if (name.includes('acanthophyllia')) subTypeCounts['acanthophyllia'] = (subTypeCounts['acanthophyllia'] || 0) + 1;
+        if (name.includes('cynarina')) subTypeCounts['cynarina'] = (subTypeCounts['cynarina'] || 0) + 1;
+        if (name.includes('catalaphyllia')) subTypeCounts['catalaphyllia'] = (subTypeCounts['catalaphyllia'] || 0) + 1;
       });
     } else if (typeFilter === 'soft') {
       filteredData.forEach(coral => {

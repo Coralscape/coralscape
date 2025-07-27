@@ -105,6 +105,7 @@ Preferred communication style: Simple, everyday language.
 - Added anemone filter category to type dropdown with pink badge styling
 - Updated coral type detection to identify anemones in specimen names
 - Added NPS (Non-Photosynthetic) filter category with red badge styling for NPS corals
+- Expanded LPS subtype filters to include micromussa, trachy, chalice, duncan, goniopora, alveopora, lobophyllia, symphyllia, scolymia, acanthophyllia, cynarina, and catalaphyllia
 
 ## System Architecture
 
