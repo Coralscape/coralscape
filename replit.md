@@ -104,6 +104,7 @@ Preferred communication style: Simple, everyday language.
 - Reverted sidebar to show 5 specimens in scrollable format
 - Added anemone filter category to type dropdown with pink badge styling
 - Updated coral type detection to identify anemones in specimen names
+- Added NPS (Non-Photosynthetic) filter category with red badge styling for NPS corals
 
 ## System Architecture
 
