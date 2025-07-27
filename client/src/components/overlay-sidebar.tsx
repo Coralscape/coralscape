@@ -74,6 +74,9 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
             {coral.name.toLowerCase().includes('nps') && (
               <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">NPS</Badge>
             )}
+            {coral.name.toLowerCase().includes('color wheel') && (
+              <Badge variant="outline" className="text-xs bg-rainbow-50 text-rainbow-700 border-rainbow-200">Color Wheel</Badge>
+            )}
             
             {/* Detect and show colors */}
             {coral.name.toLowerCase().includes('green') && (
@@ -127,9 +130,15 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
       if (name.includes('clam')) typeCounts['clam'] = (typeCounts['clam'] || 0) + 1;
       if (name.includes('anemone')) typeCounts['anemone'] = (typeCounts['anemone'] || 0) + 1;
       if (name.includes('nps')) typeCounts['nps'] = (typeCounts['nps'] || 0) + 1;
+      if (name.includes('color wheel')) typeCounts['color wheel'] = (typeCounts['color wheel'] || 0) + 1;
     });
     
-    return Object.entries(typeCounts);
+    // Sort alphabetically but put "color wheel" at the end
+    const entries = Object.entries(typeCounts);
+    const regularTypes = entries.filter(([type]) => type !== 'color wheel').sort();
+    const colorWheelType = entries.filter(([type]) => type === 'color wheel');
+    
+    return [...regularTypes, ...colorWheelType];
   }, [coralData]);
 
   // Get subcategories based on selected main type
