@@ -123,6 +123,9 @@ Preferred communication style: Simple, everyday language.
 - Enhanced coral transform controls popup (trash, rotate, mirror icons) with dark mode styling
 - Transform controls now use proper background, border, and text colors for better visibility in dark mode
 - Delete button maintains red color scheme with appropriate dark mode variants
+- Fixed selected coral layer controls panel with dark mode styling for "Selected:" box and all labels
+- Updated all text colors in layer controls to use proper foreground/muted-foreground classes
+- Export section labels now properly styled for dark mode visibility
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
 
 ## System Architecture

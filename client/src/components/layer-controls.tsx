@@ -64,7 +64,7 @@ export default function LayerControls({
           
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
-              <Label className="text-xs text-gray-500 mb-1">Format</Label>
+              <Label className="text-xs text-muted-foreground mb-1">Format</Label>
               <Select defaultValue="png">
                 <SelectTrigger className="text-sm">
                   <SelectValue />
@@ -77,7 +77,7 @@ export default function LayerControls({
               </Select>
             </div>
             <div>
-              <Label className="text-xs text-gray-500 mb-1">Quality</Label>
+              <Label className="text-xs text-muted-foreground mb-1">Quality</Label>
               <Select defaultValue="high">
                 <SelectTrigger className="text-sm">
                   <SelectValue />
@@ -113,8 +113,8 @@ export default function LayerControls({
       
       <ScrollArea className="flex-1 p-4 space-y-6">
         {selectedOverlay && (
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-gray-900 mb-3 flex items-center">
+          <div className="bg-card border border-border rounded-lg p-4">
+            <h3 className="font-medium text-foreground mb-3 flex items-center">
               <MousePointer className="text-primary mr-2 h-4 w-4" />
               Selected: <span className="ml-1">{selectedOverlay.name}</span>
             </h3>
@@ -122,10 +122,10 @@ export default function LayerControls({
             <div className="space-y-4">
               {/* Position Controls */}
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2">Position</Label>
+                <Label className="text-sm font-medium text-foreground mb-2">Position</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-xs text-gray-500 mb-1">X</Label>
+                    <Label className="text-xs text-muted-foreground mb-1">X</Label>
                     <Input
                       type="number"
                       value={selectedOverlay.x}
@@ -134,7 +134,7 @@ export default function LayerControls({
                     />
                   </div>
                   <div>
-                    <Label className="text-xs text-gray-500 mb-1">Y</Label>
+                    <Label className="text-xs text-muted-foreground mb-1">Y</Label>
                     <Input
                       type="number"
                       value={selectedOverlay.y}
@@ -147,10 +147,10 @@ export default function LayerControls({
 
               {/* Size Controls */}
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2">Size</Label>
+                <Label className="text-sm font-medium text-foreground mb-2">Size</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-xs text-gray-500 mb-1">Width</Label>
+                    <Label className="text-xs text-muted-foreground mb-1">Width</Label>
                     <Input
                       type="number"
                       value={selectedOverlay.width}
@@ -159,7 +159,7 @@ export default function LayerControls({
                     />
                   </div>
                   <div>
-                    <Label className="text-xs text-gray-500 mb-1">Height</Label>
+                    <Label className="text-xs text-muted-foreground mb-1">Height</Label>
                     <Input
                       type="number"
                       value={selectedOverlay.height}
@@ -170,7 +170,7 @@ export default function LayerControls({
                 </div>
                 <div className="flex items-center mt-2">
                   <Checkbox id="maintain-ratio" defaultChecked />
-                  <Label htmlFor="maintain-ratio" className="ml-2 text-sm text-gray-600">
+                  <Label htmlFor="maintain-ratio" className="ml-2 text-sm text-muted-foreground">
                     Maintain aspect ratio
                   </Label>
                 </div>
@@ -178,7 +178,7 @@ export default function LayerControls({
 
               {/* Opacity Control */}
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2">Opacity</Label>
+                <Label className="text-sm font-medium text-foreground mb-2">Opacity</Label>
                 <Slider
                   value={[selectedOverlay.opacity * 100]}
                   onValueChange={(value) => onUpdateOverlay(selectedOverlay.id, { opacity: value[0] / 100 })}
@@ -186,7 +186,7 @@ export default function LayerControls({
                   step={1}
                   className="w-full"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
                   <span>0%</span>
                   <span>{Math.round(selectedOverlay.opacity * 100)}%</span>
                   <span>100%</span>
@@ -195,7 +195,7 @@ export default function LayerControls({
 
               {/* Layer Order Controls */}
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2">Layer Order</Label>
+                <Label className="text-sm font-medium text-foreground mb-2">Layer Order</Label>
                 <div className="flex space-x-2">
                   <Button
                     variant="outline"
