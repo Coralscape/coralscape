@@ -108,7 +108,7 @@ Preferred communication style: Simple, everyday language.
 - Expanded LPS subtype filters to include micromussa, trachy, chalice, duncan, goniopora, alveopora, lobophyllia, symphyllia, scolymia, acanthophyllia, cynarina, and catalaphyllia
 - Fixed coral filtering logic to properly handle type/subtype hierarchical relationships
 - Added "color wheel" type filter positioned at bottom of alphabetical type list for color wheel images
-- Updated top navigation logo to new image: https://i.ibb.co/Q3rT38fX/Screen-Shot-2025-07-27-at-7-34-03-PM.png
+- Updated top navigation logo to new image: https://i.ibb.co/KcqLs8LM/Screen-Shot-2025-07-27-at-8-11-42-PM.png
 - Updated watermark image to match new logo while maintaining 20% width sizing in canvas and export
 
 ## System Architecture
