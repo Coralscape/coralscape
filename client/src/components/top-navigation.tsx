@@ -98,7 +98,7 @@ export default function TopNavigation({
             onClick={toggleTheme}
             className="hidden sm:flex items-center space-x-2"
           >
-            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
             <span className="text-sm capitalize">{theme}</span>
           </Button>
         </div>

@@ -488,14 +488,14 @@ export default function CanvasWorkspace({
                 (canvasRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
               }
             }}
-            className={`canvas-workspace relative bg-white rounded-xl shadow-lg ${
-              canvasState.baseImage ? '' : 'border-2 border-dashed border-gray-300 min-h-[600px]'
+            className={`canvas-workspace relative bg-background rounded-xl shadow-lg ${
+              canvasState.baseImage ? '' : 'border-2 border-dashed border-border min-h-[600px]'
             } flex items-center justify-center overflow-hidden ${isOver ? 'drop-zone-active' : ''}`}
             onClick={handleCanvasClick}
           >
             {canvasState.baseImage ? (
               <div 
-                className="relative flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg"
+                className="relative flex items-center justify-center border-2 border-dashed border-border rounded-lg"
                 style={{
                   width: 'fit-content',
                   height: 'fit-content',
@@ -554,13 +554,13 @@ export default function CanvasWorkspace({
               </div>
             ) : (
               <div className="text-center p-12">
-                <div className="text-gray-400 mb-4">
+                <div className="text-muted-foreground mb-4">
                   <svg className="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Upload Your Tank Image</h3>
-                <p className="text-gray-600 mb-6">Drop your aquarium image here or click to browse</p>
+                <h3 className="text-xl font-semibold text-foreground mb-2">Upload Your Tank Image</h3>
+                <p className="text-muted-foreground mb-6">Drop your aquarium image here or click to browse</p>
                 <Button onClick={() => fileInputRef.current?.click()}>
                   Choose File
                 </Button>
