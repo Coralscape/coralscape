@@ -398,7 +398,7 @@ export default function CanvasWorkspace({
 
 
   return (
-    <main className="flex-1 bg-muted flex flex-col">
+    <main className="flex-1 bg-muted dark:bg-black flex flex-col">
       <div className="bg-background border-b border-border px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-base md:text-lg font-semibold text-foreground">Tank Workspace</h2>

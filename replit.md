@@ -126,6 +126,8 @@ Preferred communication style: Simple, everyday language.
 - Fixed selected coral layer controls panel with dark mode styling for "Selected:" box and all labels
 - Updated all text colors in layer controls to use proper foreground/muted-foreground classes
 - Export section labels now properly styled for dark mode visibility
+- Made tank workspace background black in dark mode for better contrast
+- Updated export options section background to black in dark mode
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
 
 ## System Architecture

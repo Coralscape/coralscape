@@ -55,7 +55,7 @@ export default function LayerControls({
   return (
     <aside className="w-80 bg-background border-l border-border flex flex-col">
       {/* Export Section - At the very top */}
-      <div className="border-b border-border p-4 bg-muted">
+      <div className="border-b border-border p-4 bg-muted dark:bg-black">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-medium text-foreground">Export Options</h3>
