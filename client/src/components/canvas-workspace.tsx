@@ -163,7 +163,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
           />
           
           {/* Transform Controls */}
-          <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex items-center space-x-2">
+          <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-background border border-border rounded-lg shadow-lg p-2 flex items-center space-x-2">
             <div className="flex items-center space-x-1">
               <div
                 className="relative cursor-pointer"
@@ -199,19 +199,19 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
                 onClick={() => onUpdate({ rotation: ((overlay.rotation || 0) + 10) % 360 })}
                 title="Drag to rotate smoothly, click for 10°"
               >
-                <div className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors">
-                  <RotateCw className="h-3 w-3" />
+                <div className="w-6 h-6 flex items-center justify-center border border-border rounded hover:bg-muted transition-colors">
+                  <RotateCw className="h-3 w-3 text-foreground" />
                 </div>
               </div>
-              <span className="text-xs text-gray-500 min-w-[35px]">
+              <span className="text-xs text-muted-foreground min-w-[35px]">
                 {Math.round(overlay.rotation || 0)}°
               </span>
             </div>
-            <div className="h-4 w-px bg-gray-300"></div>
+            <div className="h-4 w-px bg-border"></div>
             <Button
               size="sm"
               variant="ghost"
-              className="h-6 w-6 p-0"
+              className="h-6 w-6 p-0 text-foreground hover:bg-muted"
               onClick={() => onUpdate({ 
                 flipH: !(overlay.flipH || false)
               })}
@@ -222,7 +222,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
             <Button
               size="sm"
               variant="ghost"
-              className="h-6 w-6 p-0"
+              className="h-6 w-6 p-0 text-foreground hover:bg-muted"
               onClick={() => onUpdate({ 
                 flipV: !(overlay.flipV || false)
               })}
@@ -230,11 +230,11 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
             >
               <FlipVertical className="h-3 w-3" />
             </Button>
-            <div className="h-4 w-px bg-gray-300"></div>
+            <div className="h-4 w-px bg-border"></div>
             <Button
               size="sm"
               variant="ghost"
-              className="h-6 w-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="h-6 w-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20"
               onClick={onDelete}
               title="Delete Layer"
             >

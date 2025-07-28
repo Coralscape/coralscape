@@ -120,6 +120,9 @@ Preferred communication style: Simple, everyday language.
 - Layer Controls header text now properly displays white in dark mode
 - Updated upload tank image box styling for dark mode with proper text and border colors
 - Fixed dashed border colors to use border-border class for consistent dark mode appearance
+- Enhanced coral transform controls popup (trash, rotate, mirror icons) with dark mode styling
+- Transform controls now use proper background, border, and text colors for better visibility in dark mode
+- Delete button maintains red color scheme with appropriate dark mode variants
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
 
 ## System Architecture
