@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Loader2, Plug, Settings, HelpCircle, CheckCircle2, Layers, Mail, Coffee, Palette } from "lucide-react";
+import { Loader2, Plug, Settings, HelpCircle, CheckCircle2, Layers, Mail, Coffee, Palette, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 interface TopNavigationProps {
   onConnect: () => void;
@@ -15,6 +16,7 @@ export default function TopNavigation({
   isConnected,
 }: TopNavigationProps) {
   const [colorWheelUrl, setColorWheelUrl] = useState<string>('');
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     // Fetch color wheel from Google Sheets
@@ -63,7 +65,7 @@ export default function TopNavigation({
     fetchColorWheel();
   }, []);
   return (
-    <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 shadow-sm">
+    <header className="bg-background border-b border-border px-4 md:px-6 py-3 md:py-4 shadow-sm">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center space-x-2 md:space-x-4">
           <img 
@@ -82,12 +84,21 @@ export default function TopNavigation({
           <Button
             variant="outline"
             size="sm"
-            className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 hidden sm:flex"
+            className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200 dark:hover:bg-yellow-900/30 hidden sm:flex"
             onClick={() => window.open('https://buymeacoffee.com/coralscape', '_blank')}
           >
             <span className="mr-2">🪸</span>
             <span className="hidden md:inline">Buy me a frag</span>
             <span className="md:hidden">🪸</span>
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleTheme}
+            className="hidden sm:flex"
+          >
+            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Button>
         </div>
         

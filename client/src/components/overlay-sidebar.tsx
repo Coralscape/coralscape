@@ -384,9 +384,9 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   };
 
   return (
-    <aside className="w-full md:w-80 bg-white border-r md:border-r border-b md:border-b-0 border-gray-200 flex flex-col">
-      <div className="p-3 md:p-4 border-b border-gray-200">
-        <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">Corals & Inverts</h2>
+    <aside className="w-full md:w-80 bg-background border-r md:border-r border-b md:border-b-0 border-border flex flex-col">
+      <div className="p-3 md:p-4 border-b border-border">
+        <h2 className="text-base md:text-lg font-semibold text-foreground mb-2 md:mb-3">Corals & Inverts</h2>
         
         <Tabs defaultValue="database" className="w-full">
           <TabsList className="grid w-full grid-cols-2">

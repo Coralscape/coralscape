@@ -53,12 +53,12 @@ export default function LayerControls({
   const sortedOverlays = [...canvasState.overlays].sort((a, b) => b.layer - a.layer);
 
   return (
-    <aside className="w-80 bg-white border-l border-gray-200 flex flex-col">
+    <aside className="w-80 bg-background border-l border-border flex flex-col">
       {/* Export Section - At the very top */}
-      <div className="border-b border-gray-200 p-4 bg-gray-50">
+      <div className="border-b border-border p-4 bg-muted">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-medium text-gray-900">Export Options</h3>
+            <h3 className="font-medium text-foreground">Export Options</h3>
             <Badge variant="secondary" className="bg-green-100 text-green-800">Ready</Badge>
           </div>
           
@@ -101,7 +101,7 @@ export default function LayerControls({
             {isExporting ? 'Exporting...' : 'Export Tank Design'}
           </Button>
           
-          <div className="text-xs text-gray-500 text-center">
+          <div className="text-xs text-muted-foreground text-center">
             Final image will include watermark and all coral layers
           </div>
         </div>
@@ -234,7 +234,7 @@ export default function LayerControls({
 
         {/* Layer List */}
         <div>
-          <h3 className="font-medium text-gray-900 mb-3 flex items-center justify-between">
+          <h3 className="font-medium text-foreground mb-3 flex items-center justify-between">
             <span>
               <Layers className="text-accent mr-2 h-4 w-4 inline" />
               All Layers
@@ -249,16 +249,16 @@ export default function LayerControls({
                 className={`flex items-center p-3 rounded-md cursor-pointer transition-colors ${
                   overlay.id === canvasState.selectedOverlayId
                     ? 'bg-primary bg-opacity-10 border-l-4 border-primary'
-                    : 'bg-gray-50 hover:bg-gray-100'
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
                 onClick={() => onSelectOverlay(overlay.id)}
               >
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <Eye className={`h-3 w-3 ${overlay.id === canvasState.selectedOverlayId ? 'text-primary' : 'text-gray-400'}`} />
-                    <span className="text-sm font-medium text-gray-900">{overlay.name}</span>
+                    <span className="text-sm font-medium text-foreground">{overlay.name}</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-muted-foreground mt-1">
                     Layer {overlay.layer + 1} • {overlay.width}x{overlay.height}px
                   </div>
                 </div>
@@ -271,7 +271,7 @@ export default function LayerControls({
             ))}
 
             {canvasState.baseImage && (
-              <div className="flex items-center p-3 bg-gray-50 rounded-md">
+              <div className="flex items-center p-3 bg-muted rounded-md">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <Image className="h-3 w-3 text-gray-400" />

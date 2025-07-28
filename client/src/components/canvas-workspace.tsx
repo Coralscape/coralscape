@@ -398,10 +398,10 @@ export default function CanvasWorkspace({
 
 
   return (
-    <main className="flex-1 bg-gray-100 flex flex-col">
-      <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 md:py-4">
+    <main className="flex-1 bg-muted flex flex-col">
+      <div className="bg-background border-b border-border px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <h2 className="text-base md:text-lg font-semibold text-gray-900">Tank Workspace</h2>
+          <h2 className="text-base md:text-lg font-semibold text-foreground">Tank Workspace</h2>
           <div className="flex items-center space-x-2 md:space-x-3">
             <Button
               variant="ghost"
@@ -422,8 +422,8 @@ export default function CanvasWorkspace({
               <Undo className="h-4 w-4" />
               <span className="hidden sm:inline">Undo</span>
             </Button>
-            <div className="h-4 w-px bg-gray-300"></div>
-            <div className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm text-gray-600">
+            <div className="h-4 w-px bg-border"></div>
+            <div className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm text-muted-foreground">
               <span>Zoom:</span>
               <Button variant="ghost" size="sm" className="p-1" onClick={handleZoomOut}>
                 <ZoomOut className="h-4 w-4" />
