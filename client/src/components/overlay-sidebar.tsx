@@ -34,7 +34,7 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
   return (
     <div
       ref={drag}
-      className={`group cursor-grab active:cursor-grabbing bg-gray-50 hover:bg-gray-100 rounded-lg p-3 border border-transparent hover:border-primary transition-all ${
+      className={`group cursor-grab active:cursor-grabbing bg-card hover:bg-muted rounded-lg p-3 border border-transparent hover:border-primary transition-all ${
         isDragging ? 'opacity-50' : ''
       }`}
     >
@@ -42,15 +42,15 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
         <img
           src={coral.thumbnailUrl}
           alt={coral.name}
-          className="w-16 h-16 rounded-lg object-cover border border-gray-200"
+          className="w-16 h-16 rounded-lg object-cover border border-border"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yOCAyOEgzNlYzNkgyOFYyOFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
           }}
         />
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-gray-900 truncate">{coral.name}</h3>
-          <p className="text-sm text-gray-500">{coral.width}x{coral.height}</p>
+          <h3 className="font-medium text-foreground truncate">{coral.name}</h3>
+          <p className="text-sm text-muted-foreground">{coral.width}x{coral.height}</p>
           <div className="flex items-center gap-1 mt-1 flex-wrap">
             {/* Detect and show coral type */}
             {coral.name.toLowerCase().includes('sps') && (

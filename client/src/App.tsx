@@ -18,7 +18,7 @@ function Router() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="coralscape-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="coralscape-ui-theme">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />

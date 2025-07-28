@@ -111,9 +111,12 @@ Preferred communication style: Simple, everyday language.
 - Updated top navigation logo to new image: https://i.ibb.co/KcqLs8LM/Screen-Shot-2025-07-27-at-8-11-42-PM.png
 - Updated watermark image to match new logo while maintaining 20% width sizing in canvas and export
 - Implemented comprehensive light/dark mode toggle system with theme provider and localStorage persistence
-- Added theme toggle button with moon/sun icons positioned next to "Buy me a frag" button in top navigation
+- Set dark mode as the default theme on app startup with fallback to user's saved preference
+- Added theme toggle button with moon/sun icons and text labels positioned next to "Buy me a frag" button
 - Applied dark mode styling throughout all components using Tailwind CSS dark variants
 - Dark mode features deeper black backgrounds (hsl(240, 10%, 3.9%)) with high contrast for better visibility
+- Updated coral card backgrounds to use dark theme colors (bg-card, text-foreground, border-border)
+- Layer Controls header text now properly displays white in dark mode
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
 
 ## System Architecture
