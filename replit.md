@@ -128,6 +128,8 @@ Preferred communication style: Simple, everyday language.
 - Export section labels now properly styled for dark mode visibility
 - Made tank workspace background black in dark mode for better contrast
 - Updated export options section background to black in dark mode
+- Added auto-zoom to 100% functionality before export - canvas automatically resets to 100% zoom and centers when export button is clicked
+- Export now ensures consistent sizing regardless of current zoom level for accurate final images
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
 
 ## System Architecture

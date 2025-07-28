@@ -17,6 +17,8 @@ interface LayerControlsProps {
   onUpdateOverlay: (overlayId: string, updates: Partial<OverlayData>) => void;
   onDeleteOverlay: (overlayId: string) => void;
   onSelectOverlay: (overlayId: string | null) => void;
+  onZoomChange: (zoom: number) => void;
+  onPanChange: (panX: number, panY: number) => void;
 }
 
 export default function LayerControls({
@@ -25,6 +27,8 @@ export default function LayerControls({
   onUpdateOverlay,
   onDeleteOverlay,
   onSelectOverlay,
+  onZoomChange,
+  onPanChange,
 }: LayerControlsProps) {
   const { exportCanvas, isExporting, showSuccessPopup, closeSuccessPopup } = useCanvasExport();
 
@@ -44,6 +48,14 @@ export default function LayerControls({
     e.preventDefault();
     e.stopPropagation();
     try {
+      // Auto-zoom to 100% before export if not already at 100%
+      if (canvasState.zoom !== 1) {
+        onZoomChange(1);
+        onPanChange(0, 0); // Reset pan position to center
+        // Small delay to let the zoom change take effect
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
       await exportCanvas(canvasState);
     } catch (error) {
       console.error('Export failed:', error);

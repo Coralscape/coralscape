@@ -390,6 +390,8 @@ export default function AquariumDesigner() {
               onUpdateOverlay={handleUpdateOverlay}
               onDeleteOverlay={handleDeleteOverlay}
               onSelectOverlay={handleSelectOverlay}
+              onZoomChange={handleZoomChange}
+              onPanChange={handlePanChange}
             />
           </div>
         </div>
