@@ -500,7 +500,7 @@ export default function CanvasWorkspace({
                   width: 'fit-content',
                   height: 'fit-content',
                   transform: `scale(${canvasState.zoom}) translate(${canvasState.panX / canvasState.zoom}px, ${canvasState.panY / canvasState.zoom}px)`,
-                  transformOrigin: 'center',
+                  transformOrigin: canvasState.zoom < 1 ? 'top center' : 'center',
                 }}
               >
                 <img

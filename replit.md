@@ -130,6 +130,8 @@ Preferred communication style: Simple, everyday language.
 - Updated export options section background to black in dark mode
 - Added auto-zoom to 100% functionality before export - canvas automatically resets to 100% zoom and centers when export button is clicked
 - Export now ensures consistent sizing regardless of current zoom level for accurate final images
+- Modified zoom behavior to anchor tank image at top when zooming out (below 100%) for easier viewing without scrolling
+- Tank image stays centered when zooming in (above 100%) and anchored at top when zooming out
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
 
 ## System Architecture
