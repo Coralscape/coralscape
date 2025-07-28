@@ -132,6 +132,8 @@ Preferred communication style: Simple, everyday language.
 - Export now ensures consistent sizing regardless of current zoom level for accurate final images
 - Modified zoom behavior to anchor tank image at top when zooming out (below 100%) for easier viewing without scrolling
 - Tank image stays centered when zooming in (above 100%) and anchored at top when zooming out
+- Added click functionality to coral images - clicking a coral now places it in the center of the tank image
+- Coral images support both click-to-place and drag-and-drop positioning for user convenience
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
 
 ## System Architecture

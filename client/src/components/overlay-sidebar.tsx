@@ -31,12 +31,34 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
     }),
   }));
 
+  const handleClick = () => {
+    // Find the tank image to calculate center position
+    const tankImage = document.querySelector('.canvas-workspace img');
+    if (tankImage) {
+      const rect = tankImage.getBoundingClientRect();
+      const canvasRect = document.querySelector('.canvas-workspace')?.getBoundingClientRect();
+      
+      if (canvasRect) {
+        // Calculate center position relative to the canvas workspace
+        const centerX = (rect.left + rect.width / 2) - canvasRect.left;
+        const centerY = (rect.top + rect.height / 2) - canvasRect.top;
+        
+        onAddOverlay(coral, { x: centerX, y: centerY });
+      }
+    } else {
+      // If no tank image, place at a default center position
+      onAddOverlay(coral, { x: 300, y: 200 });
+    }
+  };
+
   return (
     <div
       ref={drag}
-      className={`group cursor-grab active:cursor-grabbing bg-card hover:bg-muted rounded-lg p-3 border border-transparent hover:border-primary transition-all ${
+      onClick={handleClick}
+      className={`group cursor-pointer hover:cursor-grab active:cursor-grabbing bg-card hover:bg-muted rounded-lg p-3 border border-transparent hover:border-primary transition-all ${
         isDragging ? 'opacity-50' : ''
       }`}
+      title="Click to place in tank center or drag to position"
     >
       <div className="flex items-center space-x-3">
         <img
