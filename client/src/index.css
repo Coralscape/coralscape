@@ -157,13 +157,29 @@
 
 /* Mobile scroll bar - shifts content instead of overlaying */
 @media (max-width: 1024px) {
+  /* Hide all webkit scrollbars completely */
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+  }
+  
+  html {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    overflow-y: scroll !important; /* Force scroll space reservation */
+  }
+  
   body {
-    padding-right: 20px;
+    padding-right: 20px !important; /* Static padding for scroll indicator space */
     touch-action: pan-y; /* Allow vertical scrolling but prevent zoom */
     -webkit-text-size-adjust: 100%; /* Prevent text size adjustment */
     -webkit-touch-callout: none; /* Disable callout */
     -webkit-user-select: none; /* Disable selection */
     user-select: none;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
   
   /* Prevent zoom on form elements */
@@ -173,44 +189,40 @@
   }
   
   .mobile-scroll-indicator {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 20px;
-    height: 100vh;
-    background: white;
-    z-index: 9999;
-    pointer-events: auto;
-    opacity: 1;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .mobile-scroll-indicator:hover {
-    opacity: 1;
-    width: 20px;
-    background: white;
-  }
-  
-  .mobile-scroll-indicator:hover ~ * {
-    padding-right: 20px;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 20px !important;
+    min-width: 20px !important;
+    max-width: 20px !important;
+    height: 100vh !important;
+    background: white !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    border-left: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-sizing: border-box !important;
   }
   
   .mobile-scroll-indicator::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 3px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 2px;
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 4px !important;
+    height: 50px !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-radius: 2px !important;
   }
   
-  .mobile-scroll-indicator:hover::before {
-    background: rgba(0, 0, 0, 0.5);
-    height: 60px;
-    width: 4px;
+  /* Ensure no hover effects or dynamic changes */
+  .mobile-scroll-indicator:hover,
+  .mobile-scroll-indicator:active,
+  .mobile-scroll-indicator:focus {
+    width: 20px !important;
+    background: white !important;
+    opacity: 1 !important;
   }
 }
 
