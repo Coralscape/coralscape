@@ -400,7 +400,7 @@ export default function CanvasWorkspace({
   return (
     <main className="flex-1 bg-muted dark:bg-black flex flex-col">
       <div className="bg-background border-b border-border px-2 lg:px-4 py-2 lg:py-3">
-        <div className="flex items-center justify-end flex-wrap gap-2">
+        <div className="flex items-center justify-center lg:justify-end flex-wrap gap-2">
           <div className="flex items-center space-x-1 lg:space-x-2">
             <Button
               variant="ghost"
