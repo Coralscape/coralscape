@@ -389,8 +389,8 @@ export default function AquariumDesigner() {
 
         {/* Mobile/Tablet layout */}
         <div className="lg:hidden flex flex-col h-screen">
-          {/* Logo bar with buy me a frag button - 5% */}
-          <div className="h-[5vh] min-h-[40px]">
+          {/* Logo bar with buy me a frag button - 7.5% */}
+          <div className="h-[7.5vh] min-h-[50px]">
             <TopNavigation
               onConnect={handleConnect}
               isConnecting={connectSheetsMutation.isPending}
@@ -398,8 +398,8 @@ export default function AquariumDesigner() {
             />
           </div>
           
-          {/* Corals & Inverts section - 35% (increased from 30% since no export section) */}
-          <div className="h-[35vh] border-b border-border">
+          {/* Corals & Inverts section - 32.5% (adjusted to account for larger logo bar) */}
+          <div className="h-[32.5vh] border-b border-border">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
