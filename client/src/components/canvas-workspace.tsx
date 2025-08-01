@@ -399,10 +399,9 @@ export default function CanvasWorkspace({
 
   return (
     <main className="flex-1 bg-muted dark:bg-black flex flex-col">
-      <div className="bg-background border-b border-border px-4 md:px-6 py-3 md:py-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <h2 className="text-base md:text-lg font-semibold text-foreground">Tank Workspace</h2>
-          <div className="flex items-center space-x-2 md:space-x-3">
+      <div className="bg-background border-b border-border px-2 lg:px-4 py-2 lg:py-3">
+        <div className="flex items-center justify-end flex-wrap gap-2">
+          <div className="flex items-center space-x-1 lg:space-x-2">
             <Button
               variant="ghost"
               size="sm"
@@ -463,10 +462,11 @@ export default function CanvasWorkspace({
             <Button
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
-              className="whitespace-nowrap"
+              className="whitespace-nowrap text-xs lg:text-sm px-2 lg:px-3 py-1 lg:py-2"
             >
-              <Upload className="mr-2 h-4 w-4" />
-              Upload Tank Image
+              <Upload className="mr-1 lg:mr-2 h-3 lg:h-4 w-3 lg:w-4" />
+              <span className="hidden sm:inline">Upload Tank</span>
+              <span className="sm:hidden">Upload</span>
             </Button>
             <input
               ref={fileInputRef}
@@ -479,7 +479,7 @@ export default function CanvasWorkspace({
         </div>
       </div>
       
-      <div className="flex-1 p-3 md:p-6 overflow-auto">
+      <div className="flex-1 p-1 lg:p-3 overflow-auto">
         <div className="max-w-4xl mx-auto">
           <div
             ref={(node) => {
@@ -559,7 +559,7 @@ export default function CanvasWorkspace({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">Upload Your Tank Image</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-2">Upload Tank</h3>
                 <p className="text-muted-foreground mb-6">Drop your aquarium image here or click to browse</p>
                 <Button onClick={() => fileInputRef.current?.click()}>
                   Choose File
