@@ -51,3 +51,15 @@ Preferred communication style: Simple, everyday language.
 ### Image Processing
 - **HTML5 Canvas API**: Utilized for client-side image manipulation and composition.
 - **Blob/File APIs**: For image export and download functionality.
+
+## Recent Changes
+- Added click functionality to coral images - clicking a coral now places it in the center of the tank image
+- Coral images support both click-to-place and drag-and-drop positioning for user convenience
+- Redesigned layout for mobile/tablet devices with precise percentage breakdown:
+  * Logo bar: 5% height (minimum 40px)
+  * Corals & Inverts section: 30% height with full coral library access
+  * Tank workspace: 60% height for main design work
+  * Export section: 5% height (minimum 40px) with centered export button
+- Created compact mode for LayerControls showing only export functionality on mobile
+- Maintained desktop layout with full three-panel sidebar design for large screens
+- All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
