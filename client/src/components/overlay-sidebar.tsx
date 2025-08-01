@@ -15,14 +15,16 @@ interface OverlaySidebarProps {
   coralData: CoralData[];
   isLoading: boolean;
   onAddOverlay: (coral: CoralData, position: { x: number; y: number }) => void;
+  isMobileCompact?: boolean;
 }
 
 interface DraggableCoralItemProps {
   coral: CoralData;
   onAddOverlay: (coral: CoralData, position: { x: number; y: number }) => void;
+  isCompact?: boolean;
 }
 
-function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
+function DraggableCoralItem({ coral, onAddOverlay, isCompact = false }: DraggableCoralItemProps) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'coral',
     item: { coral },
@@ -55,71 +57,71 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
     <div
       ref={drag}
       onClick={handleClick}
-      className={`group cursor-pointer hover:cursor-grab active:cursor-grabbing bg-card hover:bg-muted rounded-lg p-3 border border-transparent hover:border-primary transition-all ${
+      className={`group cursor-pointer hover:cursor-grab active:cursor-grabbing bg-card hover:bg-muted rounded-lg ${isCompact ? 'p-2' : 'p-3'} border border-transparent hover:border-primary transition-all ${
         isDragging ? 'opacity-50' : ''
       }`}
       title="Click to place in tank center or drag to position"
     >
-      <div className="flex items-center space-x-3">
+      <div className={`flex items-center ${isCompact ? 'space-x-2' : 'space-x-3'}`}>
         <img
           src={coral.thumbnailUrl}
           alt={coral.name}
-          className="w-16 h-16 rounded-lg object-cover border border-border"
+          className={`${isCompact ? 'w-12 h-12' : 'w-16 h-16'} rounded-lg object-cover border border-border`}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yOCAyOEgzNlYzNkgyOFYyOFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
           }}
         />
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-foreground truncate">{coral.name}</h3>
-          <p className="text-sm text-muted-foreground">{coral.width}x{coral.height}</p>
-          <div className="flex items-center gap-1 mt-1 flex-wrap">
+          <h3 className={`font-medium text-foreground truncate ${isCompact ? 'text-sm' : ''}`}>{coral.name}</h3>
+          <p className={`${isCompact ? 'text-xs' : 'text-sm'} text-muted-foreground`}>{coral.width}x{coral.height}</p>
+          <div className={`flex items-center gap-1 ${isCompact ? 'mt-0.5' : 'mt-1'} flex-wrap`}>
             {/* Detect and show coral type */}
             {coral.name.toLowerCase().includes('sps') && (
-              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">SPS</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-blue-50 text-blue-700 border-blue-200`}>SPS</Badge>
             )}
             {coral.name.toLowerCase().includes('lps') && (
-              <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">LPS</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-purple-50 text-purple-700 border-purple-200`}>LPS</Badge>
             )}
             {coral.name.toLowerCase().includes('soft') && (
-              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Soft</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-green-50 text-green-700 border-green-200`}>Soft</Badge>
             )}
             {coral.name.toLowerCase().includes('zoa') && (
-              <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">Zoa</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-yellow-50 text-yellow-700 border-yellow-200`}>Zoa</Badge>
             )}
             {coral.name.toLowerCase().includes('clam') && (
-              <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">Clam</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-indigo-50 text-indigo-700 border-indigo-200`}>Clam</Badge>
             )}
             {coral.name.toLowerCase().includes('anemone') && (
-              <Badge variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">Anemone</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-pink-50 text-pink-700 border-pink-200`}>Anemone</Badge>
             )}
             {coral.name.toLowerCase().includes('nps') && (
-              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">NPS</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-red-50 text-red-700 border-red-200`}>NPS</Badge>
             )}
             {(coral.name.toLowerCase().includes('color wheel') || coral.name.toLowerCase().includes('color-wheel')) && (
-              <Badge variant="outline" className="text-xs bg-rainbow-50 text-rainbow-700 border-rainbow-200">Color Wheel</Badge>
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-rainbow-50 text-rainbow-700 border-rainbow-200`}>Color Wheel</Badge>
             )}
             
-            {/* Detect and show colors */}
-            {coral.name.toLowerCase().includes('green') && (
+            {/* Detect and show colors - hide some in compact mode to save space */}
+            {!isCompact && coral.name.toLowerCase().includes('green') && (
               <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">Green</Badge>
             )}
-            {coral.name.toLowerCase().includes('blue') && (
+            {!isCompact && coral.name.toLowerCase().includes('blue') && (
               <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">Blue</Badge>
             )}
-            {coral.name.toLowerCase().includes('red') && (
+            {!isCompact && coral.name.toLowerCase().includes('red') && (
               <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">Red</Badge>
             )}
-            {coral.name.toLowerCase().includes('pink') && (
+            {!isCompact && coral.name.toLowerCase().includes('pink') && (
               <Badge variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">Pink</Badge>
             )}
-            {coral.name.toLowerCase().includes('purple') && (
+            {!isCompact && coral.name.toLowerCase().includes('purple') && (
               <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">Purple</Badge>
             )}
-            {coral.name.toLowerCase().includes('yellow') && (
+            {!isCompact && coral.name.toLowerCase().includes('yellow') && (
               <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">Yellow</Badge>
             )}
-            {coral.name.toLowerCase().includes('orange') && (
+            {!isCompact && coral.name.toLowerCase().includes('orange') && (
               <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">Orange</Badge>
             )}
           </div>
@@ -129,7 +131,7 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
   );
 }
 
-export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: OverlaySidebarProps) {
+export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, isMobileCompact = false }: OverlaySidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [subTypeFilter, setSubTypeFilter] = useState("all");
@@ -406,37 +408,39 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
   };
 
   return (
-    <aside className="w-full md:w-80 bg-background border-r md:border-r border-b md:border-b-0 border-border flex flex-col">
-      <div className="p-3 md:p-4 border-b border-border">
-        <h2 className="text-base md:text-lg font-semibold text-foreground mb-2 md:mb-3">Corals & Inverts</h2>
+    <aside className={`w-full md:w-80 bg-background border-r md:border-r border-b md:border-b-0 border-border flex flex-col ${isMobileCompact ? 'h-full' : ''}`}>
+      <div className={`${isMobileCompact ? 'p-2' : 'p-3 md:p-4'} border-b border-border`}>
+        <h2 className={`${isMobileCompact ? 'text-sm' : 'text-base md:text-lg'} font-semibold text-foreground ${isMobileCompact ? 'mb-1' : 'mb-2 md:mb-3'}`}>Corals & Inverts</h2>
         
         <Tabs defaultValue="database" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="database">Database</TabsTrigger>
-            <TabsTrigger value="custom">Custom ({customCorals.length})</TabsTrigger>
+            <TabsTrigger value="database" className={isMobileCompact ? 'text-xs py-1' : ''}>Database</TabsTrigger>
+            <TabsTrigger value="custom" className={isMobileCompact ? 'text-xs py-1' : ''}>Custom ({customCorals.length})</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="database" className="mt-3">
-            {/* Search Input */}
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search corals & inverts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 text-sm"
-              />
-            </div>
+          <TabsContent value="database" className={isMobileCompact ? 'mt-1' : 'mt-3'}>
+            {/* Search Input - hidden in mobile compact mode */}
+            {!isMobileCompact && (
+              <div className="relative mb-3">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search corals & inverts..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 text-sm"
+                />
+              </div>
+            )}
 
             {/* Filters */}
-            <div className="space-y-2 mb-3">
+            <div className={`${isMobileCompact ? 'space-y-1 mb-1' : 'space-y-2 mb-3'}`}>
               {/* Main Type Filter */}
               <Select value={typeFilter} onValueChange={(value) => {
                 setTypeFilter(value);
                 setSubTypeFilter("all"); // Reset subtype when main type changes
               }}>
-                <SelectTrigger className="text-sm">
+                <SelectTrigger className={`${isMobileCompact ? 'text-xs h-8' : 'text-sm'}`}>
                   <SelectValue placeholder="Select Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -453,7 +457,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
               {availableSubTypes.length > 0 && (
                 <div className="relative">
                   <Select value={subTypeFilter} onValueChange={setSubTypeFilter}>
-                    <SelectTrigger className="text-sm ml-4 border-l-4 border-primary/30">
+                    <SelectTrigger className={`${isMobileCompact ? 'text-xs h-8 ml-2 border-l-2' : 'text-sm ml-4 border-l-4'} border-primary/30`}>
                       <SelectValue placeholder="Select Subtype" />
                     </SelectTrigger>
                     <SelectContent>
@@ -465,13 +469,13 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                       ))}
                     </SelectContent>
                   </Select>
-                  <div className="absolute left-0 top-1/2 w-3 h-px bg-primary/30 transform -translate-y-1/2"></div>
+                  <div className={`absolute left-0 top-1/2 ${isMobileCompact ? 'w-2' : 'w-3'} h-px bg-primary/30 transform -translate-y-1/2`}></div>
                 </div>
               )}
               
               {/* Color Filter */}
               <Select value={colorFilter} onValueChange={setColorFilter}>
-                <SelectTrigger className="text-sm">
+                <SelectTrigger className={`${isMobileCompact ? 'text-xs h-8' : 'text-sm'}`}>
                   <SelectValue placeholder="Select Color" />
                 </SelectTrigger>
                 <SelectContent>
@@ -486,12 +490,12 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
             </div>
 
             {/* Clear filters and randomize buttons */}
-            <div className="flex justify-between items-center mb-3">
+            <div className={`flex justify-between items-center ${isMobileCompact ? 'mb-1' : 'mb-3'}`}>
               {(searchTerm || typeFilter !== "all" || subTypeFilter !== "all" || colorFilter !== "all") && (
                 <Button 
                   variant="ghost" 
-                  size="sm" 
-                  className="text-gray-500 hover:text-gray-700 h-auto p-1"
+                  size={isMobileCompact ? "sm" : "sm"}
+                  className={`text-gray-500 hover:text-gray-700 h-auto ${isMobileCompact ? 'p-0.5 text-xs' : 'p-1'}`}
                   onClick={() => {
                     setSearchTerm("");
                     setTypeFilter("all");
@@ -504,24 +508,24 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
               )}
               <Button 
                 variant="ghost" 
-                size="sm" 
-                className="text-primary hover:text-primary/80 h-auto p-1"
+                size={isMobileCompact ? "sm" : "sm"}
+                className={`text-primary hover:text-primary/80 h-auto ${isMobileCompact ? 'p-0.5 text-xs' : 'p-1'}`}
                 onClick={handleRandomize}
               >
-                <RefreshCw className="mr-1 h-3 w-3" />
+                <RefreshCw className={`${isMobileCompact ? 'mr-0.5 h-2.5 w-2.5' : 'mr-1 h-3 w-3'}`} />
                 Randomize
               </Button>
             </div>
           </TabsContent>
           
-          <TabsContent value="custom" className="mt-3">
-            <div className="space-y-3">
+          <TabsContent value="custom" className={isMobileCompact ? 'mt-1' : 'mt-3'}>
+            <div className={isMobileCompact ? 'space-y-1' : 'space-y-3'}>
               <Button
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full"
+                className={`w-full ${isMobileCompact ? 'text-xs h-8' : ''}`}
               >
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className={`${isMobileCompact ? 'mr-1 h-3 w-3' : 'mr-2 h-4 w-4'}`} />
                 Upload Coral Image
               </Button>
               <input
@@ -533,26 +537,27 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
               />
               
               {customCorals.length === 0 && (
-                <p className="text-sm text-gray-500 text-center py-4">
+                <p className={`text-gray-500 text-center ${isMobileCompact ? 'text-xs py-2' : 'text-sm py-4'}`}>
                   Upload your own coral images to add them to your design
                 </p>
               )}
               
               {/* Show uploaded custom corals here too */}
-              <div className="space-y-3">
+              <div className={isMobileCompact ? 'space-y-1' : 'space-y-3'}>
                 {customCorals.map((coral) => (
                   <div key={coral.id} className="relative">
                     <DraggableCoralItem
                       coral={coral}
                       onAddOverlay={onAddOverlay}
+                      isCompact={isMobileCompact}
                     />
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="absolute top-1 right-1 h-6 w-6 p-0 bg-white shadow-sm"
+                      className={`absolute top-1 right-1 ${isMobileCompact ? 'h-5 w-5 p-0' : 'h-6 w-6 p-0'} bg-white shadow-sm`}
                       onClick={() => removeCustomCoral(coral.id)}
                     >
-                      <X className="h-3 w-3" />
+                      <X className={`${isMobileCompact ? 'h-2.5 w-2.5' : 'h-3 w-3'}`} />
                     </Button>
                   </div>
                 ))}
@@ -562,34 +567,34 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
         </Tabs>
       </div>
       
-      <ScrollArea className="flex-1 p-3 md:p-4">
+      <ScrollArea className={`flex-1 ${isMobileCompact ? 'p-1' : 'p-3 md:p-4'}`}>
         <Tabs defaultValue="database" className="w-full">
           <TabsContent value="database" className="mt-0">
             {isLoading ? (
-              <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="bg-gray-100 rounded-lg p-3 animate-pulse">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+              <div className={isMobileCompact ? 'space-y-1' : 'space-y-3'}>
+                {[...Array(isMobileCompact ? 3 : 5)].map((_, i) => (
+                  <div key={i} className={`bg-gray-100 rounded-lg ${isMobileCompact ? 'p-2' : 'p-3'} animate-pulse`}>
+                    <div className={`flex items-center ${isMobileCompact ? 'space-x-2' : 'space-x-3'}`}>
+                      <div className={`${isMobileCompact ? 'w-12 h-12' : 'w-16 h-16'} bg-gray-200 rounded-lg`}></div>
                       <div className="flex-1">
-                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                        <div className={`${isMobileCompact ? 'h-3' : 'h-4'} bg-gray-200 rounded ${isMobileCompact ? 'mb-1' : 'mb-2'}`}></div>
+                        <div className={`${isMobileCompact ? 'h-2.5' : 'h-3'} bg-gray-200 rounded w-1/2`}></div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : filteredCoralData.length === 0 && coralData.length > 0 ? (
-              <div className="text-center py-12">
+              <div className={`text-center ${isMobileCompact ? 'py-6' : 'py-12'}`}>
                 <div className="text-gray-400 mb-4">
-                  <Search className="mx-auto h-12 w-12" />
+                  <Search className={`mx-auto ${isMobileCompact ? 'h-8 w-8' : 'h-12 w-12'}`} />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Results Found</h3>
-                <p className="text-gray-600">Try adjusting your search or filters</p>
+                <h3 className={`${isMobileCompact ? 'text-sm' : 'text-lg'} font-medium text-gray-900 ${isMobileCompact ? 'mb-1' : 'mb-2'}`}>No Results Found</h3>
+                <p className={`text-gray-600 ${isMobileCompact ? 'text-xs' : ''}`}>Try adjusting your search or filters</p>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-3"
+                  className={`${isMobileCompact ? 'mt-2 text-xs h-7' : 'mt-3'}`}
                   onClick={() => {
                     setSearchTerm("");
                     setTypeFilter("all");
@@ -600,23 +605,24 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                 </Button>
               </div>
             ) : coralData.length === 0 ? (
-              <div className="text-center py-12">
+              <div className={`text-center ${isMobileCompact ? 'py-6' : 'py-12'}`}>
                 <div className="text-gray-400 mb-4">
-                  <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`mx-auto ${isMobileCompact ? 'h-8 w-8' : 'h-12 w-12'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-7l2 2-2 2M5 4l2 2-2 2" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Specimens Available</h3>
-                <p className="text-gray-600">Connect to Google Sheets to load coral and invertebrate data</p>
+                <h3 className={`${isMobileCompact ? 'text-sm' : 'text-lg'} font-medium text-gray-900 ${isMobileCompact ? 'mb-1' : 'mb-2'}`}>No Specimens Available</h3>
+                <p className={`text-gray-600 ${isMobileCompact ? 'text-xs' : ''}`}>Connect to Google Sheets to load coral and invertebrate data</p>
               </div>
             ) : (
-              <ScrollArea className="h-[400px]">
-                <div className="space-y-3 pr-3">
+              <ScrollArea className={isMobileCompact ? 'h-[300px]' : 'h-[400px]'}>
+                <div className={`${isMobileCompact ? 'space-y-1 pr-1' : 'space-y-3 pr-3'}`}>
                   {filteredCoralData.map((coral) => (
                     <DraggableCoralItem
                       key={coral.id}
                       coral={coral}
                       onAddOverlay={onAddOverlay}
+                      isCompact={isMobileCompact}
                     />
                   ))}
                 </div>

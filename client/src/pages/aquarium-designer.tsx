@@ -8,6 +8,8 @@ import TopNavigation from "@/components/top-navigation";
 import OverlaySidebar from "@/components/overlay-sidebar";
 import CanvasWorkspace from "@/components/canvas-workspace";
 import LayerControls from "@/components/layer-controls";
+import { Button } from "@/components/ui/button";
+import { Loader2, Plug, CheckCircle2 } from "lucide-react";
 import { CoralData, OverlayData, CanvasState } from "@shared/schema";
 import { fetchWatermarkFromSheets } from "@/lib/google-sheets";
 
@@ -340,32 +342,94 @@ export default function AquariumDesigner() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen bg-background">
-        <TopNavigation
-          onConnect={handleConnect}
-          isConnecting={connectSheetsMutation.isPending}
-          isConnected={isConnected}
-        />
+        {/* Desktop: Full TopNavigation */}
+        <div className="hidden lg:block">
+          <TopNavigation
+            onConnect={handleConnect}
+            isConnecting={connectSheetsMutation.isPending}
+            isConnected={isConnected}
+          />
+        </div>
         
-        <div className="flex flex-col md:flex-row h-[calc(100vh-80px)]">
-          {/* Mobile: Show sidebar above canvas */}
-          <div className="md:hidden max-h-48 overflow-y-auto">
+        {/* Mobile/Tablet: Compact header with logo and buy me a frag */}
+        <div className="lg:hidden bg-background border-b border-border px-2 py-2 shadow-sm h-[7.5vh] flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <img 
+              src="https://i.ibb.co/KcqLs8LM/Screen-Shot-2025-07-27-at-8-11-42-PM.png"
+              alt="CoralScape"
+              className="h-8 w-auto"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = '<h1 class="text-lg font-bold text-gray-900">CoralScape</h1>';
+                }
+              }}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200 dark:hover:bg-yellow-900/30 px-2 py-1 text-xs"
+              onClick={() => window.open('https://buymeacoffee.com/coralscape', '_blank')}
+            >
+              <span className="mr-1">🪸</span>
+              <span>Buy me a frag</span>
+            </Button>
+          </div>
+          
+          <Button
+            onClick={handleConnect}
+            disabled={connectSheetsMutation.isPending}
+            size="sm"
+            className={`whitespace-nowrap text-xs px-2 py-1 ${
+              isConnected 
+                ? "bg-green-600 hover:bg-green-700" 
+                : "bg-primary hover:bg-primary/90"
+            }`}
+          >
+            {connectSheetsMutation.isPending ? (
+              <>
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                Loading...
+              </>
+            ) : isConnected ? (
+              <>
+                <CheckCircle2 className="mr-1 h-3 w-3" />
+                Connected
+              </>
+            ) : (
+              <>
+                <Plug className="mr-1 h-3 w-3" />
+                Load DB
+              </>
+            )}
+          </Button>
+        </div>
+        
+        <div className="flex flex-col lg:flex-row h-[calc(100vh-7.5vh)] lg:h-[calc(100vh-80px)]">
+          {/* Mobile/Tablet: Compact sidebar with specific height allocation */}
+          <div className="lg:hidden h-[30vh] overflow-y-auto border-b border-border">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
               onAddOverlay={handleAddOverlay}
+              isMobileCompact={true}
             />
           </div>
 
           {/* Desktop: Show sidebar on left */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
               onAddOverlay={handleAddOverlay}
+              isMobileCompact={false}
             />
           </div>
           
-          <div className="flex-1 min-w-0">
+          {/* Canvas workspace - takes remaining space */}
+          <div className="flex-1 min-w-0 h-[62.5vh] lg:h-full">
             <CanvasWorkspace
               canvasState={canvasState}
               onUpdateOverlay={handleUpdateOverlay}
