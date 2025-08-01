@@ -615,7 +615,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, isM
                 <p className={`text-gray-600 ${isMobileCompact ? 'text-xs' : ''}`}>Connect to Google Sheets to load coral and invertebrate data</p>
               </div>
             ) : (
-              <ScrollArea className={isMobileCompact ? 'h-[calc(100vh-22vh)]' : 'h-[400px]'}>
+              <ScrollArea className={isMobileCompact ? 'h-[calc(53.5vh-100px)]' : 'h-[400px]'}>
                 <div className={`${isMobileCompact ? 'space-y-1 pr-1' : 'space-y-3 pr-3'}`}>
                   {filteredCoralData.map((coral) => (
                     <DraggableCoralItem

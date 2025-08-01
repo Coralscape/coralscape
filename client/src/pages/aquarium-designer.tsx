@@ -409,7 +409,7 @@ export default function AquariumDesigner() {
         
         <div className="flex flex-col lg:flex-row h-[calc(100vh-15vh)] lg:h-[calc(100vh-80px)]">
           {/* Mobile/Tablet: Compact sidebar with specific height allocation */}
-          <div className="lg:hidden h-[30vh] overflow-y-auto border-b border-border">
+          <div className="lg:hidden h-[53.5vh] overflow-y-auto border-b border-border">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
@@ -429,7 +429,7 @@ export default function AquariumDesigner() {
           </div>
           
           {/* Canvas workspace - takes remaining space */}
-          <div className="flex-1 min-w-0 h-[62.5vh] lg:h-full">
+          <div className="flex-1 min-w-0 h-[31.5vh] lg:h-full">
             <CanvasWorkspace
               canvasState={canvasState}
               onUpdateOverlay={handleUpdateOverlay}
