@@ -202,8 +202,9 @@ async function drawWatermark(ctx: CanvasRenderingContext2D, canvasWidth: number,
     // Use the specific CoralScape watermark image
     const watermarkImageUrl = "https://i.ibb.co/KcqLs8LM/Screen-Shot-2025-07-27-at-8-11-42-PM.png";
     
-    // Calculate watermark size (20% of canvas width)
-    const watermarkWidth = canvasWidth * 0.2;
+    // Calculate watermark size (30% on mobile, 20% on desktop)
+    const isMobile = window.innerWidth <= 1024;
+    const watermarkWidth = canvasWidth * (isMobile ? 0.3 : 0.2);
     
     // Position in bottom right
     const x = canvasWidth - watermarkWidth - 20;
