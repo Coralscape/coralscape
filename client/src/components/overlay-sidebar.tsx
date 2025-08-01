@@ -523,7 +523,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, isM
                     className="text-xs p-1 h-auto border-primary/20 bg-primary/5 text-primary"
                     disabled
                   >
-                    💡 Click on a Coral/Invert to drop onto your tank
+                    💡 Tap an image to add to tank
                   </Button>
                 )}
               </div>
