@@ -520,7 +520,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, isM
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="text-xs p-1 h-auto border-primary/20 bg-primary/5 text-primary"
+                    className="text-xs p-1 h-auto border-primary/20 bg-primary/5 text-primary hover:text-primary/80"
                     disabled
                   >
                     💡 Tap an image to add to tank
