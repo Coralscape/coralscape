@@ -432,9 +432,8 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
               </div>
             )}
 
-            {/* Filters - hidden on mobile/tablet */}
-            {!hideSearchBar && (
-              <div className="space-y-2 mb-3">
+            {/* Filters */}
+            <div className="space-y-2 mb-3">
               {/* Main Type Filter */}
               <Select value={typeFilter} onValueChange={(value) => {
                 setTypeFilter(value);
@@ -487,12 +486,10 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
                   ))}
                 </SelectContent>
               </Select>
-              </div>
-            )}
+            </div>
 
             {/* Clear filters and randomize buttons */}
-            {!hideSearchBar && (
-              <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-3">
                 {(searchTerm || typeFilter !== "all" || subTypeFilter !== "all" || colorFilter !== "all") && (
                   <Button 
                     variant="ghost" 
@@ -517,8 +514,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
                   <RefreshCw className="mr-1 h-3 w-3" />
                   Randomize
                 </Button>
-              </div>
-            )}
+            </div>
           </TabsContent>
           
           <TabsContent value="custom" className="mt-3">

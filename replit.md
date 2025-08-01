@@ -61,6 +61,6 @@ Preferred communication style: Simple, everyday language.
   * Tank workspace: 60% height for main design work
   * Removed export section on mobile - export functionality integrated into canvas workspace
 - Removed layer controls section entirely on mobile/tablet devices for cleaner interface
-- Hidden search bar and filters on mobile/tablet for simplified coral browsing
+- Hidden search input on mobile/tablet while keeping filter dropdowns for coral browsing
 - Maintained desktop layout with full three-panel sidebar design for large screens
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation

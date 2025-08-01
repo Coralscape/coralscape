@@ -84,7 +84,7 @@ export default function TopNavigation({
           <Button
             variant="outline"
             size="sm"
-            className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200 dark:hover:bg-yellow-900/30 hidden sm:flex"
+            className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200 dark:hover:bg-yellow-900/30"
             onClick={() => window.open('https://buymeacoffee.com/coralscape', '_blank')}
           >
             <span className="mr-2">🪸</span>
