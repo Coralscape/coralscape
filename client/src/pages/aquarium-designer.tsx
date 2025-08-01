@@ -389,7 +389,7 @@ export default function AquariumDesigner() {
 
         {/* Mobile/Tablet layout */}
         <div className="lg:hidden flex flex-col h-screen">
-          {/* Logo bar - 5% */}
+          {/* Logo bar with buy me a frag button - 5% */}
           <div className="h-[5vh] min-h-[40px]">
             <TopNavigation
               onConnect={handleConnect}
@@ -398,12 +398,13 @@ export default function AquariumDesigner() {
             />
           </div>
           
-          {/* Corals & Inverts section - 30% */}
-          <div className="h-[30vh] border-b border-border">
+          {/* Corals & Inverts section - 35% (increased from 30% since no export section) */}
+          <div className="h-[35vh] border-b border-border">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
               onAddOverlay={handleAddOverlay}
+              hideSearchBar={true}
             />
           </div>
           
@@ -422,20 +423,6 @@ export default function AquariumDesigner() {
               canUndo={canUndoAction}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
-            />
-          </div>
-          
-          {/* Export section - 5% */}
-          <div className="h-[5vh] min-h-[40px] border-t border-border bg-background px-4 flex items-center justify-center">
-            <LayerControls
-              canvasState={canvasState}
-              selectedOverlay={selectedOverlay}
-              onUpdateOverlay={handleUpdateOverlay}
-              onDeleteOverlay={handleDeleteOverlay}
-              onSelectOverlay={handleSelectOverlay}
-              onZoomChange={handleZoomChange}
-              onPanChange={handlePanChange}
-              compactMode={true}
             />
           </div>
         </div>

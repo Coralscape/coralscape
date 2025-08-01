@@ -15,6 +15,7 @@ interface OverlaySidebarProps {
   coralData: CoralData[];
   isLoading: boolean;
   onAddOverlay: (coral: CoralData, position: { x: number; y: number }) => void;
+  hideSearchBar?: boolean; // For mobile/tablet layout
 }
 
 interface DraggableCoralItemProps {
@@ -129,7 +130,7 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
   );
 }
 
-export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: OverlaySidebarProps) {
+export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hideSearchBar = false }: OverlaySidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [subTypeFilter, setSubTypeFilter] = useState("all");
@@ -417,20 +418,23 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
           </TabsList>
           
           <TabsContent value="database" className="mt-3">
-            {/* Search Input */}
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search corals & inverts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 text-sm"
-              />
-            </div>
+            {/* Search Input - hidden on mobile/tablet */}
+            {!hideSearchBar && (
+              <div className="relative mb-3">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search corals & inverts..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 text-sm"
+                />
+              </div>
+            )}
 
-            {/* Filters */}
-            <div className="space-y-2 mb-3">
+            {/* Filters - hidden on mobile/tablet */}
+            {!hideSearchBar && (
+              <div className="space-y-2 mb-3">
               {/* Main Type Filter */}
               <Select value={typeFilter} onValueChange={(value) => {
                 setTypeFilter(value);
@@ -483,35 +487,38 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay }: O
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+              </div>
+            )}
 
             {/* Clear filters and randomize buttons */}
-            <div className="flex justify-between items-center mb-3">
-              {(searchTerm || typeFilter !== "all" || subTypeFilter !== "all" || colorFilter !== "all") && (
+            {!hideSearchBar && (
+              <div className="flex justify-between items-center mb-3">
+                {(searchTerm || typeFilter !== "all" || subTypeFilter !== "all" || colorFilter !== "all") && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-500 hover:text-gray-700 h-auto p-1"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setTypeFilter("all");
+                      setSubTypeFilter("all");
+                      setColorFilter("all");
+                    }}
+                  >
+                    Clear
+                  </Button>
+                )}
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-gray-500 hover:text-gray-700 h-auto p-1"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setTypeFilter("all");
-                    setSubTypeFilter("all");
-                    setColorFilter("all");
-                  }}
+                  className="text-primary hover:text-primary/80 h-auto p-1"
+                  onClick={handleRandomize}
                 >
-                  Clear
+                  <RefreshCw className="mr-1 h-3 w-3" />
+                  Randomize
                 </Button>
-              )}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-primary hover:text-primary/80 h-auto p-1"
-                onClick={handleRandomize}
-              >
-                <RefreshCw className="mr-1 h-3 w-3" />
-                Randomize
-              </Button>
-            </div>
+              </div>
+            )}
           </TabsContent>
           
           <TabsContent value="custom" className="mt-3">

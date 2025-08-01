@@ -55,11 +55,12 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 - Added click functionality to coral images - clicking a coral now places it in the center of the tank image
 - Coral images support both click-to-place and drag-and-drop positioning for user convenience
-- Redesigned layout for mobile/tablet devices with precise percentage breakdown:
-  * Logo bar: 5% height (minimum 40px)
-  * Corals & Inverts section: 30% height with full coral library access
+- Redesigned layout for mobile/tablet devices with optimized percentage breakdown:
+  * Logo bar with "Buy me a frag" button: 5% height (minimum 40px)
+  * Corals & Inverts section: 35% height with simplified interface (no search/filters)
   * Tank workspace: 60% height for main design work
-  * Export section: 5% height (minimum 40px) with centered export button
-- Created compact mode for LayerControls showing only export functionality on mobile
+  * Removed export section on mobile - export functionality integrated into canvas workspace
+- Removed layer controls section entirely on mobile/tablet devices for cleaner interface
+- Hidden search bar and filters on mobile/tablet for simplified coral browsing
 - Maintained desktop layout with full three-panel sidebar design for large screens
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
