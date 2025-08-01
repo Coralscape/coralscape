@@ -57,6 +57,20 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
     onDragStart(); // Notify parent that drag started
   }, [overlay.x, overlay.y, onSelect, onDragStart]);
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.target !== e.currentTarget && !(e.target as HTMLElement).classList.contains('overlay-image')) {
+      return; // Don't start drag if touching resize handle
+    }
+    
+    e.preventDefault();
+    e.stopPropagation();
+    onSelect();
+    setIsDragging(true);
+    const touch = e.touches[0];
+    setDragStart({ x: touch.clientX - overlay.x, y: touch.clientY - overlay.y });
+    onDragStart(); // Notify parent that drag started
+  }, [overlay.x, overlay.y, onSelect, onDragStart]);
+
   const handleResizeMouseDown = useCallback((e: React.MouseEvent, direction: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -64,6 +78,19 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
     setResizeStart({
       x: e.clientX,
       y: e.clientY,
+      width: overlay.width,
+      height: overlay.height,
+    });
+  }, [overlay.width, overlay.height]);
+
+  const handleResizeTouchStart = useCallback((e: React.TouchEvent, direction: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    const touch = e.touches[0];
+    setResizeStart({
+      x: touch.clientX,
+      y: touch.clientY,
       width: overlay.width,
       height: overlay.height,
     });
@@ -91,9 +118,41 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         height: newHeight,
       });
     }
-  }, [isDragging, isResizing, dragStart, resizeStart, onUpdate]);
+  }, [isDragging, isResizing, dragStart, resizeStart, onUpdate, aspectRatio]);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    e.preventDefault(); // Prevent scrolling
+    const touch = e.touches[0];
+    if (isDragging) {
+      onUpdate({
+        x: Math.max(0, touch.clientX - dragStart.x),
+        y: Math.max(0, touch.clientY - dragStart.y),
+      });
+    } else if (isResizing) {
+      const deltaX = touch.clientX - resizeStart.x;
+      const deltaY = touch.clientY - resizeStart.y;
+      
+      // Maintain aspect ratio when resizing
+      const newWidth = Math.max(20, resizeStart.width + deltaX);
+      const newHeight = newWidth / aspectRatio;
+      
+      onUpdate({
+        width: newWidth,
+        height: newHeight,
+      });
+    }
+  }, [isDragging, isResizing, dragStart, resizeStart, onUpdate, aspectRatio]);
 
   const handleMouseUp = useCallback(() => {
+    const wasDragging = isDragging;
+    setIsDragging(false);
+    setIsResizing(false);
+    if (wasDragging) {
+      onDragEnd(); // Notify parent that drag ended
+    }
+  }, [isDragging, onDragEnd]);
+
+  const handleTouchEnd = useCallback(() => {
     const wasDragging = isDragging;
     setIsDragging(false);
     setIsResizing(false);
@@ -107,13 +166,17 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
     if (isDragging || isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
       
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
       };
     }
-  }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
+  }, [isDragging, isResizing, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
   return (
     <div
@@ -127,6 +190,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         zIndex: overlay.layer + 10,
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
       <img
         src={overlay.imageUrl}
@@ -148,18 +212,22 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
           <div
             className="resize-handle nw"
             onMouseDown={(e) => handleResizeMouseDown(e, 'nw')}
+            onTouchStart={(e) => handleResizeTouchStart(e, 'nw')}
           />
           <div
             className="resize-handle ne"
             onMouseDown={(e) => handleResizeMouseDown(e, 'ne')}
+            onTouchStart={(e) => handleResizeTouchStart(e, 'ne')}
           />
           <div
             className="resize-handle sw"
             onMouseDown={(e) => handleResizeMouseDown(e, 'sw')}
+            onTouchStart={(e) => handleResizeTouchStart(e, 'sw')}
           />
           <div
             className="resize-handle se"
             onMouseDown={(e) => handleResizeMouseDown(e, 'se')}
+            onTouchStart={(e) => handleResizeTouchStart(e, 'se')}
           />
           
           {/* Transform Controls */}
@@ -340,6 +408,19 @@ export default function CanvasWorkspace({
     }
   }, [canvasState.zoom, canvasState.panX, canvasState.panY]);
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    // Only start panning if touching the base image and zoomed in
+    if (canvasState.zoom > 1 && e.target instanceof HTMLImageElement) {
+      e.preventDefault();
+      setIsPanning(true);
+      const touch = e.touches[0];
+      setPanStart({ 
+        x: touch.clientX - canvasState.panX, 
+        y: touch.clientY - canvasState.panY 
+      });
+    }
+  }, [canvasState.zoom, canvasState.panX, canvasState.panY]);
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isPanning) {
       const newPanX = e.clientX - panStart.x;
@@ -348,21 +429,39 @@ export default function CanvasWorkspace({
     }
   }, [isPanning, panStart, onPanChange]);
 
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (isPanning) {
+      e.preventDefault(); // Prevent scrolling
+      const touch = e.touches[0];
+      const newPanX = touch.clientX - panStart.x;
+      const newPanY = touch.clientY - panStart.y;
+      onPanChange(newPanX, newPanY);
+    }
+  }, [isPanning, panStart, onPanChange]);
+
   const handleMouseUp = useCallback(() => {
     setIsPanning(false);
   }, []);
 
-  // Add event listeners for mouse move and up
+  const handleTouchEnd = useCallback(() => {
+    setIsPanning(false);
+  }, []);
+
+  // Add event listeners for mouse and touch move/up/end
   React.useEffect(() => {
     if (isPanning) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
       };
     }
-  }, [isPanning, handleMouseMove, handleMouseUp]);
+  }, [isPanning, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
   const handleZoomIn = () => {
     onZoomChange(Math.min(canvasState.zoom * 1.2, 3));
@@ -509,7 +608,8 @@ export default function CanvasWorkspace({
                   className={`rounded-lg block ${canvasState.zoom > 1 ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}`}
                   onClick={handleBaseImageClick}
                   onMouseDown={handleMouseDown}
-                  style={{ userSelect: 'none', pointerEvents: 'auto' }}
+                  onTouchStart={handleTouchStart}
+                  style={{ userSelect: 'none', pointerEvents: 'auto', touchAction: 'none' }}
                 />
                 
                 {/* Render overlays */}

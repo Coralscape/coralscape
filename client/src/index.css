@@ -60,10 +60,15 @@
 }
 
 /* Custom styles for aquarium designer */
+.canvas-workspace {
+  touch-action: none; /* Disable default touch behaviors for better custom handling */
+}
+
 .canvas-overlay {
   position: absolute;
   cursor: move;
   user-select: none;
+  touch-action: none;
 }
 
 .canvas-overlay.selected {
@@ -80,6 +85,34 @@
   border-radius: 50%;
   opacity: 0;
   transition: opacity 0.2s;
+}
+
+/* Larger touch targets for mobile devices */
+@media (hover: none) and (pointer: coarse) {
+  .canvas-overlay .resize-handle {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .canvas-overlay .resize-handle.nw {
+    top: -10px;
+    left: -10px;
+  }
+  
+  .canvas-overlay .resize-handle.ne {
+    top: -10px;
+    right: -10px;
+  }
+  
+  .canvas-overlay .resize-handle.sw {
+    bottom: -10px;
+    left: -10px;
+  }
+  
+  .canvas-overlay .resize-handle.se {
+    bottom: -10px;
+    right: -10px;
+  }
 }
 
 .canvas-overlay:hover .resize-handle,
