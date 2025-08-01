@@ -158,20 +158,19 @@
 /* Mobile scroll bar - shifts content instead of overlaying */
 @media (max-width: 1024px) {
   body {
-    padding-right: 15px;
+    padding-right: 20px;
   }
   
   .mobile-scroll-indicator {
     position: fixed;
     top: 0;
     right: 0;
-    width: 15px;
+    width: 20px;
     height: 100vh;
     background: white;
     z-index: 9999;
     pointer-events: auto;
     opacity: 1;
-    transition: all 0.3s ease;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
   }
   

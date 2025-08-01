@@ -30,6 +30,7 @@ interface DraggableOverlayProps {
   onDelete: () => void;
   onDragStart: () => void;
   onDragEnd: () => void;
+  zoom: number;
 }
 
 interface TransformControls {
@@ -38,7 +39,7 @@ interface TransformControls {
   flipV: boolean;
 }
 
-function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, onDragStart, onDragEnd }: DraggableOverlayProps) {
+function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, onDragStart, onDragEnd, zoom }: DraggableOverlayProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -101,9 +102,24 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging) {
+      // Apply mobile zoom dampening - 50% slower movement when zoomed in on mobile
+      const isMobile = window.innerWidth <= 1024;
+      const zoomDampening = isMobile && zoom > 1 ? 0.5 : 1;
+      
+      let newX = e.clientX - dragStart.x;
+      let newY = e.clientY - dragStart.y;
+      
+      // Apply dampening by reducing movement delta
+      if (zoomDampening < 1) {
+        const currentX = overlay.x;
+        const currentY = overlay.y;
+        newX = currentX + (newX - currentX) * zoomDampening;
+        newY = currentY + (newY - currentY) * zoomDampening;
+      }
+      
       onUpdate({
-        x: Math.max(0, e.clientX - dragStart.x),
-        y: Math.max(0, e.clientY - dragStart.y),
+        x: Math.max(0, newX),
+        y: Math.max(0, newY),
       });
     } else if (isResizing) {
       const deltaX = e.clientX - resizeStart.x;
@@ -118,15 +134,30 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         height: newHeight,
       });
     }
-  }, [isDragging, isResizing, dragStart, resizeStart, onUpdate, aspectRatio]);
+  }, [isDragging, isResizing, dragStart, resizeStart, onUpdate, aspectRatio, zoom, overlay.x, overlay.y]);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     e.preventDefault(); // Prevent scrolling
     const touch = e.touches[0];
     if (isDragging) {
+      // Apply mobile zoom dampening - 50% slower movement when zoomed in on mobile
+      const isMobile = window.innerWidth <= 1024;
+      const zoomDampening = isMobile && zoom > 1 ? 0.5 : 1;
+      
+      let newX = touch.clientX - dragStart.x;
+      let newY = touch.clientY - dragStart.y;
+      
+      // Apply dampening by reducing movement delta
+      if (zoomDampening < 1) {
+        const currentX = overlay.x;
+        const currentY = overlay.y;
+        newX = currentX + (newX - currentX) * zoomDampening;
+        newY = currentY + (newY - currentY) * zoomDampening;
+      }
+      
       onUpdate({
-        x: Math.max(0, touch.clientX - dragStart.x),
-        y: Math.max(0, touch.clientY - dragStart.y),
+        x: Math.max(0, newX),
+        y: Math.max(0, newY),
       });
     } else if (isResizing) {
       const deltaX = touch.clientX - resizeStart.x;
@@ -141,7 +172,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         height: newHeight,
       });
     }
-  }, [isDragging, isResizing, dragStart, resizeStart, onUpdate, aspectRatio]);
+  }, [isDragging, isResizing, dragStart, resizeStart, onUpdate, aspectRatio, zoom, overlay.x, overlay.y]);
 
   const handleMouseUp = useCallback(() => {
     const wasDragging = isDragging;
@@ -623,6 +654,7 @@ export default function CanvasWorkspace({
                     onDelete={() => onDeleteOverlay(overlay.id)}
                     onDragStart={() => onDragStart(overlay.id)}
                     onDragEnd={onDragEnd}
+                    zoom={canvasState.zoom}
                   />
                 ))}
                 
