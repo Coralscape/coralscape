@@ -9,13 +9,15 @@ import OverlaySidebar from "@/components/overlay-sidebar";
 import CanvasWorkspace from "@/components/canvas-workspace";
 import LayerControls from "@/components/layer-controls";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plug, CheckCircle2 } from "lucide-react";
+import { Loader2, Plug, CheckCircle2, Download } from "lucide-react";
 import { CoralData, OverlayData, CanvasState } from "@shared/schema";
 import { fetchWatermarkFromSheets } from "@/lib/google-sheets";
+import { useCanvasExport } from "@/hooks/use-canvas";
 
 export default function AquariumDesigner() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { exportCanvas, isExporting } = useCanvasExport();
   
   const [canvasState, setCanvasState] = useState<CanvasState>({
     baseImage: null,
@@ -379,31 +381,13 @@ export default function AquariumDesigner() {
           </div>
           
           <Button
-            onClick={handleConnect}
-            disabled={connectSheetsMutation.isPending}
+            onClick={() => exportCanvas(canvasState)}
+            disabled={isExporting || !canvasState.baseImage}
             size="sm"
-            className={`whitespace-nowrap text-xs px-2 py-1 ${
-              isConnected 
-                ? "bg-green-600 hover:bg-green-700" 
-                : "bg-primary hover:bg-primary/90"
-            }`}
+            className="whitespace-nowrap text-xs px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white disabled:bg-gray-400"
           >
-            {connectSheetsMutation.isPending ? (
-              <>
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                Loading...
-              </>
-            ) : isConnected ? (
-              <>
-                <CheckCircle2 className="mr-1 h-3 w-3" />
-                Connected
-              </>
-            ) : (
-              <>
-                <Plug className="mr-1 h-3 w-3" />
-                Load DB
-              </>
-            )}
+            <Download className="mr-1 h-3 w-3" />
+            {isExporting ? 'Exporting...' : 'Export'}
           </Button>
         </div>
         
