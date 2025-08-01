@@ -159,6 +159,17 @@
 @media (max-width: 1024px) {
   body {
     padding-right: 20px;
+    touch-action: pan-y; /* Allow vertical scrolling but prevent zoom */
+    -webkit-text-size-adjust: 100%; /* Prevent text size adjustment */
+    -webkit-touch-callout: none; /* Disable callout */
+    -webkit-user-select: none; /* Disable selection */
+    user-select: none;
+  }
+  
+  /* Prevent zoom on form elements */
+  input, select, textarea {
+    font-size: 16px !important; /* Prevent zoom on focus */
+    touch-action: manipulation;
   }
   
   .mobile-scroll-indicator {

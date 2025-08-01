@@ -219,7 +219,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         height: overlay.height,
         opacity: overlay.opacity,
         zIndex: overlay.layer + 10,
-        touchAction: 'manipulation'
+        touchAction: 'none'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -230,7 +230,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         className="overlay-image w-full h-full object-cover rounded-lg border-2 border-transparent hover:border-primary transition-colors"
         style={{
           transform: `rotate(${overlay.rotation || 0}deg) scaleX(${overlay.flipH ? -1 : 1}) scaleY(${overlay.flipV ? -1 : 1})`,
-          touchAction: 'manipulation'
+          touchAction: 'none'
         }}
         title={overlay.name}
         draggable={false}
@@ -627,6 +627,9 @@ export default function CanvasWorkspace({
               canvasState.baseImage ? '' : 'border-2 border-dashed border-border min-h-[600px]'
             } flex items-center justify-center overflow-hidden ${isOver ? 'drop-zone-active' : ''}`}
             onClick={handleCanvasClick}
+            onWheel={(e) => e.preventDefault()}
+            onTouchMove={(e) => e.preventDefault()}
+            style={{ touchAction: 'none' }}
           >
             {canvasState.baseImage ? (
               <div 
@@ -645,7 +648,7 @@ export default function CanvasWorkspace({
                   onClick={handleBaseImageClick}
                   onMouseDown={handleMouseDown}
                   onTouchStart={handleTouchStart}
-                  style={{ userSelect: 'none', pointerEvents: 'auto', touchAction: 'manipulation' }}
+                  style={{ userSelect: 'none', pointerEvents: 'auto', touchAction: 'none' }}
                 />
                 
                 {/* Render overlays */}
