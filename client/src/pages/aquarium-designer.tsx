@@ -27,6 +27,14 @@ export default function AquariumDesigner() {
   const handleMobileSaveToPhotos = async () => {
     setIsSavingToPhotos(true);
     try {
+      // Auto-zoom to 100% and center before export if not already at 100%
+      if (canvasState.zoom !== 1) {
+        handleZoomChange(1);
+        handlePanChange(0, 0); // Reset pan position to center
+        // Small delay to let the zoom change take effect
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
       await saveToPhotos(canvasState);
       setShowMobileExportDialog(false);
       // Show success popup with "Buy me a frag" button instead of toast
@@ -47,11 +55,30 @@ export default function AquariumDesigner() {
 
   const handleMobileDownload = async () => {
     try {
+      // Auto-zoom to 100% and center before export if not already at 100%
+      if (canvasState.zoom !== 1) {
+        handleZoomChange(1);
+        handlePanChange(0, 0); // Reset pan position to center
+        // Small delay to let the zoom change take effect
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
       await exportCanvas(canvasState);
       setShowMobileExportDialog(false);
     } catch (error) {
       console.error('Download error:', error);
     }
+  };
+  
+  const handleMobileExportClick = async () => {
+    // Auto-zoom to 100% and center before opening export dialog
+    if (canvasState.zoom !== 1) {
+      handleZoomChange(1);
+      handlePanChange(0, 0); // Reset pan position to center
+      // Small delay to let the zoom change take effect
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    setShowMobileExportDialog(true);
   };
   
   const [canvasState, setCanvasState] = useState<CanvasState>({
@@ -416,7 +443,7 @@ export default function AquariumDesigner() {
           </div>
           
           <Button
-            onClick={() => setShowMobileExportDialog(true)}
+            onClick={handleMobileExportClick}
             disabled={isExporting || !canvasState.baseImage}
             size="sm"
             className="whitespace-nowrap text-xs px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white disabled:bg-gray-400"
