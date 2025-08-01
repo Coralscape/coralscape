@@ -163,18 +163,18 @@
     right: 0;
     width: 15px;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.1);
+    background: white;
     z-index: 9999;
     pointer-events: auto;
     opacity: 1;
     transition: all 0.3s ease;
-    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
   }
   
   .mobile-scroll-indicator:hover {
     opacity: 1;
     width: 20px;
-    background: rgba(0, 0, 0, 0.1);
+    background: white;
   }
   
   .mobile-scroll-indicator::before {
