@@ -407,7 +407,7 @@ export default function AquariumDesigner() {
           </Button>
         </div>
         
-        <div className="flex flex-col lg:flex-row h-[calc(100vh-7.5vh)] lg:h-[calc(100vh-80px)]">
+        <div className="flex flex-col lg:flex-row h-[calc(100vh-15vh)] lg:h-[calc(100vh-80px)]">
           {/* Mobile/Tablet: Compact sidebar with specific height allocation */}
           <div className="lg:hidden h-[30vh] overflow-y-auto border-b border-border">
             <OverlaySidebar
