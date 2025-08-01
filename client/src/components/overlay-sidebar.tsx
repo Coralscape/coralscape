@@ -45,14 +45,14 @@ function DraggableCoralItem({ coral, onAddOverlay }: DraggableCoralItemProps) {
   };
 
   return (
-    <div className="group bg-background hover:bg-muted/50 rounded-lg p-2 border border-border transition-colors cursor-pointer"
+    <div className="group bg-background hover:bg-muted/50 rounded-lg p-2 md:p-3 border border-border transition-colors cursor-pointer"
          onClick={handleClick}>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 md:space-x-3">
         <div className="relative">
           <img
             src={coral.imageUrl}
             alt={coral.fullName}
-            className="w-12 h-12 object-cover rounded border border-border"
+            className="w-12 h-12 md:w-16 md:h-16 object-cover rounded md:rounded-lg border border-border"
             loading="lazy"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -213,8 +213,8 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
 
   return (
     <aside className="w-full md:w-80 bg-background border-r md:border-r border-b md:border-b-0 border-border flex flex-col h-full">
-      <div className="px-3 md:px-4 pt-2 md:pt-3 pb-1 md:pb-2 flex-shrink-0">
-        <h2 className="text-base md:text-lg font-semibold text-foreground mb-1 md:mb-2">Corals & Inverts</h2>
+      <div className="px-2 md:px-4 pt-2 md:pt-4 pb-1 md:pb-3 lg:border-b border-border flex-shrink-0">
+        <h2 className="text-base md:text-lg font-semibold text-foreground mb-1 md:mb-3">Corals & Inverts</h2>
         
         <Tabs defaultValue="database" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -222,10 +222,10 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
             <TabsTrigger value="custom">Custom ({customCorals.length})</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="database" className="mt-2">
+          <TabsContent value="database" className="mt-2 md:mt-3">
             {/* Search Input - hidden on mobile/tablet */}
             {!hideSearchBar && (
-              <div className="relative mb-2">
+              <div className="relative mb-2 md:mb-3">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type="text"
@@ -238,7 +238,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
             )}
 
             {/* Filters */}
-            <div className="space-y-1.5 mb-2">
+            <div className="space-y-1.5 md:space-y-2 mb-2 md:mb-3">
               {/* Main Type Filter */}
               <Select value={typeFilter} onValueChange={(value) => {
                 setTypeFilter(value);
@@ -294,7 +294,7 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
             </div>
 
             {/* Clear filters and randomize buttons */}
-            <div className="flex justify-between items-center mb-1">
+            <div className="flex justify-between items-center mb-1 md:mb-3">
               {(searchTerm || typeFilter !== "all" || subTypeFilter !== "all" || colorFilter !== "all") && (
                 <Button 
                   variant="ghost" 
@@ -322,8 +322,8 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
             </div>
           </TabsContent>
           
-          <TabsContent value="custom" className="mt-2">
-            <div className="space-y-2">
+          <TabsContent value="custom" className="mt-2 md:mt-3">
+            <div className="space-y-2 md:space-y-3">
               <Button
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
@@ -352,8 +352,8 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, hid
       
       {/* Scrollable coral list */}
       <div className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full px-2 md:px-3">
-          <div className="space-y-2 pb-2">
+        <ScrollArea className="h-full px-2 md:px-4">
+          <div className="space-y-2 md:space-y-3 pb-2 md:pb-4">
             {isLoading ? (
               <>
                 {[...Array(5)].map((_, i) => (

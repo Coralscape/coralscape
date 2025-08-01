@@ -63,4 +63,6 @@ Preferred communication style: Simple, everyday language.
 - Removed layer controls section entirely on mobile/tablet devices for cleaner interface
 - Hidden search input on mobile/tablet while keeping filter dropdowns for coral browsing
 - Maintained desktop layout with full three-panel sidebar design for large screens
+- Mobile-specific compact spacing: smaller coral images (12x12), reduced padding and margins
+- Desktop maintains original spacing: larger coral images (16x16), standard padding and borders
 - All UI elements adapt to theme changes including sidebars, canvas workspace, layer controls, and navigation
