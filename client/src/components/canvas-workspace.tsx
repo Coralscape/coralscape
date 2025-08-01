@@ -219,6 +219,7 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         height: overlay.height,
         opacity: overlay.opacity,
         zIndex: overlay.layer + 10,
+        touchAction: 'manipulation'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -228,7 +229,8 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
         alt={overlay.name}
         className="overlay-image w-full h-full object-cover rounded-lg border-2 border-transparent hover:border-primary transition-colors"
         style={{
-          transform: `rotate(${overlay.rotation || 0}deg) scaleX(${overlay.flipH ? -1 : 1}) scaleY(${overlay.flipV ? -1 : 1})`
+          transform: `rotate(${overlay.rotation || 0}deg) scaleX(${overlay.flipH ? -1 : 1}) scaleY(${overlay.flipV ? -1 : 1})`,
+          touchAction: 'manipulation'
         }}
         title={overlay.name}
         draggable={false}
@@ -422,6 +424,7 @@ export default function CanvasWorkspace({
   };
 
   const handleCanvasClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent mobile zoom on double-tap
     if (e.target === e.currentTarget) {
       onSelectOverlay(null);
     }
@@ -502,7 +505,9 @@ export default function CanvasWorkspace({
     onZoomChange(Math.max(canvasState.zoom / 1.2, 0.1));
   };
 
-  const handleBaseImageClick = () => {
+  const handleBaseImageClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent mobile zoom on double-tap
+    e.stopPropagation();
     // Select base image (deselect any overlays)
     onSelectOverlay(null);
   };
@@ -640,7 +645,7 @@ export default function CanvasWorkspace({
                   onClick={handleBaseImageClick}
                   onMouseDown={handleMouseDown}
                   onTouchStart={handleTouchStart}
-                  style={{ userSelect: 'none', pointerEvents: 'auto', touchAction: 'none' }}
+                  style={{ userSelect: 'none', pointerEvents: 'auto', touchAction: 'manipulation' }}
                 />
                 
                 {/* Render overlays */}
