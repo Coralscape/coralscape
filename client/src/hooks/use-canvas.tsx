@@ -40,7 +40,11 @@ export function useCanvasExport() {
     setShowSuccessPopup(false);
   }, []);
 
-  return { exportCanvas, isExporting, showSuccessPopup, closeSuccessPopup };
+  const showSuccessMessage = useCallback(() => {
+    setShowSuccessPopup(true);
+  }, []);
+
+  return { exportCanvas, isExporting, showSuccessPopup, closeSuccessPopup, showSuccessMessage };
 }
 
 export function useCanvasState() {

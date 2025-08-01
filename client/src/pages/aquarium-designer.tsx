@@ -15,11 +15,12 @@ import { fetchWatermarkFromSheets } from "@/lib/google-sheets";
 import { useCanvasExport } from "@/hooks/use-canvas";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { saveToPhotos } from "@/lib/canvas-utils";
+import ExportSuccessPopup from "@/components/export-success-popup";
 
 export default function AquariumDesigner() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { exportCanvas, isExporting } = useCanvasExport();
+  const { exportCanvas, isExporting, showSuccessPopup, closeSuccessPopup, showSuccessMessage } = useCanvasExport();
   const [showMobileExportDialog, setShowMobileExportDialog] = useState(false);
   const [isSavingToPhotos, setIsSavingToPhotos] = useState(false);
 
@@ -27,11 +28,11 @@ export default function AquariumDesigner() {
     setIsSavingToPhotos(true);
     try {
       await saveToPhotos(canvasState);
-      toast({
-        title: "Success!",
-        description: "Your aquarium design has been saved to your device!",
-      });
       setShowMobileExportDialog(false);
+      // Show success popup with "Buy me a frag" button instead of toast
+      setTimeout(() => {
+        showSuccessMessage();
+      }, 100); // Small delay to ensure dialog closes first
     } catch (error) {
       console.error('Save to photos error:', error);
       toast({
@@ -535,6 +536,12 @@ export default function AquariumDesigner() {
             </div>
           </DialogContent>
         </Dialog>
+        
+        {/* Export Success Popup - shows "Buy me a frag" button */}
+        <ExportSuccessPopup 
+          isOpen={showSuccessPopup}
+          onClose={closeSuccessPopup}
+        />
       </div>
     </DndProvider>
   );
