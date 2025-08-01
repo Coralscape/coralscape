@@ -155,8 +155,12 @@
   background-color: hsl(207, 90%, 97%) !important;
 }
 
-/* Mobile scroll bar overlay */
+/* Mobile scroll bar - shifts content instead of overlaying */
 @media (max-width: 1024px) {
+  body {
+    padding-right: 15px;
+  }
+  
   .mobile-scroll-indicator {
     position: fixed;
     top: 0;
@@ -175,6 +179,10 @@
     opacity: 1;
     width: 20px;
     background: white;
+  }
+  
+  .mobile-scroll-indicator:hover ~ * {
+    padding-right: 20px;
   }
   
   .mobile-scroll-indicator::before {
