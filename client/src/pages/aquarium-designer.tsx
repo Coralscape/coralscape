@@ -9,15 +9,49 @@ import OverlaySidebar from "@/components/overlay-sidebar";
 import CanvasWorkspace from "@/components/canvas-workspace";
 import LayerControls from "@/components/layer-controls";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plug, CheckCircle2, Download } from "lucide-react";
+import { Loader2, Plug, CheckCircle2, Download, Camera, Save } from "lucide-react";
 import { CoralData, OverlayData, CanvasState } from "@shared/schema";
 import { fetchWatermarkFromSheets } from "@/lib/google-sheets";
 import { useCanvasExport } from "@/hooks/use-canvas";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { saveToPhotos } from "@/lib/canvas-utils";
 
 export default function AquariumDesigner() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { exportCanvas, isExporting } = useCanvasExport();
+  const [showMobileExportDialog, setShowMobileExportDialog] = useState(false);
+  const [isSavingToPhotos, setIsSavingToPhotos] = useState(false);
+
+  const handleMobileSaveToPhotos = async () => {
+    setIsSavingToPhotos(true);
+    try {
+      await saveToPhotos(canvasState);
+      toast({
+        title: "Success!",
+        description: "Your aquarium design has been saved to your device!",
+      });
+      setShowMobileExportDialog(false);
+    } catch (error) {
+      console.error('Save to photos error:', error);
+      toast({
+        title: "Save Failed",
+        description: "Could not save to photos. Try downloading instead.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingToPhotos(false);
+    }
+  };
+
+  const handleMobileDownload = async () => {
+    try {
+      await exportCanvas(canvasState);
+      setShowMobileExportDialog(false);
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
   
   const [canvasState, setCanvasState] = useState<CanvasState>({
     baseImage: null,
@@ -381,7 +415,7 @@ export default function AquariumDesigner() {
           </div>
           
           <Button
-            onClick={() => exportCanvas(canvasState)}
+            onClick={() => setShowMobileExportDialog(true)}
             disabled={isExporting || !canvasState.baseImage}
             size="sm"
             className="whitespace-nowrap text-xs px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white disabled:bg-gray-400"
@@ -468,6 +502,39 @@ export default function AquariumDesigner() {
             />
           </div>
         </div>
+
+        {/* Mobile Export Dialog */}
+        <Dialog open={showMobileExportDialog} onOpenChange={setShowMobileExportDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Export Your Tank Design</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 pt-4">
+              <Button
+                onClick={handleMobileSaveToPhotos}
+                disabled={isSavingToPhotos}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Camera className="mr-2 h-4 w-4" />
+                {isSavingToPhotos ? 'Saving to Photos...' : 'Save to Camera Roll'}
+              </Button>
+              
+              <Button
+                onClick={handleMobileDownload}
+                disabled={isExporting}
+                variant="outline"
+                className="w-full"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                {isExporting ? 'Downloading...' : 'Download to Device'}
+              </Button>
+              
+              <p className="text-xs text-center text-muted-foreground">
+                Choose how you'd like to save your aquarium design
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </DndProvider>
   );

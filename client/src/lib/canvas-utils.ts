@@ -1,6 +1,78 @@
 import { CanvasState, OverlayData } from "@shared/schema";
 import { fetchWatermarkFromSheets } from "./google-sheets";
 
+// Function to save image to camera roll (mobile)
+export async function saveToPhotos(canvasState: CanvasState): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    if (!ctx || !canvasState.baseImage) {
+      reject(new Error('Canvas context or base image not available'));
+      return;
+    }
+
+    const baseImg = new Image();
+    baseImg.crossOrigin = 'anonymous';
+    
+    baseImg.onload = async () => {
+      try {
+        canvas.width = baseImg.width;
+        canvas.height = baseImg.height;
+        ctx.drawImage(baseImg, 0, 0);
+        
+        const overlayPromises = canvasState.overlays
+          .sort((a, b) => a.layer - b.layer)
+          .map(overlay => drawOverlay(ctx, overlay, canvas.width, canvas.height));
+        
+        await Promise.all(overlayPromises);
+        await drawWatermark(ctx, canvas.width, canvas.height);
+        
+        // Convert to blob and save to photos
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            try {
+              // Create a file from the blob
+              const file = new File([blob], `coralscape-design-${Date.now()}.png`, { type: 'image/png' });
+              
+              // Check if Web Share API is available
+              if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                  files: [file],
+                  title: 'CoralScape Design',
+                  text: 'My aquarium design from CoralScape'
+                });
+                resolve();
+              } else {
+                // Fallback to download
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `coralscape-design-${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                resolve();
+              }
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            reject(new Error('Failed to create blob'));
+          }
+        }, 'image/png');
+        
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    baseImg.onerror = () => reject(new Error('Failed to load base image'));
+    baseImg.src = canvasState.baseImage;
+  });
+}
+
 export async function exportCanvasAsImage(canvasState: CanvasState): Promise<void> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
