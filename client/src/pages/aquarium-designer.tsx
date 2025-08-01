@@ -339,77 +339,33 @@ export default function AquariumDesigner() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-background flex flex-col">
-        {/* Desktop layout */}
-        <div className="hidden lg:flex lg:flex-col lg:h-screen">
-          <TopNavigation
-            onConnect={handleConnect}
-            isConnecting={connectSheetsMutation.isPending}
-            isConnected={isConnected}
-          />
-          <div className="flex-1 flex overflow-hidden">
-            <div className="block">
-              <OverlaySidebar
-                coralData={coralData}
-                isLoading={isLoadingCorals}
-                onAddOverlay={handleAddOverlay}
-              />
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              <CanvasWorkspace
-                canvasState={canvasState}
-                onUpdateOverlay={handleUpdateOverlay}
-                onSelectOverlay={handleSelectOverlay}
-                onBaseImageUpload={handleBaseImageUpload}
-                onAddOverlay={handleAddOverlay}
-                onZoomChange={handleZoomChange}
-                onPanChange={handlePanChange}
-                onDeleteOverlay={handleDeleteOverlay}
-                onUndo={handleUndo}
-                canUndo={canUndoAction}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              />
-            </div>
-            
-            <div className="block">
-              <LayerControls
-                canvasState={canvasState}
-                selectedOverlay={selectedOverlay}
-                onUpdateOverlay={handleUpdateOverlay}
-                onDeleteOverlay={handleDeleteOverlay}
-                onSelectOverlay={handleSelectOverlay}
-                onZoomChange={handleZoomChange}
-                onPanChange={handlePanChange}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile/Tablet layout */}
-        <div className="lg:hidden flex flex-col h-screen">
-          {/* Logo bar with buy me a frag button - 7.5% */}
-          <div className="h-[7.5vh] min-h-[50px]">
-            <TopNavigation
-              onConnect={handleConnect}
-              isConnecting={connectSheetsMutation.isPending}
-              isConnected={isConnected}
-            />
-          </div>
-          
-          {/* Corals & Inverts section - 32.5% (adjusted to account for larger logo bar) */}
-          <div className="h-[32.5vh] border-b border-border">
+      <div className="min-h-screen bg-background">
+        <TopNavigation
+          onConnect={handleConnect}
+          isConnecting={connectSheetsMutation.isPending}
+          isConnected={isConnected}
+        />
+        
+        <div className="flex flex-col md:flex-row h-[calc(100vh-80px)]">
+          {/* Mobile: Show sidebar above canvas */}
+          <div className="md:hidden max-h-48 overflow-y-auto">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
               onAddOverlay={handleAddOverlay}
-              hideSearchBar={true}
+            />
+          </div>
+
+          {/* Desktop: Show sidebar on left */}
+          <div className="hidden md:block">
+            <OverlaySidebar
+              coralData={coralData}
+              isLoading={isLoadingCorals}
+              onAddOverlay={handleAddOverlay}
             />
           </div>
           
-          {/* Tank workspace - 60% */}
-          <div className="h-[60vh] flex-1">
+          <div className="flex-1 min-w-0">
             <CanvasWorkspace
               canvasState={canvasState}
               onUpdateOverlay={handleUpdateOverlay}
@@ -423,6 +379,19 @@ export default function AquariumDesigner() {
               canUndo={canUndoAction}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
+            />
+          </div>
+          
+          {/* Layer controls - hidden on mobile/tablet, visible on large screens */}
+          <div className="hidden lg:block">
+            <LayerControls
+              canvasState={canvasState}
+              selectedOverlay={selectedOverlay}
+              onUpdateOverlay={handleUpdateOverlay}
+              onDeleteOverlay={handleDeleteOverlay}
+              onSelectOverlay={handleSelectOverlay}
+              onZoomChange={handleZoomChange}
+              onPanChange={handlePanChange}
             />
           </div>
         </div>

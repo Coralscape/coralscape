@@ -19,7 +19,6 @@ interface LayerControlsProps {
   onSelectOverlay: (overlayId: string | null) => void;
   onZoomChange: (zoom: number) => void;
   onPanChange: (panX: number, panY: number) => void;
-  compactMode?: boolean; // For mobile export-only view
 }
 
 export default function LayerControls({
@@ -30,7 +29,6 @@ export default function LayerControls({
   onSelectOverlay,
   onZoomChange,
   onPanChange,
-  compactMode = false,
 }: LayerControlsProps) {
   const { exportCanvas, isExporting, showSuccessPopup, closeSuccessPopup } = useCanvasExport();
 
@@ -65,27 +63,6 @@ export default function LayerControls({
   };
 
   const sortedOverlays = [...canvasState.overlays].sort((a, b) => b.layer - a.layer);
-
-  // If compact mode, only show export button
-  if (compactMode) {
-    return (
-      <div className="flex items-center justify-center w-full">
-        <Button
-          type="button"
-          className="bg-accent hover:bg-accent/90 text-white px-6"
-          onClick={handleExport}
-          disabled={isExporting || !canvasState.baseImage}
-        >
-          <Download className="mr-2 h-4 w-4" />
-          {isExporting ? 'Exporting...' : 'Export Tank Design'}
-        </Button>
-        <ExportSuccessPopup 
-          isOpen={showSuccessPopup}
-          onClose={closeSuccessPopup}
-        />
-      </div>
-    );
-  }
 
   return (
     <aside className="w-80 bg-background border-l border-border flex flex-col">
