@@ -506,15 +506,27 @@ export default function OverlaySidebar({ coralData, isLoading, onAddOverlay, isM
                   Clear
                 </Button>
               )}
-              <Button 
-                variant="ghost" 
-                size={isMobileCompact ? "sm" : "sm"}
-                className={`text-primary hover:text-primary/80 h-auto ${isMobileCompact ? 'p-0.5 text-xs' : 'p-1'}`}
-                onClick={handleRandomize}
-              >
-                <RefreshCw className={`${isMobileCompact ? 'mr-0.5 h-2.5 w-2.5' : 'mr-1 h-3 w-3'}`} />
-                Randomize
-              </Button>
+              <div className="flex items-center space-x-1">
+                <Button 
+                  variant="ghost" 
+                  size={isMobileCompact ? "sm" : "sm"}
+                  className={`text-primary hover:text-primary/80 h-auto ${isMobileCompact ? 'p-0.5 text-xs' : 'p-1'}`}
+                  onClick={handleRandomize}
+                >
+                  <RefreshCw className={`${isMobileCompact ? 'mr-0.5 h-2.5 w-2.5' : 'mr-1 h-3 w-3'}`} />
+                  Randomize
+                </Button>
+                {isMobileCompact && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs p-1 h-auto border-primary/20 bg-primary/5 text-primary"
+                    disabled
+                  >
+                    💡 Click on a Coral/Invert to drop onto your tank
+                  </Button>
+                )}
+              </div>
             </div>
           </TabsContent>
           
