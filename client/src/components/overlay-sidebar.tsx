@@ -102,27 +102,27 @@ function DraggableCoralItem({ coral, onAddOverlay, isCompact = false }: Draggabl
               <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-rainbow-50 text-rainbow-700 border-rainbow-200`}>Color Wheel</Badge>
             )}
             
-            {/* Detect and show colors - hide some in compact mode to save space */}
-            {!isCompact && coral.name.toLowerCase().includes('green') && (
-              <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">Green</Badge>
+            {/* Detect and show colors - show in compact mode too but smaller */}
+            {coral.name.toLowerCase().includes('green') && (
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-emerald-50 text-emerald-700 border-emerald-200`}>Green</Badge>
             )}
-            {!isCompact && coral.name.toLowerCase().includes('blue') && (
-              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">Blue</Badge>
+            {coral.name.toLowerCase().includes('blue') && (
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-blue-50 text-blue-700 border-blue-200`}>Blue</Badge>
             )}
-            {!isCompact && coral.name.toLowerCase().includes('red') && (
-              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">Red</Badge>
+            {coral.name.toLowerCase().includes('red') && (
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-red-50 text-red-700 border-red-200`}>Red</Badge>
             )}
-            {!isCompact && coral.name.toLowerCase().includes('pink') && (
-              <Badge variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">Pink</Badge>
+            {coral.name.toLowerCase().includes('pink') && (
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-pink-50 text-pink-700 border-pink-200`}>Pink</Badge>
             )}
-            {!isCompact && coral.name.toLowerCase().includes('purple') && (
-              <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">Purple</Badge>
+            {coral.name.toLowerCase().includes('purple') && (
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-purple-50 text-purple-700 border-purple-200`}>Purple</Badge>
             )}
-            {!isCompact && coral.name.toLowerCase().includes('yellow') && (
-              <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">Yellow</Badge>
+            {coral.name.toLowerCase().includes('yellow') && (
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-yellow-50 text-yellow-700 border-yellow-200`}>Yellow</Badge>
             )}
-            {!isCompact && coral.name.toLowerCase().includes('orange') && (
-              <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">Orange</Badge>
+            {coral.name.toLowerCase().includes('orange') && (
+              <Badge variant="outline" className={`${isCompact ? 'text-[10px] px-1 py-0' : 'text-xs'} bg-orange-50 text-orange-700 border-orange-200`}>Orange</Badge>
             )}
           </div>
         </div>

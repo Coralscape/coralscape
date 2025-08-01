@@ -155,6 +155,47 @@
   background-color: hsl(207, 90%, 97%) !important;
 }
 
+/* Mobile scroll bar overlay */
+@media (max-width: 1024px) {
+  .mobile-scroll-indicator {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 15px;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.05);
+    z-index: 9999;
+    pointer-events: auto;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .mobile-scroll-indicator:hover {
+    opacity: 1;
+    width: 20px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  .mobile-scroll-indicator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 3px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+  }
+  
+  .mobile-scroll-indicator:hover::before {
+    background: rgba(0, 0, 0, 0.5);
+    height: 60px;
+    width: 4px;
+  }
+}
+
 .watermark {
   pointer-events: none;
   user-select: none;

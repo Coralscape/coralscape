@@ -407,6 +407,31 @@ export default function AquariumDesigner() {
           </Button>
         </div>
         
+        {/* Mobile scroll indicator */}
+        <div 
+          className="mobile-scroll-indicator lg:hidden"
+          onTouchStart={(e) => {
+            e.preventDefault();
+            const startY = e.touches[0].clientY;
+            const startScrollTop = window.pageYOffset;
+            
+            const handleTouchMove = (moveEvent: TouchEvent) => {
+              moveEvent.preventDefault();
+              const currentY = moveEvent.touches[0].clientY;
+              const deltaY = (currentY - startY) * 2; // Amplify scroll sensitivity
+              window.scrollTo(0, startScrollTop - deltaY);
+            };
+            
+            const handleTouchEnd = () => {
+              document.removeEventListener('touchmove', handleTouchMove);
+              document.removeEventListener('touchend', handleTouchEnd);
+            };
+            
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd);
+          }}
+        ></div>
+        
         <div className="flex flex-col lg:flex-row h-[calc(100vh-15vh)] lg:h-[calc(100vh-80px)]">
           {/* Mobile/Tablet: Compact sidebar with specific height allocation */}
           <div className="lg:hidden h-[53.5vh] overflow-y-auto border-b border-border">
