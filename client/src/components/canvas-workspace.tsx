@@ -102,8 +102,8 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging) {
-      // Apply mobile zoom dampening - 50% slower movement when zoomed in on mobile
-      const isMobile = window.innerWidth <= 1024;
+      // Apply mobile zoom dampening - 50% slower movement when zoomed in on mobile/tablet
+      const isMobile = window.innerWidth <= 1200;
       const zoomDampening = isMobile && zoom > 1 ? 0.5 : 1;
       
       let newX = e.clientX - dragStart.x;
@@ -140,8 +140,8 @@ function DraggableOverlay({ overlay, isSelected, onUpdate, onSelect, onDelete, o
     e.preventDefault(); // Prevent scrolling
     const touch = e.touches[0];
     if (isDragging) {
-      // Apply mobile zoom dampening - 50% slower movement when zoomed in on mobile
-      const isMobile = window.innerWidth <= 1024;
+      // Apply mobile zoom dampening - 50% slower movement when zoomed in on mobile/tablet
+      const isMobile = window.innerWidth <= 1200;
       const zoomDampening = isMobile && zoom > 1 ? 0.5 : 1;
       
       let newX = touch.clientX - dragStart.x;

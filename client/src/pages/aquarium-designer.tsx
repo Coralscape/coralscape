@@ -125,8 +125,8 @@ export default function AquariumDesigner() {
       setIsConnected(true);
       queryClient.invalidateQueries({ queryKey: ["/api/corals"] });
       
-      // Check if on mobile device
-      const isMobile = window.innerWidth < 1024;
+      // Check if on mobile or tablet device
+      const isMobile = window.innerWidth < 1200;
       
       const toastInstance = toast({
         title: "Connected Successfully",
@@ -419,7 +419,7 @@ export default function AquariumDesigner() {
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen bg-background">
         {/* Desktop: Full TopNavigation */}
-        <div className="hidden lg:block">
+        <div className="hidden xl:block">
           <TopNavigation
             onConnect={handleConnect}
             isConnecting={connectSheetsMutation.isPending}
@@ -428,7 +428,7 @@ export default function AquariumDesigner() {
         </div>
         
         {/* Mobile/Tablet: Compact header with logo and buy me a frag */}
-        <div className="lg:hidden bg-background border-b border-border px-2 py-2 shadow-sm h-[7.5vh] flex items-center justify-between">
+        <div className="xl:hidden bg-background border-b border-border px-2 py-2 shadow-sm h-[7.5vh] flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <img 
               src="https://i.ibb.co/KcqLs8LM/Screen-Shot-2025-07-27-at-8-11-42-PM.png"
@@ -467,7 +467,7 @@ export default function AquariumDesigner() {
         
         {/* Mobile scroll indicator */}
         <div 
-          className="mobile-scroll-indicator lg:hidden"
+          className="mobile-scroll-indicator xl:hidden"
           onTouchStart={(e) => {
             e.preventDefault();
             const startY = e.touches[0].clientY;
@@ -490,9 +490,9 @@ export default function AquariumDesigner() {
           }}
         ></div>
         
-        <div className="flex flex-col lg:flex-row h-[calc(100vh-15vh)] lg:h-[calc(100vh-80px)]">
+        <div className="flex flex-col xl:flex-row h-[calc(100vh-15vh)] xl:h-[calc(100vh-80px)]">
           {/* Mobile/Tablet: Compact sidebar with specific height allocation */}
-          <div className="lg:hidden h-[53.5vh] overflow-y-auto border-b border-border">
+          <div className="xl:hidden h-[53.5vh] overflow-y-auto border-b border-border">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
@@ -502,7 +502,7 @@ export default function AquariumDesigner() {
           </div>
 
           {/* Desktop: Show sidebar on left */}
-          <div className="hidden lg:block">
+          <div className="hidden xl:block">
             <OverlaySidebar
               coralData={coralData}
               isLoading={isLoadingCorals}
@@ -512,7 +512,7 @@ export default function AquariumDesigner() {
           </div>
           
           {/* Canvas workspace - takes remaining space */}
-          <div className="flex-1 min-w-0 h-[31.5vh] lg:h-full">
+          <div className="flex-1 min-w-0 h-[31.5vh] xl:h-full">
             <CanvasWorkspace
               canvasState={canvasState}
               onUpdateOverlay={handleUpdateOverlay}
@@ -530,7 +530,7 @@ export default function AquariumDesigner() {
           </div>
           
           {/* Layer controls - hidden on mobile/tablet, visible on large screens */}
-          <div className="hidden lg:block">
+          <div className="hidden xl:block">
             <LayerControls
               canvasState={canvasState}
               selectedOverlay={selectedOverlay}

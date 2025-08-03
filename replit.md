@@ -16,8 +16,8 @@ Preferred communication style: Simple, everyday language.
 - **State Management**: React Query (TanStack Query) for server state, local React state for UI.
 - **Routing**: Wouter
 - **Drag & Drop**: React DnD for interactive coral placement.
-- **UI/UX Decisions**: Three-panel layout (sidebar, canvas, controls); consistent component library; real-time design preview; responsive design for mobile, tablet, and desktop; customizable theme (light/dark mode).
-- **Core Features**: Interactive canvas for tank design; layered coral placement with transform controls (rotate, flip, zoom, pan); canvas-to-image export with watermarking; search and hierarchical filtering of coral specimens; custom coral upload persistence; undo system for actions; keyboard shortcuts for common actions; automatic HEIC to JPEG conversion for uploads.
+- **UI/UX Decisions**: Three-panel layout (sidebar, canvas, controls); consistent component library; real-time design preview; responsive design for mobile/tablet (<1200px) and desktop (≥1200px); customizable theme (light/dark mode).
+- **Core Features**: Interactive canvas for tank design; layered coral placement with transform controls (rotate, flip, zoom, pan); canvas-to-image export with watermarking; search and hierarchical filtering of coral specimens; custom coral upload persistence; undo system for actions; keyboard shortcuts for common actions; automatic HEIC to JPEG conversion for uploads; mobile/tablet optimization with touch support and precision controls.
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js

@@ -155,8 +155,8 @@
   background-color: hsl(207, 90%, 97%) !important;
 }
 
-/* Mobile scroll bar - shifts content instead of overlaying */
-@media (max-width: 1024px) {
+/* Mobile and tablet scroll bar - shifts content instead of overlaying */
+@media (max-width: 1200px) {
   /* Hide all webkit scrollbars completely */
   ::-webkit-scrollbar {
     display: none !important;
