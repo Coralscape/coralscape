@@ -1,0 +1,602 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Composition Tool - Professional Canvas Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        accent: '#F59E0B',
+                        background: '#FAFAFA'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="font-inter bg-background min-h-screen">
+    <!-- @COMPONENT: TopNavigationBar [url input, connect button] -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-xl font-semibold text-gray-900">
+                    <i class="fas fa-layer-group text-primary mr-2"></i>
+                    Image Composition Studio
+                </h1>
+            </div>
+            
+            <div class="flex items-center space-x-4 flex-1 max-w-2xl mx-4">
+                <div class="flex-1">
+                    <label for="sheets-url" class="sr-only">Google Sheets URL</label>
+                    <div class="relative">
+                        <i class="fas fa-table absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input 
+                            type="url" 
+                            id="sheets-url"
+                            data-mock="true"
+                            placeholder="Paste Google Sheets URL here..."
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors"
+                            value="https://docs.google.com/spreadsheets/d/1abc123..."
+                        >
+                    </div>
+                </div>
+                <button 
+                    data-event="click:connectToSheets"
+                    class="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 whitespace-nowrap"
+                >
+                    <i class="fas fa-plug"></i>
+                    <span>Connect</span>
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: TopNavigationBar -->
+
+    <div class="flex h-[calc(100vh-80px)]">
+        <!-- @COMPONENT: LeftSidebar [thumbnail gallery, overlay images] -->
+        <aside class="w-80 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 mb-2">Overlay Images</h2>
+                <div class="flex items-center justify-between text-sm text-gray-600">
+                    <span data-bind="overlayImages.length">24 items loaded</span>
+                    <button class="text-primary hover:text-blue-700 transition-colors">
+                        <i class="fas fa-sync-alt mr-1"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="space-y-3">
+                    <!-- @MAP: overlayImages.map(image => ( -->
+                    
+                    <!-- Coral overlay item 1 -->
+                    <div class="group cursor-grab active:cursor-grabbing bg-gray-50 hover:bg-gray-100 rounded-lg p-3 border border-transparent hover:border-primary transition-all"
+                         data-draggable="true" data-overlay-id="coral-1">
+                        <div class="flex items-center space-x-3">
+                            <!-- Coral thumbnail image -->
+                            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                 alt="Brain Coral" 
+                                 class="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                                 data-mock-image="true">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate" data-bind="image.name">Brain Coral</h3>
+                                <p class="text-sm text-gray-500" data-bind="image.dimensions">1024x768</p>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coral overlay item 2 -->
+                    <div class="group cursor-grab active:cursor-grabbing bg-gray-50 hover:bg-gray-100 rounded-lg p-3 border border-transparent hover:border-primary transition-all"
+                         data-draggable="true" data-overlay-id="coral-2">
+                        <div class="flex items-center space-x-3">
+                            <!-- Staghorn coral thumbnail -->
+                            <img src="https://images.unsplash.com/photo-1582967788606-a171c1080cb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                 alt="Staghorn Coral" 
+                                 class="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                                 data-mock-image="true">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate" data-bind="image.name">Staghorn Coral</h3>
+                                <p class="text-sm text-gray-500" data-bind="image.dimensions">1200x900</p>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fish overlay item -->
+                    <div class="group cursor-grab active:cursor-grabbing bg-gray-50 hover:bg-gray-100 rounded-lg p-3 border border-transparent hover:border-primary transition-all"
+                         data-draggable="true" data-overlay-id="fish-1">
+                        <div class="flex items-center space-x-3">
+                            <!-- Tropical fish thumbnail -->
+                            <img src="https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                 alt="Clownfish" 
+                                 class="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                                 data-mock-image="true">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate" data-bind="image.name">Clownfish</h3>
+                                <p class="text-sm text-gray-500" data-bind="image.dimensions">800x600</p>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sea anemone overlay item -->
+                    <div class="group cursor-grab active:cursor-grabbing bg-gray-50 hover:bg-gray-100 rounded-lg p-3 border border-transparent hover:border-primary transition-all"
+                         data-draggable="true" data-overlay-id="anemone-1">
+                        <div class="flex items-center space-x-3">
+                            <!-- Sea anemone thumbnail -->
+                            <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                 alt="Sea Anemone" 
+                                 class="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                                 data-mock-image="true">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate" data-bind="image.name">Sea Anemone</h3>
+                                <p class="text-sm text-gray-500" data-bind="image.dimensions">1000x750</p>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional overlay items -->
+                    <div class="group cursor-grab active:cursor-grabbing bg-gray-50 hover:bg-gray-100 rounded-lg p-3 border border-transparent hover:border-primary transition-all"
+                         data-draggable="true" data-overlay-id="starfish-1">
+                        <div class="flex items-center space-x-3">
+                            <!-- Starfish thumbnail -->
+                            <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                 alt="Starfish" 
+                                 class="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                                 data-mock-image="true">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate" data-bind="image.name">Purple Starfish</h3>
+                                <p class="text-sm text-gray-500" data-bind="image.dimensions">900x900</p>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: LeftSidebar -->
+
+        <!-- @COMPONENT: CenterCanvas [main workspace, base image, overlays] -->
+        <main class="flex-1 bg-gray-100 flex flex-col">
+            <div class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-900">Canvas Workspace</h2>
+                    <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2 text-sm text-gray-600">
+                            <span>Zoom:</span>
+                            <button class="p-1 hover:bg-gray-100 rounded" data-event="click:zoomOut">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <span data-bind="canvasZoom" class="font-medium">100%</span>
+                            <button class="p-1 hover:bg-gray-100 rounded" data-event="click:zoomIn">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                        </div>
+                        <div class="h-4 w-px bg-gray-300"></div>
+                        <button class="flex items-center space-x-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+                                data-event="click:uploadBaseImage">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload Base Image</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 p-6 overflow-auto">
+                <div class="max-w-4xl mx-auto">
+                    <!-- @STATE: hasBaseImage:boolean = true -->
+                    <div class="relative bg-white rounded-xl shadow-lg border-2 border-dashed border-gray-300 min-h-[600px] flex items-center justify-center"
+                         data-dropzone="true" data-implementation="Canvas element for image composition">
+                        
+                        <!-- Base Image Display -->
+                        <div class="relative w-full h-full" data-canvas-container="true">
+                            <!-- Underwater reef base image -->
+                            <img src="https://images.unsplash.com/photo-1583212292454-1fe6229603b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=800" 
+                                 alt="Underwater reef base image" 
+                                 class="w-full h-auto rounded-lg shadow-sm"
+                                 data-mock-image="true"
+                                 data-base-image="true">
+                            
+                            <!-- Overlay Elements on Canvas -->
+                            <!-- @FUNCTIONALITY: These should be draggable and resizable overlay elements -->
+                            <div class="absolute top-1/4 left-1/3 cursor-move group" 
+                                 data-overlay="coral-1" 
+                                 data-implementation="Draggable overlay with resize handles">
+                                <div class="relative">
+                                    <!-- Brain coral overlay -->
+                                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150" 
+                                         alt="Brain coral overlay" 
+                                         class="w-24 h-24 rounded-lg opacity-90 hover:opacity-100 transition-opacity border-2 border-transparent group-hover:border-primary"
+                                         data-mock-image="true">
+                                    <!-- Resize handles -->
+                                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-se-resize"></div>
+                                    <div class="absolute -top-1 -left-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-sw-resize"></div>
+                                    <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-nw-resize"></div>
+                                    <div class="absolute -bottom-1 -left-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-ne-resize"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute top-1/2 right-1/4 cursor-move group" 
+                                 data-overlay="fish-1"
+                                 data-implementation="Draggable overlay with resize handles">
+                                <div class="relative">
+                                    <!-- Clownfish overlay -->
+                                    <img src="https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=90" 
+                                         alt="Clownfish overlay" 
+                                         class="w-16 h-12 rounded-lg opacity-90 hover:opacity-100 transition-opacity border-2 border-transparent group-hover:border-primary"
+                                         data-mock-image="true">
+                                    <!-- Resize handles -->
+                                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-se-resize"></div>
+                                    <div class="absolute -top-1 -left-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-sw-resize"></div>
+                                    <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-nw-resize"></div>
+                                    <div class="absolute -bottom-1 -left-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 cursor-ne-resize"></div>
+                                </div>
+                            </div>
+
+                            <!-- Watermark positioned in bottom right -->
+                            <div class="absolute bottom-4 right-4" data-watermark="true">
+                                <div class="bg-white bg-opacity-90 rounded-lg p-2 shadow-sm">
+                                    <img src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=30" 
+                                         alt="Company watermark" 
+                                         class="h-6 opacity-80"
+                                         data-mock-image="true"
+                                         data-implementation="Replace with actual watermark from ibb.co/bgvtdQjn">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Drop Zone when no base image -->
+                        <div class="text-center p-12 hidden" data-show-when="no-base-image">
+                            <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Upload Your Base Image</h3>
+                            <p class="text-gray-600 mb-6">Drop your image here or click to browse</p>
+                            <button class="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                Choose File
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- @END_COMPONENT: CenterCanvas -->
+
+        <!-- @COMPONENT: RightPanel [overlay controls, layer management, export] -->
+        <aside class="w-80 bg-white border-l border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Layer Controls</h2>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                <!-- Selected Overlay Controls -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-mouse-pointer text-primary mr-2"></i>
+                        Selected: <span data-bind="selectedOverlay.name" class="ml-1">Brain Coral</span>
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Position Controls -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Position</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">X</label>
+                                    <input type="number" value="120" data-bind="selectedOverlay.x" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Y</label>
+                                    <input type="number" value="80" data-bind="selectedOverlay.y" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Size Controls -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Size</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Width</label>
+                                    <input type="number" value="96" data-bind="selectedOverlay.width" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Height</label>
+                                    <input type="number" value="96" data-bind="selectedOverlay.height" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
+                            </div>
+                            <div class="flex items-center mt-2">
+                                <input type="checkbox" id="maintain-ratio" checked 
+                                       class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <label for="maintain-ratio" class="ml-2 text-sm text-gray-600">Maintain aspect ratio</label>
+                            </div>
+                        </div>
+
+                        <!-- Opacity Control -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Opacity</label>
+                            <input type="range" min="0" max="100" value="90" 
+                                   data-bind="selectedOverlay.opacity"
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span data-bind="selectedOverlay.opacity">90%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+
+                        <!-- Layer Order Controls -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Layer Order</label>
+                            <div class="flex space-x-2">
+                                <button class="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium transition-colors"
+                                        data-event="click:moveLayerUp">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    Forward
+                                </button>
+                                <button class="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium transition-colors"
+                                        data-event="click:moveLayerDown">
+                                    <i class="fas fa-arrow-down mr-1"></i>
+                                    Backward
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Delete Control -->
+                        <button class="w-full px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-md text-sm font-medium transition-colors border border-red-200"
+                                data-event="click:deleteOverlay">
+                            <i class="fas fa-trash mr-1"></i>
+                            Remove Layer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Layer List -->
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3 flex items-center justify-between">
+                        <span><i class="fas fa-layers text-accent mr-2"></i>All Layers</span>
+                        <span class="text-sm text-gray-500" data-bind="overlays.length">3 layers</span>
+                    </h3>
+                    
+                    <div class="space-y-2">
+                        <!-- @MAP: overlays.map(overlay => ( -->
+                        
+                        <div class="flex items-center p-3 bg-primary bg-opacity-10 border-l-4 border-primary rounded-md">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-eye text-primary text-sm"></i>
+                                    <span class="text-sm font-medium text-gray-900" data-bind="overlay.name">Brain Coral</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1" data-bind="overlay.position">Layer 3 • 96x96px</div>
+                            </div>
+                            <button class="p-1 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-grip-vertical text-xs"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors cursor-pointer">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-eye text-gray-400 text-sm"></i>
+                                    <span class="text-sm font-medium text-gray-700" data-bind="overlay.name">Clownfish</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1" data-bind="overlay.position">Layer 2 • 64x48px</div>
+                            </div>
+                            <button class="p-1 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-grip-vertical text-xs"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center p-3 bg-gray-50 rounded-md">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-image text-gray-400 text-sm"></i>
+                                    <span class="text-sm font-medium text-gray-700">Base Image</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">Background • 1200x800px</div>
+                            </div>
+                            <i class="fas fa-lock text-gray-400 text-xs"></i>
+                        </div>
+                        
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="border-t border-gray-200 p-4 bg-gray-50">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-medium text-gray-900">Export Options</h3>
+                        <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Ready</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Format</label>
+                            <select class="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                                <option>PNG</option>
+                                <option>JPEG</option>
+                                <option>WEBP</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Quality</label>
+                            <select class="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                                <option>High</option>
+                                <option>Medium</option>
+                                <option>Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-accent hover:bg-amber-600 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+                            data-event="click:exportComposition">
+                        <i class="fas fa-download"></i>
+                        <span>Export Composition</span>
+                    </button>
+                    
+                    <div class="text-xs text-gray-500 text-center">
+                        Final image will include watermark and all overlay layers
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: RightPanel -->
+    </div>
+
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, and state management
+            
+            // Mock drag and drop functionality for demonstration
+            let isDragging = false;
+            let draggedElement = null;
+            
+            // Add drag start listeners to overlay thumbnails
+            document.querySelectorAll('[data-draggable="true"]').forEach(element => {
+                element.addEventListener('dragstart', function(e) {
+                    isDragging = true;
+                    draggedElement = this;
+                    this.style.opacity = '0.5';
+                });
+                
+                element.addEventListener('dragend', function(e) {
+                    isDragging = false;
+                    this.style.opacity = '1';
+                    draggedElement = null;
+                });
+            });
+            
+            // Add drop listeners to canvas
+            const canvas = document.querySelector('[data-dropzone="true"]');
+            if (canvas) {
+                canvas.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    if (isDragging) {
+                        this.classList.add('border-primary', 'bg-blue-50');
+                    }
+                });
+                
+                canvas.addEventListener('dragleave', function(e) {
+                    this.classList.remove('border-primary', 'bg-blue-50');
+                });
+                
+                canvas.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('border-primary', 'bg-blue-50');
+                    
+                    if (draggedElement) {
+                        // TODO: Create new overlay element on canvas
+                        console.log('Dropped overlay:', draggedElement.dataset.overlayId);
+                    }
+                });
+            }
+            
+            // Mock overlay selection
+            document.querySelectorAll('[data-overlay]').forEach(overlay => {
+                overlay.addEventListener('click', function() {
+                    // Remove selection from other overlays
+                    document.querySelectorAll('[data-overlay]').forEach(el => {
+                        el.querySelector('img').classList.remove('border-primary');
+                        el.querySelector('img').classList.add('border-transparent');
+                    });
+                    
+                    // Add selection to clicked overlay
+                    this.querySelector('img').classList.remove('border-transparent');
+                    this.querySelector('img').classList.add('border-primary');
+                });
+            });
+            
+            // Mock connect to sheets functionality
+            document.querySelector('[data-event="click:connectToSheets"]')?.addEventListener('click', function() {
+                // TODO: Implement Google Sheets API integration
+                console.log('Connecting to Google Sheets...');
+                
+                // Show loading state
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Connecting...</span>';
+                this.disabled = true;
+                
+                // Mock successful connection after 2 seconds
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-check"></i><span>Connected</span>';
+                    this.classList.remove('bg-primary', 'hover:bg-blue-700');
+                    this.classList.add('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
+            });
+            
+            // Mock export functionality
+            document.querySelector('[data-event="click:exportComposition"]')?.addEventListener('click', function() {
+                // TODO: Implement canvas export with overlays and watermark
+                console.log('Exporting composition...');
+                
+                // Show loading state
+                const originalContent = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Exporting...</span>';
+                this.disabled = true;
+                
+                // Mock export completion after 3 seconds
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.disabled = false;
+                    
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                    successMsg.innerHTML = '<i class="fas fa-check mr-2"></i>Image exported successfully!';
+                    document.body.appendChild(successMsg);
+                    
+                    setTimeout(() => {
+                        successMsg.remove();
+                    }, 3000);
+                }, 3000);
+            });
+        })();
+    </script>
+</body>
+</html>

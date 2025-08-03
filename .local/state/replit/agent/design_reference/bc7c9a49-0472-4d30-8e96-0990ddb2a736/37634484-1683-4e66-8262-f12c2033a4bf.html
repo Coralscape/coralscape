@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Composition Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        accent: '#F59E0B',
+                        background: '#FAFAFA'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="font-inter bg-background min-h-screen">
+    <!-- @COMPONENT: TopBar [Google Sheets URL input and connection] -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-xl font-semibold text-gray-800">Image Composition Studio</h1>
+                <div class="h-6 w-px bg-gray-300"></div>
+                <div class="flex items-center space-x-3">
+                    <label class="text-sm font-medium text-gray-700">Google Sheets URL:</label>
+                    <input 
+                        type="url" 
+                        placeholder="https://docs.google.com/spreadsheets/d/..."
+                        class="w-96 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                        data-mock="true"
+                    >
+                    <button 
+                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                        data-event="click:handleConnect"
+                        data-implementation="Should validate URL and fetch Google Sheets data"
+                    >
+                        <i class="fas fa-link mr-2"></i>Connect
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <!-- @STATE: isConnected:boolean = false -->
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800" data-bind="connectionStatus">
+                    <i class="fas fa-circle text-gray-400 mr-1.5 text-xs"></i>
+                    Disconnected
+                </span>
+                <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: TopBar -->
+
+    <div class="flex h-[calc(100vh-73px)]">
+        <!-- @COMPONENT: LeftSidebar [Thumbnail gallery of overlay images] -->
+        <div class="w-80 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800 mb-2">Overlay Images</h2>
+                <div class="flex items-center justify-between text-sm text-gray-600">
+                    <span data-bind="overlayCount">12 images available</span>
+                    <button class="text-primary hover:text-blue-700 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="space-y-3">
+                    <!-- @MAP: overlayImages.map(image => ( -->
+                    <!-- Modern product photography of wireless headphones on white background -->
+                    <div class="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer border-2 border-transparent hover:border-accent" 
+                         data-mock="true" 
+                         data-implementation="Should be draggable overlay item"
+                         draggable="true">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=64&h=64" 
+                                     alt="Wireless headphones thumbnail" 
+                                     class="w-full h-full object-cover"
+                                     data-mock-image="true">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate" data-bind="image.name">Wireless Headphones</h3>
+                                <p class="text-xs text-gray-500" data-bind="image.dimensions">1200 × 800 px</p>
+                                <div class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stylish smartphone displaying a colorful app interface -->
+                    <div class="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer border-2 border-transparent hover:border-accent" 
+                         data-mock="true" 
+                         draggable="true">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=64&h=64" 
+                                     alt="Smartphone thumbnail" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate">Modern Smartphone</h3>
+                                <p class="text-xs text-gray-500">800 × 1200 px</p>
+                                <div class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Elegant laptop computer on a minimalist desk setup -->
+                    <div class="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer border-2 border-transparent hover:border-accent" 
+                         data-mock="true" 
+                         draggable="true">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=64&h=64" 
+                                     alt="Laptop computer thumbnail" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate">Premium Laptop</h3>
+                                <p class="text-xs text-gray-500">1400 × 900 px</p>
+                                <div class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional camera with various lenses on studio background -->
+                    <div class="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer border-2 border-transparent hover:border-accent" 
+                         data-mock="true" 
+                         draggable="true">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=64&h=64" 
+                                     alt="Professional camera thumbnail" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate">DSLR Camera</h3>
+                                <p class="text-xs text-gray-500">1600 × 1200 px</p>
+                                <div class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Colorful gaming controller against vibrant background -->
+                    <div class="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer border-2 border-transparent hover:border-accent" 
+                         data-mock="true" 
+                         draggable="true">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=64&h=64" 
+                                     alt="Gaming controller thumbnail" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate">Game Controller</h3>
+                                <p class="text-xs text-gray-500">1000 × 800 px</p>
+                                <div class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        Ready
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP -->
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: LeftSidebar -->
+
+        <!-- @COMPONENT: CenterCanvas [Main image workspace with drag & drop] -->
+        <div class="flex-1 bg-gray-100 flex flex-col">
+            <div class="bg-white border-b border-gray-200 px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h3 class="text-sm font-semibold text-gray-800">Canvas</h3>
+                        <div class="flex items-center space-x-2 text-xs text-gray-600">
+                            <span data-bind="canvasSize">1920 × 1080 px</span>
+                            <span>•</span>
+                            <span data-bind="zoomLevel">100%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Zoom Out">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Fit to Screen">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Zoom In">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <div class="h-4 w-px bg-gray-300"></div>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Undo">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Redo">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 p-6 flex items-center justify-center">
+                <!-- @FUNCTIONALITY: This canvas should implement drag & drop image composition using HTML5 Canvas API -->
+                <div class="relative bg-white rounded-lg shadow-lg border-2 border-dashed border-gray-300 hover:border-accent transition-colors" 
+                     style="width: 800px; height: 450px;"
+                     data-implementation="Should be a canvas or div container for image composition"
+                     data-event="drop:handleImageDrop">
+                    
+                    <!-- Base Image Upload Area -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500" data-mock="true">
+                        <div class="text-center">
+                            <i class="fas fa-cloud-upload-alt text-4xl mb-4 text-gray-400"></i>
+                            <h4 class="text-lg font-medium mb-2">Drop your base image here</h4>
+                            <p class="text-sm text-gray-400 mb-4">or click to browse files</p>
+                            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                Choose File
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Watermark Position Indicator (lower right) -->
+                    <div class="absolute bottom-4 right-4 bg-black bg-opacity-20 rounded p-2 text-xs text-white" data-mock="true">
+                        <i class="fas fa-copyright mr-1"></i>
+                        Watermark (20% width)
+                    </div>
+
+                    <!-- Sample Overlay Elements (shown when base image is loaded) -->
+                    <div class="absolute top-20 left-20 hidden" data-mock="true" data-implementation="Should show actual overlay images when dropped">
+                        <div class="relative group">
+                            <div class="w-32 h-32 bg-white rounded-lg shadow-md border-2 border-transparent group-hover:border-accent transition-colors">
+                                <!-- Sample overlay representation -->
+                                <div class="w-full h-full bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-2xl text-gray-400"></i>
+                                </div>
+                            </div>
+                            <!-- Resize handles -->
+                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full cursor-nw-resize opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-accent rounded-full cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: CenterCanvas -->
+
+        <!-- @COMPONENT: RightPanel [Controls for selected overlays and export] -->
+        <div class="w-80 bg-white border-l border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">Properties</h2>
+            </div>
+
+            <div class="flex-1 overflow-y-auto">
+                <!-- Layer Management Section -->
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Layers</h3>
+                    <div class="space-y-2">
+                        <!-- @MAP: layers.map(layer => ( -->
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg group" data-mock="true">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-grip-vertical text-gray-400 cursor-move"></i>
+                                <div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                                    <i class="fas fa-image text-white text-xs"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700" data-bind="layer.name">Overlay 1</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button class="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-eye text-xs"></i>
+                                </button>
+                                <button class="p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2 bg-accent bg-opacity-10 rounded-lg border border-accent" data-mock="true">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-grip-vertical text-gray-400 cursor-move"></i>
+                                <div class="w-8 h-8 bg-accent rounded flex items-center justify-center">
+                                    <i class="fas fa-image text-white text-xs"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Base Image</span>
+                            </div>
+                            <span class="text-xs text-accent font-medium">Selected</span>
+                        </div>
+                        <!-- @END_MAP -->
+                    </div>
+                </div>
+
+                <!-- Position & Size Controls -->
+                <div class="p-4 border-b border-gray-200" data-implementation="Should update selected overlay properties">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Transform</h3>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">X Position</label>
+                                <input type="number" value="120" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary" data-bind="selectedOverlay.x">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Y Position</label>
+                                <input type="number" value="80" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary" data-bind="selectedOverlay.y">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Width</label>
+                                <input type="number" value="200" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary" data-bind="selectedOverlay.width">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Height</label>
+                                <input type="number" value="150" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary" data-bind="selectedOverlay.height">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Opacity</label>
+                            <input type="range" min="0" max="100" value="100" class="w-full" data-bind="selectedOverlay.opacity">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer Order Controls -->
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Layer Order</h3>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                            <i class="fas fa-arrow-up mr-1"></i>Bring Forward
+                        </button>
+                        <button class="flex-1 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                            <i class="fas fa-arrow-down mr-1"></i>Send Back
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Canvas Settings -->
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Canvas Settings</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Background Color</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="color" value="#ffffff" class="w-8 h-8 rounded border border-gray-300 cursor-pointer">
+                                <input type="text" value="#FFFFFF" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Canvas Width</label>
+                                <input type="number" value="1920" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Canvas Height</label>
+                                <input type="number" value="1080" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="p-4 border-t border-gray-200 bg-gray-50">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Export Options</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Format</label>
+                        <select class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary">
+                            <option>PNG (Recommended)</option>
+                            <option>JPEG</option>
+                            <option>WEBP</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Quality</label>
+                        <input type="range" min="1" max="100" value="95" class="w-full">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>Low</span>
+                            <span>High</span>
+                        </div>
+                    </div>
+                    <button 
+                        class="w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                        data-event="click:handleExport"
+                        data-implementation="Should export composite image with all layers and watermark"
+                    >
+                        <i class="fas fa-download mr-2"></i>Export Composition
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: RightPanel -->
+    </div>
+
+    <script>
+        (function() {
+            // TODO: Implement Google Sheets API integration
+            // TODO: Implement drag and drop functionality
+            // TODO: Implement canvas-based image composition
+            // TODO: Implement layer management system
+            // TODO: Implement real-time overlay manipulation
+            // TODO: Implement image export with watermark
+
+            // Mock connection status toggle for demonstration
+            const connectBtn = document.querySelector('[data-event="click:handleConnect"]');
+            const statusSpan = document.querySelector('[data-bind="connectionStatus"]');
+            
+            if (connectBtn && statusSpan) {
+                connectBtn.addEventListener('click', function() {
+                    const isConnected = statusSpan.textContent.includes('Connected');
+                    if (isConnected) {
+                        statusSpan.innerHTML = '<i class="fas fa-circle text-gray-400 mr-1.5 text-xs"></i>Disconnected';
+                        statusSpan.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800';
+                    } else {
+                        statusSpan.innerHTML = '<i class="fas fa-circle text-green-400 mr-1.5 text-xs"></i>Connected';
+                        statusSpan.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800';
+                    }
+                });
+            }
+
+            // Mock drag and drop visual feedback
+            const draggableItems = document.querySelectorAll('[draggable="true"]');
+            const canvas = document.querySelector('[data-event="drop:handleImageDrop"]');
+            
+            draggableItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    this.style.opacity = '0.5';
+                    if (canvas) {
+                        canvas.style.borderColor = '#F59E0B';
+                        canvas.style.backgroundColor = '#FEF3C7';
+                    }
+                });
+                
+                item.addEventListener('dragend', function(e) {
+                    this.style.opacity = '1';
+                    if (canvas) {
+                        canvas.style.borderColor = '';
+                        canvas.style.backgroundColor = '';
+                    }
+                });
+            });
+            
+            if (canvas) {
+                canvas.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+                
+                canvas.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.style.borderColor = '';
+                    this.style.backgroundColor = '';
+                    // TODO: Handle actual image drop and overlay creation
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
