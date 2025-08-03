@@ -124,10 +124,22 @@ export default function AquariumDesigner() {
     onSuccess: (data) => {
       setIsConnected(true);
       queryClient.invalidateQueries({ queryKey: ["/api/corals"] });
-      toast({
+      
+      // Check if on mobile device
+      const isMobile = window.innerWidth < 1024;
+      
+      const toastInstance = toast({
         title: "Connected Successfully",
         description: `Loaded ${data.data?.length || 0} coral specimens from database.`,
+        duration: isMobile ? 1000 : 5000, // 1 second on mobile, 5 seconds on desktop
       });
+      
+      // Auto-dismiss after the specified duration on mobile
+      if (isMobile) {
+        setTimeout(() => {
+          toastInstance.dismiss();
+        }, 1000);
+      }
     },
     onError: (error: any) => {
       toast({
